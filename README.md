@@ -7,5 +7,5 @@ Backup the configs of all your Tasmota devices
 
 # Instructions
 
-* to add a device "device.php?ip=192.168.2.x"
-* to run backups for all added devices "backupall.php"
+* to add a device "index.php?task=discover&ip=xxx.xxx.xxx.xxx"
+* to run backups for all added devices "index.php?task=backupall"

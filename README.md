@@ -14,7 +14,7 @@ Backup the configs of all your Tasmota devices
 
 # Screenshots
 
-https://imgur.com/a/PoTDIao
+https://imgur.com/a/yfHvw0i
 
 # To-Do
 

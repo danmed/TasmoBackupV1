@@ -1,8 +1,9 @@
 <!DOCTYPE html>                                                                                              
 <?PHP
 include "config.inc.php";
-$device = $_GET["ip"];
-$task   = $_GET["task"];
+$device = $_POST["ip"];
+$task   = $_POST["task"];
+$name = $_POST["name"];
 
 function getBetween($content, $start, $end)
 {
@@ -56,15 +57,17 @@ if ($task == "discover") {
         $sql = "INSERT INTO devices (name,ip,version) VALUES ('$name', '$device', '$version')";
         
         if (mysqli_query($db_handle, $sql)) {
-            echo "<center><b>Tasmota Device Added Successfully!</b><center>";
+            $show_modal = 1;
+            $output = "<center><b>" . $name . " Added Successfully!</b><center>";
         } else {
-            echo $sql;
-            echo "Error updating record: " . mysqli_error($db_handle) . "<br>";
+            $show_modal = 1;
+            $output = "Error updating record: " . mysqli_error($db_handle) . "<br>";
         }
     }
     
     else {
-        print "Does not appear to be a Tasmota device!!";
+      $show_modal = 1;
+        $output = "Does not appear to be a Tasmota device!!";
     }
 }
 ?> 
@@ -140,14 +143,16 @@ if ($task == "singlebackup") {
             $sql2 = "UPDATE devices SET version = $version, lastbackup = '$date', noofbackups = '$noofbackups' WHERE ip = '$device'";
             
             if (mysqli_query($db_handle, $sql2)) {
-                echo "<center><b>" . $name . " backed up successfully</b><br></center>";
+                $show_modal = 1;
+                $output = "<center><b>" . $name . " backed up successfully</b><br></center>";
             } else {
-                echo $sql2;
+                $show_modal = 1;
                 echo "<center><b>Error updating record: " . mysqli_error($db_handle) . "<br>";
             }
             
         } else {
-            echo "<center><b>Status Code: " . $statusCode . "/b></center>";
+            $show_modal = 1;
+            $output = "<center><b>Status Code: " . $statusCode . "/b></center>";
         }
         
         
@@ -161,6 +166,7 @@ if ($task == "backupall") {
     $db_found  = mysqli_select_db($db_handle, $DBName);
     $SQL       = "select * from devices order by id asc";
     $result    = mysqli_query($db_handle, $SQL);
+    $errorcount = 0;
     while ($db_field = mysqli_fetch_assoc($result)) {
         $id       = $db_field['id'];
         $ip       = $db_field['ip'];
@@ -225,20 +231,73 @@ if ($task == "backupall") {
             $sql2 = "UPDATE devices SET version = $version, lastbackup = '$date', noofbackups = '$noofbackups' WHERE id = '$id'";
             
             if (mysqli_query($db_handle, $sql2)) {
-                
+
             } else {
-                echo $sql2;
-                echo "Error updating record: " . mysqli_error($db_handle) . "<br>";
+                
+                $errorcount = $errorcount + 1;
             }
             
         } else {
-            echo "Status Code: " . $statusCode;
+            
         }
         
         
     }
+
+    $show_modal = true;
+    if($errorcount < 1)
+    {
+
+$output = "All backups completed successfully!";
+
+    }
+    else
+    {
+      $output = "<font color='red'><b>Not all backups completed successfully!</b></font>";
+    }
 }
 ?> 
+
+<?PHP
+if ($task=="delete") {
+    $show_modal = true;
+    $db_handle  = mysqli_connect($DBServer, $DBUser, $DBPassword);
+    $db_found   = mysqli_select_db($db_handle, $DBName);
+    $SQLDELETE  = "delete from devices where ip = '$device'";
+        
+    if (mysqli_query($db_handle, $SQLDELETE)) {
+
+        $output = $name . " deleted successfully from the database.";
+        $output2 = "<br><font color='red'><b><i>!!NO BACKUPS WERE DELETED. PLEASE DO THIS MANUALLY!!</i></b>";
+        
+    } else {
+        $output = "Error deleting  " . $name . " : " . mysqli_error($db_handle);
+    }
+}
+?>
+
+<?PHP
+if ($task == "noofbackups") {
+
+$findname = preg_replace('/\s+/', '_', $name);
+$findname = preg_replace('/[^A-Za-z0-9\-]/', '', $findname);
+$directory = "backups/" . $findname ;
+$scanned_directory = array_diff(scandir($directory), array('..', '.'));
+
+$out = array();
+foreach($scanned_directory as $value){
+    $link = strtolower(implode("-", explode(" ", $value)));
+    $out[] = '<a href="backups/' . $findname . '/'.$link.'">'.$link.'</a>';
+}
+$output = implode("<br>", $out); 
+
+
+$show_modal = 1;
+
+}
+
+?>
+
 
 
 <html lang="en">                                                                                            
@@ -253,7 +312,7 @@ if ($task == "backupall") {
   gtag('config', 'UA-116906-4');                                                                            
 </script>                                                                                                    
                                                                                                             
-<title>Tasmo Backup</title>                                                                              
+<title>TasmoBackup</title>                                                                              
   <meta charset="utf-8">                                                                                    
   <meta name="viewport" content="width=device-width, initial-scale=1">                                      
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">      
@@ -264,7 +323,10 @@ if ($task == "backupall") {
 <script type="text/javascript" class="init">                                                                
 $(document).ready(function() {                                                                              
         $('#status').DataTable({                                                                            
-        "order": [[0, "desc" ]]                                                                              
+        "order": [[0, "asc" ]],
+        "pageLength": 25,
+        "statesave": true,
+        "autoWidth": true
 } );            
 } );                                                                                                        
                                                                                                             
@@ -276,8 +338,8 @@ $(document).ready(function() {
     <div class="container">                                                                                  
     <table class="table table-striped table-bordered" id="status">                                          
     <thead>                                                                                                  
-    <tr><th colspan="7"><center><b>Tasmo Backup</th></tr>                                                
-        <tr><th><b>NAME</th><th>IP</th><th><b>VERSION</th><th>LAST BACKUP</th><th><b># BACKUPS</th><th><b>BACKUP</b></th></tr>
+    <tr><th colspan="8"><center><b>TasmoBackup</th></tr>                                                
+        <tr><th><b>NAME</th><th>IP</th><th><b>VERSION</th><th>LAST BACKUP</th><th><b># BACKUPS</th><th><b>BACKUP</b></th><th><b>DELETE</b></th></tr>
     </thead>                                                                                                
     <tbody>  
 <?PHP
@@ -286,7 +348,7 @@ $db_handle = mysqli_connect($DBServer, $DBUser, $DBPassword);
 $db_found  = mysqli_select_db($db_handle, $DBName);
 
 if ($db_found) {
-    $SQL    = "select * from devices order by id asc";
+    $SQL    = "select * from devices order by name desc";
     $result = mysqli_query($db_handle, $SQL);
     while ($db_field = mysqli_fetch_assoc($result)) {
         $id              = $relcount;
@@ -296,7 +358,13 @@ if ($db_found) {
         $lastbackup      = $db_field['lastbackup'];
         $numberofbackups = $db_field['noofbackups'];
         
-        print "<tr><td>" . $name . "</td><td>" . $ip . "</td><td>" . $version . "</td><td>" . $lastbackup . "</td><Td>" . $numberofbackups . "</td><td><a href='index.php?task=singlebackup&ip=" . $ip . "'>BACKUP</a></td></tr>";
+?>
+
+
+
+<?PHP
+
+        print "<tr valign='middle'><td>" . $name . "</td><td><center><a href='http://" . $ip . "'>" . $ip . "</a></td><td><center>" . $version . "</td><td><center>" . $lastbackup . "</td><Td><center><form method='POST' action='index.php'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='noofbackups' name='task'><input type='submit' value='" . $numberofbackups . "' class='btn-xs btn-info'></form></td><td><center><form method='POST' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='singlebackup' name='task'><input type='submit' value='Backup' class='btn-xs btn-success'></form></td><td><center><form method='POST' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='delete' name='task'><input type='submit' value='Delete' class='btn-xs btn-danger'></form></td></tr>";
         $relcount = $relcount + 1;
     }
     
@@ -307,3 +375,45 @@ if ($db_found) {
            </tbody>                                                                                          
     </table>                                                                                                
     </div>     
+
+<center><form method='POST' action='index.php'><input type='hidden' value='backupall' name='task'><input type='submit' value='Backup All' class='btn-xs btn-success'></form><br>
+  <form method='POST' action='index.php'><input type='hidden' value='discover' name='task'><input type="text" name="ip"><input type='submit' value='Discover' class='btn-xs btn-danger'></form>
+
+
+    <?php
+if ($show_modal):
+?>
+   <script type='text/javascript'>
+    $(document).ready(function(){
+    $('#myModal').modal('show');
+    });
+    </script>
+<?php
+endif;
+?>
+
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">TasmoBackup</h4>
+      </div>
+      <div class="modal-body">
+        <p><center>
+          <?PHP echo $output; ?>
+          <br>
+          <?PHP echo $output2; ?>
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>

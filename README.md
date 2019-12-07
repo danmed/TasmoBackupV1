@@ -29,6 +29,7 @@ https://imgur.com/a/yfHvw0i
 * Create install.php - DONE
 * Schedule for all backups
 * Auto Discover devices
-* Error Checking
+* Prevent duplicates
 * Delete backups when device removed (Make sure it is accurate!)
 * Make backup location customisable
+* Edit function to change name of devices

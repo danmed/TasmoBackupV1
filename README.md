@@ -26,6 +26,7 @@ https://imgur.com/a/yfHvw0i
 
 # To-Do
 
+* Create install.php - DONE
 * Schedule for all backups
 * Auto Discover devices
 * Error Checking

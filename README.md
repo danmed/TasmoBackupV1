@@ -10,7 +10,7 @@ Backup the configs of all your Tasmota devices
 # Requirements
 
 * PHP
-* Mysql / MariaDB - Import tasmobackup.sql
+* Mysql / MariaDB
 * Writeable directory named "backups" in the same folder as the index.php 
 
 # Install

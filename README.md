@@ -6,6 +6,7 @@ Backup the configs of all your Tasmota devices
 * Backup all devices
 * Remove devices
 * Download individual backups
+* No duplicates (based on IP)
 
 # Requirements
 
@@ -26,10 +27,10 @@ https://imgur.com/a/yfHvw0i
 
 # To-Do
 
-* Create install.php - DONE
+* ~~Create install.php~~
 * Schedule for all backups
 * Auto Discover devices
-* Prevent duplicates
+* ~~Prevent duplicates~~
 * Delete backups when device removed (Make sure it is accurate!)
 * Make backup location customisable
 * Edit function to change name of devices

@@ -1,7 +1,7 @@
  <?php
 include "config.inc.php";
 $filename = "tasmobackup.sql";
-$DBName   = "tasmobackup_test";
+$DBName   = "tasmobackup";
 /* Attempt MySQL server connection. Assuming you are running MySQL
 server with default setting (user 'root' with no password) */
 $link     = mysqli_connect($DBServer, $DBUser, $DBPassword);
@@ -12,7 +12,7 @@ if ($link === false) {
 }
 
 // Attempt create database query execution
-$sql = "CREATE DATABASE tasmobackup";
+$sql = "CREATE DATABASE tasmobackup_test";
 if (mysqli_query($link, $sql)) {
     echo "Database created successfully";
 }

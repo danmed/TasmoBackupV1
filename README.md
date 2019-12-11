@@ -34,3 +34,4 @@ https://imgur.com/a/yfHvw0i
 * Delete backups when device removed (Make sure it is accurate!)
 * Make backup location customisable
 * Edit function to change name of devices
+* Retention (Number of backups)

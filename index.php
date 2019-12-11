@@ -53,7 +53,7 @@ if ($task == "discover")
         $db_found = mysqli_select_db($db_handle, $DBName);
         $check = mysqli_query($dbc, "select * from devices where ip = '$device'");
         $checkrows = mysqli_num_rows($check);
-        if ($checkrows > 0)
+        if ($checkrows < 1)
         {
             #$SQL       = "select * from devices order by id asc";
             $sql = "INSERT INTO devices (name,ip,version) VALUES ('$name', '$device', '$version')";

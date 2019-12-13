@@ -25,6 +25,7 @@ Backup the configs of all your Tasmota devices
 
 * Clone this repo
 * Create the Database in your MySQL / MariaDB server (.sql file included to be imported to db named tasmobackup)
+* edit config.inc.php to reflect your MySQL username / pass / ip
 * ```docker build -t tasmobackup:latest .```
 * ```docker run -d -p 8259:80 --name TasmoBackup tasmobackup:latest```
 

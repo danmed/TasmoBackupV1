@@ -17,6 +17,7 @@ Backup the configs of all your Tasmota devices
 # Install
 
 * Clone this repo
+* Copy config.inc.php.example to config.inc.php (This will prevent it being overwitten on new pulls)
 * Edit config.inc.php to reflect your MYSQL server, username and password
 * Navigate to install.php
 * When you get the message that the database was created successfully, navigate to index.php
@@ -24,8 +25,8 @@ Backup the configs of all your Tasmota devices
 # Docker
 
 * Clone this repo
-* copy config.inc.php.example to config.inc.php (This will prevent it being overwitten on new pulls)
-* edit config.inc.php to reflect your MySQL username / pass / ip
+* Copy config.inc.php.example to config.inc.php (This will prevent it being overwitten on new pulls)
+* Edit config.inc.php to reflect your MySQL username / pass / ip
 * ```docker volume create tasmobackup```
 * ```docker build -t tasmobackup:latest .```
 * ```docker run -d -p 8259:80 -v tasmobackup:/var/www/html/backups --name TasmoBackup tasmobackup:latest```

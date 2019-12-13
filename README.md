@@ -30,6 +30,10 @@ Backup the configs of all your Tasmota devices
 * ```docker run -d -p 8259:80 -v tasmobackup:/var/www/html/backups --name TasmoBackup tasmobackup:latest```
 * Navigate to install.php to create the database, or create it yourself by importing the .sql file included in this repo.
 
+# Docker Update
+
+* figure this bit out....
+
 # Screenshots
 
 ![Alt text](https://i.imgur.com/dDvz5xA.png)

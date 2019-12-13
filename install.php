@@ -12,7 +12,7 @@ if ($link === false) {
 }
 
 // Attempt create database query execution
-$sql = "CREATE DATABASE tasmobackup_test";
+$sql = "CREATE DATABASE " . $dbname;
 if (mysqli_query($link, $sql)) {
     echo "Database created successfully";
 }

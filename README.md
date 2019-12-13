@@ -35,7 +35,7 @@ Backup the configs of all your Tasmota devices
 
 * ```docker container stop TasmoBackup```
 * ```docker container rm TasmoBackup```
-*```docker image rm tasmobackup:latest```
+* ```docker image rm tasmobackup:latest```
 * ```git pull```
 * ```docker build -t tasmobackup:latest .```
 * ```docker run -d -p 8259:80 -v tasmobackup:/var/www/html/backups --name TasmoBackup tasmobackup:latest``` 

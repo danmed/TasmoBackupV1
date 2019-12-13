@@ -40,7 +40,7 @@ $sql2 = "TRUNCATE TABLE `devices`;";
 $sql25 = "ALTER TABLE `devices`
   ADD PRIMARY KEY (`id`);";
 
-$sql3 - "ALTER TABLE `devices`
+$sql3 = "ALTER TABLE `devices`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;";
 $sql4 = "COMMIT;";
 

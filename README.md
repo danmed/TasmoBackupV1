@@ -24,6 +24,7 @@ Backup the configs of all your Tasmota devices
 # Docker
 
 * Clone this repo
+* copy config.inc.php.example to config.inc.php (This will prevent it being overwitten on new pulls)
 * edit config.inc.php to reflect your MySQL username / pass / ip
 * ```docker volume create tasmobackup```
 * ```docker build -t tasmobackup:latest .```

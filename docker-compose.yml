@@ -1,0 +1,11 @@
+version: '2'
+services:
+    tasmobackup:
+        ports:
+            - '8259:80'
+        volumes:
+        # Make sure this config.json file exists. Take a copy from github and alter to meet your MySQL details.
+            - ./config.inc.php:/var/www/html/config.inc.php
+            - 'tasmobackup:/var/www/html/backups'
+        container_name: TasmoBackup
+        image: 'tasmobackup:latest'

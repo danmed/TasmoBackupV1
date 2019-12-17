@@ -419,7 +419,8 @@ if ($db_found)
 
 <center><form method='POST' action='index.php'><input type='hidden' value='backupall' name='task'><input type='submit' value='Backup All' class='btn-xs btn-success'></form><br>
   <form method='POST' action='index.php'><input type='hidden' value='discover' name='task'><input type="text" name="ip"><input type='submit' value='Discover' class='btn-xs btn-danger'></form>
-
+<br><br>
+<div style='text-align:right;font-size:11px;'><hr/><a href='https://bit.ly/tasmobackup' target='_blank' style='color:#aaa;'>TasmoBackup 0.2 by Dan Medhurst</a></div>
 
     <?php
 if ($show_modal):

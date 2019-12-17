@@ -22,7 +22,7 @@ Backup the configs of all your Tasmota devices
 * Navigate to install.php
 * When you get the message that the database was created successfully, navigate to index.php
 
-#Docker-compose
+# Docker-compose
 * Clone this repo
 * Create your bind mounts as per the docker-compose.yml
 * Create your config file as per the docker-compose.yml

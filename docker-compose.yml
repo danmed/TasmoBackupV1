@@ -5,8 +5,10 @@ services:
             - '8259:80'
         volumes:
         # Make sure this config.inc.php file exists. Take a copy from github and alter to meet your MySQL details.
+        # You can make it a volume if you'd prefer, or just change the path to where you want to store it on your host.
             - /root/data/TasmoBackup/config.inc.php:/var/www/html/config.inc.php
         # The below folder needs to be writeable.. Suggest chmod 777 before starting the container
+        # You can make it a volume if you'd prefer, or just change the path to where you want to store it on your host.
             - /root/data/TasmoBackup/backups:/var/www/html/backups
         container_name: TasmoBackup
         image: 'danmed/tasmobackup'

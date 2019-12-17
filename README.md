@@ -23,30 +23,12 @@ Backup the configs of all your Tasmota devices
 * When you get the message that the database was created successfully, navigate to index.php
 
 # Docker-compose
+
 * Clone this repo
 * Create your bind mounts as per the docker-compose.yml
 * Create your config file as per the docker-compose.yml
 * ```docker-compose up -d```
 * Navigate to http://ipaddress:8259/install.php to create the database.
-
-# Dockerfile
-
-* Clone this repo
-* Copy config.inc.php.example to config.inc.php (This will prevent it being overwitten on new pulls)
-* Edit config.inc.php to reflect your MySQL username / pass / ip
-* ```docker volume create tasmobackup```
-* ```docker build -t tasmobackup:latest .```
-* ```docker run -d -p 8259:80 -v tasmobackup:/var/www/html/backups --name TasmoBackup tasmobackup:latest```
-* Navigate to http://ipaddress:8259/install.php to create the database.
-
-# Dockerfile Update
-
-* ```docker container stop TasmoBackup```
-* ```docker container rm TasmoBackup```
-* ```docker image rm tasmobackup:latest```
-* ```git pull```
-* ```docker build -t tasmobackup:latest .```
-* ```docker run -d -p 8259:80 -v tasmobackup:/var/www/html/backups --name TasmoBackup tasmobackup:latest``` 
 
 # Screenshots
 

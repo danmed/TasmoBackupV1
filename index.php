@@ -1,15 +1,20 @@
 <!DOCTYPE html>                                                                                              
 <?PHP
 include "config.inc.php";
-$device = $_POST["ip"];
-$task = $_POST["task"];
-$name = $_POST["name"];
+if ($_POST["password"] != "") {
+    $device = "admin:" . $_POST["password"] . "@" . $_POST["ip"];
+} else {
+    $device = $_POST["ip"];
+}
+$task     = $_POST["task"];
+$password = $_POST["password"];
+$ip       = $_POST["ip"];
+$name     = $_POST["name"];
 
 function getBetween($content, $start, $end)
 {
     $r = explode($start, $content);
-    if (isset($r[1]))
-    {
+    if (isset($r[1])) {
         $r = explode($end, $r[1]);
         return $r[0];
     }
@@ -18,29 +23,27 @@ function getBetween($content, $start, $end)
 ?>  
 
 <?PHP
-if ($task == "discover")
-{
-
-    $ch = curl_init($device);
+if ($task == "discover") {
+    
+    $ch = curl_init("http://" . $device);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $text = curl_exec($ch);
-
-    if (strpos($text, 'Tasmota') !== false)
-    {
-
+    
+    if (strpos($text, 'Tasmota') !== false) {
+        
         //Get Version
-        $url = 'http://' . $device . '/cm?cmnd=status%202';
-        $ch = curl_init($url);
+        $url = 'http://' . $ip . '/cm?cmnd=status%202&user=admin&password=' . $password;
+        $ch  = curl_init($url);
         curl_setopt($ch, CURLOPT_TIMEOUT, 5);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $data = curl_exec($ch);
         curl_close($ch);
         $version = getBetween($data, '"Version":"', '"');
-
+        
         //Get Name
-        $url = 'http://' . $device . '/cm?cmnd=status';
-        $ch = curl_init($url);
+        $url = 'http://' . $ip . '/cm?cmnd=status&user=admin&password=' . $password;
+        $ch  = curl_init($url);
         curl_setopt($ch, CURLOPT_TIMEOUT, 5);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -48,38 +51,31 @@ if ($task == "discover")
         curl_close($ch);
         $name = getBetween($data, 'FriendlyName":["', '"');
         $name = str_replace("'", "", $name);
-
+        
         $db_handle = mysqli_connect($DBServer, $DBUser, $DBPassword);
-        $db_found = mysqli_select_db($db_handle, $DBName);
-        $check = mysqli_query($dbc, "select * from devices where ip = '$device'");
+        $db_found  = mysqli_select_db($db_handle, $DBName);
+        $check     = mysqli_query($dbc, "select * from devices where ip = '$ip'");
         $checkrows = mysqli_num_rows($check);
-        if ($checkrows < 1)
-        {
+        if ($checkrows < 1) {
             #$SQL       = "select * from devices order by id asc";
-            $sql = "INSERT INTO devices (name,ip,version) VALUES ('$name', '$device', '$version')";
-
-            if (mysqli_query($db_handle, $sql))
-            {
+            $sql = "INSERT INTO devices (name,ip,version,password) VALUES ('$name', '$ip', '$version', '$password')";
+            
+            if (mysqli_query($db_handle, $sql)) {
                 $show_modal = 1;
-                $output = "<center><b>" . $name . " Added Successfully!</b><center>";
-            }
-            else
-            {
+                $output     = "<center><b>" . $name . " Added Successfully!</b><center>";
+            } else {
                 $show_modal = 1;
-                $output = "Error updating record: " . mysqli_error($db_handle) . "<br>";
+                $output     = "Error updating record: " . mysqli_error($db_handle) . "<br>";
             }
-        }
-        else
-        {
+        } else {
             $show_modal = 1;
-            $output = "This device already exists in the database!";
+            $output     = "This device already exists in the database!";
         }
     }
-
-    else
-    {
+    
+    else {
         $show_modal = 1;
-        $output = "Does not appear to be a Tasmota device!!";
+        $output     = "Does not appear to be a Tasmota device!!";
     }
 }
 ?> 
@@ -87,253 +83,222 @@ if ($task == "discover")
 
 <?PHP
 // SINGLE BACKUP ROUTINE
-if ($task == "singlebackup")
-{
+if ($task == "singlebackup") {
     $db_handle = mysqli_connect($DBServer, $DBUser, $DBPassword);
-    $db_found = mysqli_select_db($db_handle, $DBName);
-    $SQL = "select * from devices where ip = '" . $device . "'";
-    $result = mysqli_query($db_handle, $SQL);
-    while ($db_field = mysqli_fetch_assoc($result))
-    {
-
-        $name = $db_field['name'];
+    $db_found  = mysqli_select_db($db_handle, $DBName);
+    $SQL       = "select * from devices where ip = '" . $device . "'";
+    $result    = mysqli_query($db_handle, $SQL);
+    while ($db_field = mysqli_fetch_assoc($result)) {
+        
+        $name     = $db_field['name'];
+        $password = $db_field['password'];
         $savename = preg_replace('/\s+/', '_', $name);
         $savename = preg_replace('/[^A-Za-z0-9\-]/', '', $savename);
-        if (!file_exists('backups/' . $savename))
-        {
+        if (!file_exists('backups/' . $savename)) {
             $oldmask = umask(0);
             mkdir('backups/' . $savename, 0777, true);
             umask($oldmask);
         }
-        $backupurl = $device . "/dl";
-        $date = date('Y-m-d H:i:s');
-        $savedate = preg_replace('/\s+/', '_', $date);
-        $savedate = preg_replace('/[^A-Za-z0-9\-]/', '', $savedate);
-
-        $url = 'http://' . $device . '/cm?cmnd=status%202';
-        $ch = curl_init($url);
+        $backupurl = "http://admin:" . $password . "@" . $device . "/dl";
+        $date      = date('Y-m-d H:i:s');
+        $savedate  = preg_replace('/\s+/', '_', $date);
+        $savedate  = preg_replace('/[^A-Za-z0-9\-]/', '', $savedate);
+        
+        $url = 'http://' . $device . '/cm?cmnd=status%202&user=admin&password=' . $password;
+        $ch  = curl_init($url);
         curl_setopt($ch, CURLOPT_TIMEOUT, 5);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $data = curl_exec($ch);
         curl_close($ch);
         $version = "'" . getBetween($data, '"Version":"', '"') . "'";
-
+        
         $saveto = "backups/" . $savename . "/" . $savedate . ".dmp";
-
+        
         $fp = fopen($saveto, 'w+');
-        if ($fp === false)
-        {
+        if ($fp === false) {
             throw new Exception('Could not open: ' . $saveto);
         }
-
+        
         $ch = curl_init($backupurl);
         curl_setopt($ch, CURLOPT_FILE, $fp);
         curl_setopt($ch, CURLOPT_TIMEOUT, 20);
         curl_exec($ch);
-        if (curl_errno($ch))
-        {
+        if (curl_errno($ch)) {
             throw new Exception(curl_error($ch));
         }
-
+        
         $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
+        
         curl_close($ch);
         fclose($fp);
-
-        if ($statusCode == 200)
-        {
-
+        
+        if ($statusCode == 200) {
+            
             $directory = "backups/" . $savename . "/";
-
+            
             // Initialize filecount variavle
             $filecount = 0;
-
+            
             $files2 = glob($directory . "*");
-
-            if ($files2)
-            {
+            
+            if ($files2) {
                 $noofbackups = count($files2);
                 #echo $noofbackups;
                 
             }
-
+            
             $sql2 = "UPDATE devices SET version = $version, lastbackup = '$date', noofbackups = '$noofbackups' WHERE ip = '$device'";
-
-            if (mysqli_query($db_handle, $sql2))
-            {
+            
+            if (mysqli_query($db_handle, $sql2)) {
                 $show_modal = 1;
-                $output = "<center><b>" . $name . " backed up successfully</b><br></center>";
-            }
-            else
-            {
+                $output     = "<center><b>" . $name . " backed up successfully</b><br></center>";
+            } else {
                 $show_modal = 1;
                 echo "<center><b>Error updating record: " . mysqli_error($db_handle) . "<br>";
             }
-
-        }
-        else
-        {
+            
+        } else {
             $show_modal = 1;
-            $output = "<center><b>Status Code: " . $statusCode . "/b></center>";
+            $output     = "<center><b>Status Code: " . $statusCode . "/b></center>";
         }
-
+        
     }
 }
 ?> 
 
 <?PHP
-if ($task == "backupall")
-{
-    $db_handle = mysqli_connect($DBServer, $DBUser, $DBPassword);
-    $db_found = mysqli_select_db($db_handle, $DBName);
-    $SQL = "select * from devices order by id asc";
-    $result = mysqli_query($db_handle, $SQL);
+if ($task == "backupall") {
+    $db_handle  = mysqli_connect($DBServer, $DBUser, $DBPassword);
+    $db_found   = mysqli_select_db($db_handle, $DBName);
+    $SQL        = "select * from devices order by id asc";
+    $result     = mysqli_query($db_handle, $SQL);
     $errorcount = 0;
-    while ($db_field = mysqli_fetch_assoc($result))
-    {
-        $id = $db_field['id'];
-        $ip = $db_field['ip'];
-        $name = $db_field['name'];
+    while ($db_field = mysqli_fetch_assoc($result)) {
+        $id       = $db_field['id'];
+        $ip       = $db_field['ip'];
+        $password = $db_field['password'];
+        $name     = $db_field['name'];
         $savename = preg_replace('/\s+/', '_', $name);
         $savename = preg_replace('/[^A-Za-z0-9\-]/', '', $savename);
-        if (!file_exists('backups/' . $savename))
-        {
+        if (!file_exists('backups/' . $savename)) {
             $oldmask = umask(0);
             mkdir('backups/' . $savename, 0777, true);
             umask($oldmask);
         }
-        $backupurl = $ip . "/dl";
-        $date = date('Y-m-d H:i:s');
-        $savedate = preg_replace('/\s+/', '_', $date);
-        $savedate = preg_replace('/[^A-Za-z0-9\-]/', '', $savedate);
-
-        $url = 'http://' . $ip . '/cm?cmnd=status%202';
-        $ch = curl_init($url);
+        $backupurl = "http://admin:" . $password . "@" . $ip . "/dl";
+        $date      = date('Y-m-d H:i:s');
+        $savedate  = preg_replace('/\s+/', '_', $date);
+        $savedate  = preg_replace('/[^A-Za-z0-9\-]/', '', $savedate);
+        
+        $url = 'http://' . $ip . '/cm?cmnd=status%202&user=admin&password=' . $password;
+        $ch  = curl_init($url);
         curl_setopt($ch, CURLOPT_TIMEOUT, 5);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $data = curl_exec($ch);
         curl_close($ch);
         $version = "'" . getBetween($data, '"Version":"', '"') . "'";
-
+        
         $saveto = "backups/" . $savename . "/" . $savedate . ".dmp";
-
+        
         $fp = fopen($saveto, 'w+');
-        if ($fp === false)
-        {
+        if ($fp === false) {
             throw new Exception('Could not open: ' . $saveto);
         }
-
+        
         $ch = curl_init($backupurl);
         curl_setopt($ch, CURLOPT_FILE, $fp);
         curl_setopt($ch, CURLOPT_TIMEOUT, 20);
         curl_exec($ch);
-        if (curl_errno($ch))
-        {
+        if (curl_errno($ch)) {
             throw new Exception(curl_error($ch));
         }
-
+        
         $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
+        
         curl_close($ch);
         fclose($fp);
-
-        if ($statusCode == 200)
-        {
-
+        
+        if ($statusCode == 200) {
+            
             $directory = "backups/" . $savename . "/";
-
+            
             // Initialize filecount variavle
             $filecount = 0;
-
+            
             $files2 = glob($directory . "*");
-
-            if ($files2)
-            {
+            
+            if ($files2) {
                 $noofbackups = count($files2);
                 #echo $noofbackups;
                 
             }
-
+            
             $sql2 = "UPDATE devices SET version = $version, lastbackup = '$date', noofbackups = '$noofbackups' WHERE id = '$id'";
-
-            if (mysqli_query($db_handle, $sql2))
-            {
-
-            }
-            else
-            {
-
+            
+            if (mysqli_query($db_handle, $sql2)) {
+                
+            } else {
+                
                 $errorcount = $errorcount + 1;
             }
-
+            
+        } else {
+            
         }
-        else
-        {
-
-        }
-
+        
     }
-
+    
     $show_modal = true;
-    if ($errorcount < 1)
-    {
-
+    if ($errorcount < 1) {
+        
         $output = "All backups completed successfully!";
-
-    }
-    else
-    {
+        
+    } else {
         $output = "<font color='red'><b>Not all backups completed successfully!</b></font>";
     }
 }
 ?> 
 
 <?PHP
-if ($task == "delete")
-{
+if ($task == "delete") {
     $show_modal = true;
-    $db_handle = mysqli_connect($DBServer, $DBUser, $DBPassword);
-    $db_found = mysqli_select_db($db_handle, $DBName);
-    $SQLDELETE = "delete from devices where ip = '$device'";
-
-    if (mysqli_query($db_handle, $SQLDELETE))
-    {
-
-        $output = $name . " deleted successfully from the database.";
+    $db_handle  = mysqli_connect($DBServer, $DBUser, $DBPassword);
+    $db_found   = mysqli_select_db($db_handle, $DBName);
+    $SQLDELETE  = "delete from devices where ip = '$device'";
+    
+    if (mysqli_query($db_handle, $SQLDELETE)) {
+        
+        $output  = $name . " deleted successfully from the database.";
         $output2 = "<br><font color='red'><b><i>!!NO BACKUPS WERE DELETED. PLEASE DO THIS MANUALLY!!</i></b>";
-
-    }
-    else
-    {
+        
+    } else {
         $output = "Error deleting  " . $name . " : " . mysqli_error($db_handle);
     }
 }
 ?>
 
 <?PHP
-if ($task == "noofbackups")
-{
-
-    $findname = preg_replace('/\s+/', '_', $name);
-    $findname = preg_replace('/[^A-Za-z0-9\-]/', '', $findname);
-    $directory = "backups/" . $findname;
-    $scanned_directory = array_diff(scandir($directory) , array(
+if ($task == "noofbackups") {
+    
+    $findname          = preg_replace('/\s+/', '_', $name);
+    $findname          = preg_replace('/[^A-Za-z0-9\-]/', '', $findname);
+    $directory         = "backups/" . $findname;
+    $scanned_directory = array_diff(scandir($directory), array(
         '..',
         '.'
     ));
-
+    
     $out = array();
-    foreach ($scanned_directory as $value)
-    {
-        $link = strtolower(implode("-", explode(" ", $value)));
+    foreach ($scanned_directory as $value) {
+        $link  = strtolower(implode("-", explode(" ", $value)));
         $out[] = '<a href="backups/' . $findname . '/' . $link . '">' . $link . '</a>';
     }
     $output = implode("<br>", $out);
-
+    
     $show_modal = 1;
-
+    
 }
 
 ?>
@@ -383,23 +348,21 @@ $(document).ready(function() {
     </thead>                                                                                                
     <tbody>  
 <?PHP
-$relcount = 1;
+$relcount  = 1;
 $db_handle = mysqli_connect($DBServer, $DBUser, $DBPassword);
-$db_found = mysqli_select_db($db_handle, $DBName);
+$db_found  = mysqli_select_db($db_handle, $DBName);
 
-if ($db_found)
-{
-    $SQL = "select * from devices order by name desc";
+if ($db_found) {
+    $SQL    = "select * from devices order by name desc";
     $result = mysqli_query($db_handle, $SQL);
-    while ($db_field = mysqli_fetch_assoc($result))
-    {
-        $id = $relcount;
-        $name = $db_field['name'];
-        $ip = $db_field['ip'];
-        $version = $db_field['version'];
-        $lastbackup = $db_field['lastbackup'];
+    while ($db_field = mysqli_fetch_assoc($result)) {
+        $id              = $relcount;
+        $name            = $db_field['name'];
+        $ip              = $db_field['ip'];
+        $version         = $db_field['version'];
+        $lastbackup      = $db_field['lastbackup'];
         $numberofbackups = $db_field['noofbackups'];
-
+        
 ?>
 
 
@@ -408,24 +371,24 @@ if ($db_found)
         print "<tr valign='middle'><td>" . $name . "</td><td><center><a href='http://" . $ip . "'>" . $ip . "</a></td><td><center>" . $version . "</td><td><center>" . $lastbackup . "</td><Td><center><form method='POST' action='index.php'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='noofbackups' name='task'><input type='submit' value='" . $numberofbackups . "' class='btn-xs btn-info'></form></td><td><center><form method='POST' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='singlebackup' name='task'><input type='submit' value='Backup' class='btn-xs btn-success'></form></td><td><center><form method='POST' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='delete' name='task'><input type='submit' value='Delete' class='btn-xs btn-danger'></form></td></tr>";
         $relcount = $relcount + 1;
     }
-
+    
     mysqli_close($db_handle);
-
+    
 }
 ?>                                                                                                          
            </tbody>                                                                                          
     </table>                                                                                                
-    </div>     
+    </div>    
 
 <center><form method='POST' action='index.php'><input type='hidden' value='backupall' name='task'><input type='submit' value='Backup All' class='btn-xs btn-success'></form><br>
-  <form method='POST' action='index.php'><input type='hidden' value='discover' name='task'><input type="text" name="ip"><input type='submit' value='Discover' class='btn-xs btn-danger'></form>
+  <form method='POST' action='index.php'><input type='hidden' value='discover' name='task'><input type="text" name="ip" placeholder="ip address"><input type="text" name="password" placeholder="password"><input type='submit' value='Discover' class='btn-xs btn-danger'></form>
 <br><br>
 <div style='text-align:right;font-size:11px;'><hr/><a href='https://bit.ly/tasmobackup' target='_blank' style='color:#aaa;'>TasmoBackup 0.2 by Dan Medhurst</a></div>
 
     <?php
 if ($show_modal):
 ?>
-   <script type='text/javascript'>
+  <script type='text/javascript'>
     $(document).ready(function(){
     $('#myModal').modal('show');
     });
@@ -447,10 +410,14 @@ endif;
       </div>
       <div class="modal-body">
         <p><center>
-          <?PHP echo $output; ?>
-          <br>
-          <?PHP echo $output2; ?>
-        </p>
+          <?PHP
+echo $output;
+?>
+         <br>
+          <?PHP
+echo $output2;
+?>
+       </p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

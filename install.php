@@ -3,7 +3,7 @@ include "config.inc.php";
 
 /* Attempt MySQL server connection. Assuming you are running MySQL
 server with default setting (user 'root' with no password) */
-$link     = mysqli_connect($DBServer, $DBUser, $DBPassword);
+$link = mysqli_connect($DBServer, $DBUser, $DBPassword);
 
 // Check connection
 if ($link === false) {
@@ -33,7 +33,8 @@ $sql  = "CREATE TABLE `devices` (
   `ip` text NOT NULL,
   `version` text NOT NULL,
   `lastbackup` datetime DEFAULT NULL,
-  `noofbackups` int(11) DEFAULT NULL
+  `noofbackups` int(11) DEFAULT NULL,
+  `password` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;";
 $sql2 = "TRUNCATE TABLE `devices`;";
 

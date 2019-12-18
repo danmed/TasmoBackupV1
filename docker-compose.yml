@@ -4,6 +4,6 @@ services:
         ports:
             - '8259:80'
         volumes:
-            - /root/data/TasmoBackup:/var/www/html/data
+            - ./data:/var/www/html/data
         container_name: TasmoBackup
         image: 'danmed/tasmobackup'

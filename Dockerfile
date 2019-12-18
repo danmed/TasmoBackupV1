@@ -4,5 +4,6 @@ COPY *.php /var/www/html/
 RUN rm /var/www/html/index.html
 RUN mkdir -p /var/www/html/data
 RUN chmod 777 /var/www/html/data
+COPY *.db /var/www/html/data
 RUN mkdir -p /var/www/html/data/backups
 RUN chmod 777 /var/www/html/data/backups

@@ -344,7 +344,7 @@ $(document).ready(function() {
     <table class="table table-striped table-bordered" id="status">                                          
     <thead>                                                                                                  
     <tr><th colspan="8"><center><b>TasmoBackup</th></tr>                                                
-        <tr><th><b>NAME</th><th>IP</th><th><b>VERSION</th><th>LAST BACKUP</th><th><b># BACKUPS</th><th><b>BACKUP</b></th><th><b>DELETE</b></th></tr>
+        <tr><th><b>NAME1</th><th>IP</th><th><b>VERSION</th><th>LAST BACKUP</th><th><b># BACKUPS</th><th><b>BACKUP</b></th><th><b>DELETE</b></th></tr>
     </thead>                                                                                                
     <tbody>  
 <?PHP

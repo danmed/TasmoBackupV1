@@ -5,7 +5,7 @@ COPY *.db /var/www/html/
 COPY *.sh /var/www/html/
 COPY *.example /var/www/html/
 RUN rm /var/www/html/index.html
-RUN chmod 777 /var/www/html/install.sh
-#CMD bash -C '/var/www/html/install.sh';'bash'
+RUN mv /var/www/html/install.sh /etc/my_init.d/install.sh
+RUN chmod 777 /etc/my_init.d/install.sh
 
 

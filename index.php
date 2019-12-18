@@ -386,7 +386,7 @@ $(document).ready(function() {
     <table class="table table-striped table-bordered" id="status">                                          
     <thead>                                                                                                  
     <tr><th colspan="8"><center><b>TasmoBackup</th></tr>                                                
-        <tr><th><b>NAME1</th><th>IP</th><th>PWORD</th><th><b>VERSION</th><th>LAST BACKUP</th><th><b># BACKUPS</th><th><b>BACKUP</b></th><th><b>DELETE</b></th></tr>
+        <tr><th><b>NAME1</th><th>IP</th><th><b>VERSION</th><th>LAST BACKUP</th><th><b># BACKUPS</th><th><b>BACKUP</b></th><th><b>DELETE</b></th></tr>
     </thead>                                                                                                
     <tbody>  
 <?PHP
@@ -412,7 +412,7 @@ if ($db_found)
 
 
 <?PHP
-        print "<tr valign='middle'><td>" . $name . "</td><td><center><a href='http://" . $ip . "'>" . $ip . "</a></td><img src='" . <?PHP if($password != "") {echo "lock.png";}else{ echo "lock-open-variant.png";} ?> . "'><td><center>" . $version . "</td><td><center>" . $lastbackup . "</td><Td><center><form method='POST' action='index.php'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='noofbackups' name='task'><input type='submit' value='" . $numberofbackups . "' class='btn-xs btn-info'></form></td><td><center><form method='POST' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='singlebackup' name='task'><input type='submit' value='Backup' class='btn-xs btn-success'></form></td><td><center><form method='POST' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='delete' name='task'><input type='submit' value='Delete' class='btn-xs btn-danger'></form></td></tr>";
+        print "<tr valign='middle'><td>" . $name . "</td><td><center><a href='http://" . $ip . "'>" . $ip . "</a></td><td><center>" . $version . "</td><td><center>" . $lastbackup . "</td><Td><center><form method='POST' action='index.php'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='noofbackups' name='task'><input type='submit' value='" . $numberofbackups . "' class='btn-xs btn-info'></form></td><td><center><form method='POST' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='singlebackup' name='task'><input type='submit' value='Backup' class='btn-xs btn-success'></form></td><td><center><form method='POST' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='delete' name='task'><input type='submit' value='Delete' class='btn-xs btn-danger'></form></td></tr>";
         $relcount = $relcount + 1;
     }
 

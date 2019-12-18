@@ -1,6 +1,7 @@
 FROM nimmis/apache-php7
 MAINTAINER Dan Medhurst (danmed@gmail.com)
 COPY *.php /var/www/html/
+COPY *.png /var/www/html/
 COPY *.db /var/www/html/
 COPY *.sh /var/www/html/
 COPY *.example /var/www/html/

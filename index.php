@@ -54,7 +54,7 @@ if ($task == "discover") {
         
         $db_handle = mysqli_connect($DBServer, $DBUser, $DBPassword);
         $db_found  = mysqli_select_db($db_handle, $DBName);
-        $check     = mysqli_query($dbc, "select * from devices where ip = '$ip'");
+        $check     = mysqli_query($db_handle, "select * from devices where ip = '$ip'");
         $checkrows = mysqli_num_rows($check);
         if ($checkrows < 1) {
             #$SQL       = "select * from devices order by id asc";

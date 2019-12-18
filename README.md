@@ -12,23 +12,25 @@ Backup the configs of all your Tasmota devices
 
 * PHP
 * Mysql / MariaDB
-* Writeable directory named "backups" in the same folder as the index.php 
 
 # Install
 
 * Clone this repo
-* Copy config.inc.php.example to config.inc.php (This will prevent it being overwitten on new pulls)
+* Create a folder called data
+* Create a folder called data/backups
+* Chmod 777 data/backups
+* Copy config.inc.php.example to data/config.inc.php (This will prevent it being overwitten on new pulls)
 * Edit config.inc.php to reflect your MYSQL server, username and password
-* Navigate to install.php
-* When you get the message that the database was created successfully, navigate to index.php
+* Navigate to http://ipaddress:8259/dbcreate.php to create the database
+* Navigate to http://ipaddress:8259
 
 # Docker-compose
 
 * Clone this repo
-* Create your bind mounts as per the docker-compose.yml
-* Create your config file as per the docker-compose.yml
 * ```docker-compose up -d```
-* Navigate to http://ipaddress:8259/install.php to create the database.
+* edit config.inc.php in the data mount and give it your mysql user / pass and IP.
+* Navigate to http://ipaddress:8259/dbcreate.php to create the database
+* Navigate to http://ipaddress:8259
 
 # Screenshots
 

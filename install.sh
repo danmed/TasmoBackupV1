@@ -13,4 +13,4 @@ if [ ! -f var/www/html/data/backups ]; then
     chmod 777 /var/www/html/data/backups
 fi
 
-
+sleep infinity & wait

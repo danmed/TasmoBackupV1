@@ -96,7 +96,7 @@ $old_ip = $_POST['oldip'];
 
     $db_handle = mysqli_connect($DBServer, $DBUser, $DBPassword);
     $db_found = mysqli_select_db($db_handle, $DBName);
-    $sql = "UPDATE devices SET name = '$name', ip = '$ip', password = '$password' WHERE ip = '$old_ip'";
+    $sql = "UPDATE devices SET ip = '$ip', password = '$password' WHERE ip = '$old_ip'";
 
             if (mysqli_query($db_handle, $sql))
             {

@@ -89,6 +89,28 @@ if ($task == "discover")
 }
 ?> 
 
+<?PHP
+if ($task == "edit")
+{
+$old_ip = $_POST['oldip'];
+
+    $db_handle = mysqli_connect($DBServer, $DBUser, $DBPassword);
+    $db_found = mysqli_select_db($db_handle, $DBName);
+    $sql = "UPDATE devices SET name = '$name', ip = '$ip', password = '$password' WHERE ip = '$old_ip'";
+
+            if (mysqli_query($db_handle, $sql))
+            {
+                $show_modal = 1;
+                $output = "<center><b>" . $name . " updated up successfully</b><br></center>";
+            }
+            else
+            {
+                $show_modal = 1;
+                echo "<center><b>Error updating record: " . mysqli_error($db_handle) . "<br>";
+            }
+
+}
+?>
 
 <?PHP
 // SINGLE BACKUP ROUTINE
@@ -181,7 +203,7 @@ if ($task == "singlebackup")
         else
         {
             $show_modal = 1;
-            $output = "<center><b>Status Code: " . $statusCode . "/b></center>";
+            $output = "<center><b>Status Code: " . $statusCode . "</b></center>";
         }
 
     }
@@ -385,8 +407,8 @@ $(document).ready(function() {
     <div class="container">                                                                                  
     <table class="table table-striped table-bordered" id="status">                                          
     <thead>                                                                                                  
-    <tr><th colspan="8"><center><b>TasmoBackup</th></tr>                                                
-        <tr><th><b>NAME</th><th>IP</th><th>AUTH</th><th><b>VERSION</th><th>LAST BACKUP</th><th><b>FILES</th><th><b>BACKUP</b></th><th><b>DELETE</b></th></tr>
+    <tr><th colspan="9"><center><b>TasmoBackup</th></tr>                                                
+        <tr><th><b>NAME</th><th>IP</th><th>AUTH</th><th><b>VERSION</th><th>LAST BACKUP</th><th><b>FILES</th><th><b>BACKUP</b></th><th>EDIT</th><th><b>DELETE</b></th></tr>
     </thead>                                                                                                
     <tbody>  
 <?PHP
@@ -413,7 +435,7 @@ if ($db_found)
 
 
 <?PHP
-        print "<tr valign='middle'><td>" . $name . "</td><td><center><a href='http://" . $ip . "'>" . $ip . "</a></td><td><center><img src='" . (strlen($password) > 0 ? 'lock.png' : 'lock-open-variant.png') . "'></td><td><center>" . $version . "</td><td><center>" . $lastbackup . "</td><Td><center><form method='POST' action='index.php'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='noofbackups' name='task'><input type='submit' value='" . $numberofbackups . "' class='btn-xs btn-info'></form></td><td><center><form method='POST' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='singlebackup' name='task'><input type='submit' value='Backup' class='btn-xs btn-success'></form></td><td><center><form method='POST' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='delete' name='task'><input type='submit' value='Delete' class='btn-xs btn-danger'></form></td></tr>";
+        print "<tr valign='middle'><td>" . $name . "</td><td><center><a href='http://" . $ip . "'>" . $ip . "</a></td><td><center><img src='" . (strlen($password) > 0 ? 'lock.png' : 'lock-open-variant.png') . "'></td><td><center>" . $version . "</td><td><center>" . $lastbackup . "</td><Td><center><form method='POST' action='index.php'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='noofbackups' name='task'><input type='submit' value='" . $numberofbackups . "' class='btn-xs btn-info'></form></td><td><center><form method='POST' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='singlebackup' name='task'><input type='submit' value='Backup' class='btn-xs btn-success'></form></td><td><center><form method='POST' action='edit.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='edit' name='task'><input type='submit' value='Edit' class='btn-xs btn-warning'></form></td><td><center><form method='POST' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='delete' name='task'><input type='submit' value='Delete' class='btn-xs btn-danger'></form></td></tr>";
         $relcount = $relcount + 1;
     }
 
@@ -467,3 +489,4 @@ endif;
 
   </div>
 </div>
+>

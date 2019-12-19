@@ -69,7 +69,7 @@ if ($db_found)
 
 
 <?PHP
-        print "<tr valign='middle'><td><form method='POST' action='index.php'><input type='hidden' name='task' value='edit'><input type='hidden' name='oldip' value='" . $ip . "'><input type='hidden' name='oldip' value='" . $ip . "'>" . $name . "</td><td><center><input type='text' name='ip' value='" . $ip . "'></td><td><center><center><input type='password' name='password' value='" . $password . "'></td><td><center><input type='submit' value='Submit' class='btn-xs btn-success'></form></td></tr>";
+        print "<tr valign='middle'><td><form method='POST' action='index.php'><input type='hidden' name='name' value='" . $name . "'><input type='hidden' name='task' value='edit'><input type='hidden' name='oldip' value='" . $ip . "'><input type='hidden' name='oldip' value='" . $ip . "'>" . $name . "</td><td><center><input type='text' name='ip' value='" . $ip . "'></td><td><center><center><input type='password' name='password' value='" . $password . "'></td><td><center><input type='submit' value='Submit' class='btn-xs btn-success'></form></td></tr>";
         $relcount = $relcount + 1;
     }
 

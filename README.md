@@ -2,6 +2,8 @@
 Backup the configs of all your Tasmota devices
 
 # Features
+* Add single devices
+* Discover devices
 * Backup single devices
 * Backup all devices
 * Remove devices

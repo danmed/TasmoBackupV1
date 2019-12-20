@@ -93,14 +93,33 @@ if ($task == "discover")
 if ($task == "edit")
 {
 $old_ip = $_POST['oldip'];
+$old_name = $_POST['oldname'];
+
+$old_folder = preg_replace('/\s+/', '', $old_name);
+$old_folder = "data/" . $old_folder;
+
+$new_folder = preg_replace('/\s+/', '', $name);
+$new_folder = "data/" . $new_folder;
+$old_folder = realpath("/" . $old_folder);
+$new_folder = realpath("/" . $new_folder);
+
 
     $db_handle = mysqli_connect($DBServer, $DBUser, $DBPassword);
     $db_found = mysqli_select_db($db_handle, $DBName);
-    $sql = "UPDATE devices SET ip = '$ip', password = '$password' WHERE ip = '$old_ip'";
+    $sql = "UPDATE devices SET name = '$name', ip = '$ip', password = '$password' WHERE ip = '$old_ip'";
 
             if (mysqli_query($db_handle, $sql))
             {
                 $show_modal = 1;
+		if($name !== $old_name)
+			{
+				if(file_exists(realpath("/" . $old_folder)))
+					{
+echo $old_folder . "<br>";
+echo $new_folder . "<br>";
+					rename($old_folder, $new_folder);
+					}
+			}
                 $output = "<center><b>" . $name . " updated up successfully</b><br></center>";
             }
             else
@@ -448,7 +467,8 @@ if ($db_found)
     </div>     
 
 <center><form method='POST' action='index.php'><input type='hidden' value='backupall' name='task'><input type='submit' value='Backup All' class='btn-xs btn-success'></form><br>
-  <form method='POST' action='index.php'><input type='hidden' value='discover' name='task'><input type="text" name="ip" placeholder="ip address"><input type="password" name="password" placeholder="password"><input type='submit' value='Discover' class='btn-xs btn-danger'></form>
+  <form method='POST' action='index.php'><input type='hidden' value='discover' name='task'><input type="text" name="ip" placeholder="ip address"><input type="password" name="password" placeholder="password"><input type='submit' value='Add' class='btn-xs btn-danger'></form>
+<form method="POST" action="scan.php"><input type=text name=range placeholder="192.168.1.1-255"><input type=hidden name=task value=scan><input type=submit value=Discover class='btn-xs btn-danger'></form>
 <br><br>
 <div style='text-align:right;font-size:11px;'><hr/><a href='https://bit.ly/tasmobackup' target='_blank' style='color:#aaa;'>TasmoBackup 0.2 by Dan Medhurst</a></div>
 
@@ -489,4 +509,3 @@ endif;
 
   </div>
 </div>
->

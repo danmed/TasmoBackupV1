@@ -44,9 +44,9 @@ Backup the configs of all your Tasmota devices
 
 * ~~Create install.php~~
 * Schedule for all backups
-* Auto Discover devices
+* Auto Discover devices - In Progress (Beta)
 * ~~Prevent duplicates~~
 * Delete backups when device removed (Make sure it is accurate!)
 * Make backup location customisable
-* Edit function to change name of devices
+* ~~~~Edit function to change name of devices~~~~
 * Retention (Number of backups)

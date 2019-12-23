@@ -29,8 +29,9 @@ Backup the configs of all your Tasmota devices
 # Docker-compose
 
 * Clone this repo
+* Edit docker-compose.yml to define your MySQL information and Volume location.
 * ```docker-compose up -d```
-* edit config.inc.php in the data mount and give it your mysql user / pass and IP.
+* ~~edit config.inc.php in the data mount and give it your mysql user / pass and IP.
 * Navigate to http://ipaddress:8259/createdb.php to create the database or import the tasmobackup.sql template in this repo.
 * Navigate to http://ipaddress:8259
 
@@ -50,5 +51,5 @@ Backup the configs of all your Tasmota devices
 * ~~Prevent duplicates~~
 * Delete backups when device removed (Make sure it is accurate!)
 * Make backup location customisable
-* ~~~~Edit function to change name of devices~~~~
+* ~~~Edit function to change name of devices
 * Retention (Number of backups)

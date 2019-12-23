@@ -1,8 +1,8 @@
 <?PHP
 /* MYSQL Configuration */
-$DBServer       =       '192.168.2.75';
-$DBUser         =       'username';
-$DBPassword     =       'password';
+$DBServer       =       $_SERVER['MYSQL_SERVER'];
+$DBUser         =       $_SERVER['MYSQL_USERNAME'];
+$DBPassword     =       $_SERVER['MYSQL_PASSWORD'];
 #DO NOT CHANGE THE BELOW
 $DBName         =       'tasmobackup';
 ?>

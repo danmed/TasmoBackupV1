@@ -6,8 +6,8 @@ services:
         volumes:
             - ./data:/var/www/html/data
         environment:
-            - MYSQL_SERVER=192.168.2.75
-            - MYSQL_USERNAME=root
-            - MYSQL_PASSWORD=password
+            - MYSQL_SERVER=IPADDRESS
+            - MYSQL_USERNAME=USERNAME
+            - MYSQL_PASSWORD=PASSWORD
         container_name: TasmoBackup
         image: 'danmed/tasmobackup'

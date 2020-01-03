@@ -49,7 +49,7 @@ Backup the configs of all your Tasmota devices
 # To-Do
 
 * ~~Create install.php~~
-* Schedule for all backups
+* ~~Schedule for all backups~~
 * Auto Discover devices - In Progress (Beta)
 * ~~Prevent duplicates~~
 * Delete backups when device removed (Make sure it is accurate!)

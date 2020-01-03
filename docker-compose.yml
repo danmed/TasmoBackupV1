@@ -5,11 +5,9 @@ services:
             - '8259:80'
         volumes:
             - ./data:/var/www/html/data
-            - ./data/cron:/etc/cron.d
         environment:
             - MYSQL_SERVER=IPADDRESS
             - MYSQL_USERNAME=USERNAME
             - MYSQL_PASSWORD=PASSWORD
-            - CRON_JOB=0 12 * * 5 /usr/bin/php -f /var/www/html/backupall.php
         container_name: TasmoBackup
         image: 'danmed/tasmobackup'

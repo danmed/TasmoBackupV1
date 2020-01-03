@@ -1,6 +1,6 @@
 <?PHP
 
-include "data/config.inc.php";
+include "/var/www/html/data/config.inc.php";
 function getBetween($content, $start, $end)
 {
     $r = explode($start, $content);

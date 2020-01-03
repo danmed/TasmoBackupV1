@@ -11,7 +11,7 @@ RUN echo 'PassEnv MYSQL_SERVER'  >> /etc/apache2/conf-enabled/expose-env.conf
 RUN echo 'PassEnv MYSQL_USERNAME'  >> /etc/apache2/conf-enabled/expose-env.conf
 RUN echo 'PassEnv MYSQL_PASSWORD'  >> /etc/apache2/conf-enabled/expose-env.conf
 RUN touch /etc/cron.d/schedule
-RUN echo 'PassEnv CRON_JOB; >> /etc/cron.d/schedule
+RUN echo 'PassEnv CRON_JOB' >> /etc/cron.d/schedule
 RUN chmod 0644 /etc/cron.d/schedule
 RUN service cron start
 

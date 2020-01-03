@@ -35,6 +35,9 @@ Backup the configs of all your Tasmota devices
 * Navigate to http://ipaddress:8259
 * Note : If you get your MySQL details wrong at this stage, you can change them by editing config.inc.php in your data folder.
 
+# Scheduled Backups
+* backupall.php exists to do literally that.. Schedule this with your chosen means (nodered, curl, scheduled tasks etc)
+
 # Screenshots
 
 ![Alt text](https://i.imgur.com/dDvz5xA.png)

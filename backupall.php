@@ -1,4 +1,17 @@
 <?PHP
+
+include "data/config.inc.php";
+function getBetween($content, $start, $end)
+{
+    $r = explode($start, $content);
+    if (isset($r[1]))
+    {
+        $r = explode($end, $r[1]);
+        return $r[0];
+    }
+    return '';
+}
+
     $db_handle = mysqli_connect($DBServer, $DBUser, $DBPassword);
     $db_found = mysqli_select_db($db_handle, $DBName);
     $SQL = "select * from devices order by id asc";

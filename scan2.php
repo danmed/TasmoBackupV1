@@ -113,7 +113,6 @@ for( $octet4=$range[3][0]; $octet4<=(($range[3][1])? $range[3][1]:$range[3][0]);
 		}
 } 
 }
-header("Location: index.php");
 ?>
 
 </tbody>                                                                                          

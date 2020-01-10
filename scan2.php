@@ -106,7 +106,7 @@ for( $octet4=$range[3][0]; $octet4<=(($range[3][1])? $range[3][1]:$range[3][0]);
         	$checkrows = mysqli_num_rows($check);
 	        if ($checkrows < 1)
 	        	{
-            print "<tr valign='middle'><td>" . $name . "</td><td><center><a href='http://" . $ip . "'>" . $ip . "</a></td><td><center><form method='POST' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='delete' name='task'><input type='submit' value='Delete' class='btn-xs btn-danger'></form></td></tr>";
+            print "<tr valign='middle'><td>" . $name . "</td><td><center><a href='http://" . $ip . "'>" . $ip . "</a></td><td><center><form method='POST' action='index.php' target='_blank'><input type='hidden' value='discover' name='task'><input type='hidden' name='ip' value='" . $ip . "'><input type='submit' value='Add' class='btn-xs btn-success'></td></tr>";
       //$sql = "INSERT INTO devices (name,ip,version) VALUES ('$name', '$ip', '$version')";
 			//$result = mysqli_query($db_handle, $sql);
 			}

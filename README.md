@@ -22,6 +22,7 @@ Backup the configs of all your Tasmota devices
 * Create a folder called data/backups
 * Chmod 777 data/backups
 * Copy config.inc.php.example to data/config.inc.php (This will prevent it being overwitten on new pulls)
+* Copy settings.inc.php to data/settings.inc.php(This will prevent it being overwitten on new pulls)
 * Edit config.inc.php to reflect your MYSQL server, username and password
 * Navigate to http://ipaddress:8259/createdb.php to create the database
 * Navigate to http://ipaddress:8259

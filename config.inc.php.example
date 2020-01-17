@@ -3,6 +3,8 @@
 $DBServer       =       "mysqlserver";
 $DBUser         =       "mysqlusername";
 $DBPassword     =       "mysqlpassword";
+$sort           =       "1";
+$amount         =       "100";
 #DO NOT CHANGE THE BELOW
 $DBName         =       'tasmobackup';
 ?>

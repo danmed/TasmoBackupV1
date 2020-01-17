@@ -17,7 +17,7 @@ $ip = $_POST["ip"];
   gtag('config', 'UA-116906-4');                                                                            
 </script>                                                                                                    
                                                                                                             
-<title>TasmoBackup</title>                                                                              
+<title>TasmoBackup - Edit Device</title>                                                                              
   <meta charset="utf-8">                                                                                    
   <meta name="viewport" content="width=device-width, initial-scale=1">                                      
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">      
@@ -43,7 +43,7 @@ $(document).ready(function() {
     <div class="container">                                                                                  
     <table class="table table-striped table-bordered" id="status">                                          
     <thead>                                                                                                  
-    <tr><th colspan="4"><center><b>TasmoBackup</th></tr>                                                
+      <tr><th colspan="4"><center><b><a href="index.php">TasmoBackup</a></th></tr>                                                
         <tr><th><b>NAME</th><th>IP</th><th>AUTH</th><th>SUBMIT</th></tr>
     </thead>                                                                                                
     <tbody>  

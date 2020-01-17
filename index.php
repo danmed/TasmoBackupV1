@@ -411,8 +411,8 @@ if ($task == "noofbackups")
 <script type="text/javascript" class="init">                                                                
 $(document).ready(function() {                                                                              
         $('#status').DataTable({                                                                            
-        "order": [[0, "asc" ]],
-        "pageLength": 25,
+        "order": [[<?PHP echo $sort; ?>, "asc" ]],
+        "pageLength": <?PHP echo $amount; ?>,
         "statesave": true,
         "autoWidth": true
 } );            

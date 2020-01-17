@@ -1,6 +1,8 @@
 #!/bin/sh
 
-cp /var/www/html/settings.inc.php /var/www/html/data/settings.inc.php
+if [ ! -f /var/www/html/data/settings.inc.php ]; then
+    cp /var/www/html/settings.inc.php /var/www/html/data/settings.inc.php
+fi
 
 if [ ! -f /var/www/html/data/config.inc.php ]; then
     cp /var/www/html/config.inc.php.example /var/www/html/data/config.inc.php

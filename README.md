@@ -40,9 +40,10 @@ Backup the configs of all your Tasmota devices
 
 # Screenshots
 
-![Alt text](https://i.imgur.com/dDvz5xA.png)
-![Alt text](https://i.imgur.com/qM6drXz.png)
-![Alt text](https://i.imgur.com/o79yMXB.png)
+![Alt text](https://i.imgur.com/2swMzG9.png)
+![Alt text](https://i.imgur.com/27Pm7lH.png)
+![Alt text](https://i.imgur.com/QReTLxp.png)
+![Alt text](https://i.imgur.com/e2ruv2t.png)
 
 
 
@@ -50,9 +51,9 @@ Backup the configs of all your Tasmota devices
 
 * ~~Create install.php~~
 * ~~Schedule for all backups~~
-* Auto Discover devices - In Progress (Beta)
+* ~~Auto Discover devices - In Progress~~
 * ~~Prevent duplicates~~
 * Delete backups when device removed (Make sure it is accurate!)
-* Make backup location customisable
+* ~~Make backup location customisable~~
 * ~~Edit function to change name of devices~~
 * Retention (Number of backups)

@@ -23,7 +23,7 @@ $oldamount = "\"$oldamount\"";
 $str = file_get_contents('data/settings.inc.php');
 $str = str_replace("$oldamount", "$newamount", $str);
 file_put_contents('data/settings.inc.php', $str);
-$amount = $newamount;
+$amount = trim($newamount, '"');
 }
 ?>
 <html lang="en">                                                                                            

@@ -13,6 +13,7 @@ Backup the configs of all your Tasmota devices
 # Requirements
 
 * PHP
+* PHP CURL
 * Mysql / MariaDB
 
 # Install

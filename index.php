@@ -1,6 +1,7 @@
 <!DOCTYPE html>                                                                                              
 <?PHP
 include "data/config.inc.php";
+include "data/settings.php";
 if($_POST["password"]!="")
 {$device = "admin:" . $_POST["password"] . "@" . $_POST["ip"];}
 else

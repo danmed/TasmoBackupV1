@@ -29,34 +29,15 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `devices` (
-  `id` int(11) NOT NULL,
+  `id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
   `name` text NOT NULL,
   `ip` text NOT NULL,
   `version` text NOT NULL,
   `lastbackup` datetime DEFAULT NULL,
   `noofbackups` int(11) DEFAULT NULL,
   `password` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+);
 
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `devices`
---
-ALTER TABLE `devices`
-  ADD PRIMARY KEY (`id`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `devices`
---
-ALTER TABLE `devices`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

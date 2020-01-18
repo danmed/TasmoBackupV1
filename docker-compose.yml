@@ -12,4 +12,4 @@ services:
             - DBTYPE=mysql or sqlite
             - DBNAME=tasmobackup
         container_name: TasmoBackup
-        image: 'danmed/tasmobackup'
+        image: 'danmed/tasmobackup_beta'

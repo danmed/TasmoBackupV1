@@ -9,5 +9,7 @@ services:
             - MYSQL_SERVER=IPADDRESS
             - MYSQL_USERNAME=USERNAME
             - MYSQL_PASSWORD=PASSWORD
+            - DBTYPE=mysql or sqlite
+            - DBNAME=tasmobackup
         container_name: TasmoBackup
         image: 'danmed/tasmobackup'

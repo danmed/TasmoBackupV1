@@ -42,7 +42,8 @@ $(document).ready(function() {
     <tbody>  
 
 <?php 
-include "data/config.inc.php";
+require 'db.inc.php';
+
 function getBetween($content, $start, $end)
 {
     $r = explode($start, $content);
@@ -100,11 +101,11 @@ for( $octet4=$range[3][0]; $octet4<=(($range[3][1])? $range[3][1]:$range[3][0]);
         curl_close($ch);
         $name = getBetween($data, 'FriendlyName":["', '"');
         $name = str_replace("'", "", $name);
-		$db_handle = mysqli_connect($DBServer, $DBUser, $DBPassword);
-        	$db_found = mysqli_select_db($db_handle, $DBName);
-       		$check = mysqli_query($db_handle, "select * from devices where ip = '$ip'");
-        	$checkrows = mysqli_num_rows($check);
-	        if ($checkrows < 1)
+
+       		$stm = $db_handle->prepare("select * from devices where ip = :ip");
+       		$stm->bindValue(':ip', $ip, PDO::PARAM_STR);
+       		$stm->execute();
+	        if ($stm->fetchColumn() < 1)
 	        	{
             print "<tr valign='middle'><td>" . $name . "</td><td><center><a href='http://" . $ip . "'>" . $ip . "</a></form></td><td><center><form method='POST' action='index.php' target='_blank'><input type='hidden' value='discover' name='task'><input type='hidden' name='ip' value='" . $ip . "'><input type='submit' value='Add' class='btn-xs btn-success'></form></td></tr>";
       //$sql = "INSERT INTO devices (name,ip,version) VALUES ('$name', '$ip', '$version')";

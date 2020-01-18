@@ -1,6 +1,6 @@
 <!DOCTYPE html>                                                                                              
 <?PHP
-include "data/config.inc.php";
+require "db.inc.php";
 
 $ip = $_POST["ip"];
 
@@ -50,14 +50,11 @@ $(document).ready(function() {
 
 <?PHP
 $relcount = 1;
-$db_handle = mysqli_connect($DBServer, $DBUser, $DBPassword);
-$db_found = mysqli_select_db($db_handle, $DBName);
 
-if ($db_found)
-{
-    $SQL = "select * from devices where ip = '$ip'";
-    $result = mysqli_query($db_handle, $SQL);
-    while ($db_field = mysqli_fetch_assoc($result))
+    $stm = $db_handle->prepare("select * from devices where ip = :ip");
+    $stm->bindValue(':ip', $ip, PDO::PARAM_STR);
+    $stm->execute();
+    while ($db_field = $stm->fetch(PDO::FETCH_ASSOC))
     {
         $id = $relcount;
         $name = $db_field['name'];
@@ -70,12 +67,9 @@ if ($db_found)
 
 <?PHP
         print "<tr valign='middle'><td><form method='POST' action='index.php'><input type='hidden' name='name' value='" . $name . "'><input type='hidden' name='task' value='edit'><input type='hidden' name='oldip' value='" . $ip . "'><input type='hidden' name='oldip' value='" . $ip . "'>" . $name . "</td><td><center><input type='text' name='ip' value='" . $ip . "'></td><td><center><center><input type='password' name='password' value='" . $password . "'></td><td><center><input type='submit' value='Submit' class='btn-xs btn-success'></form></td></tr>";
-        $relcount = $relcount + 1;
+        $relcount ++;
     }
 
-    mysqli_close($db_handle);
-
-}
 ?>                                                                                                          
            </tbody>                                                                                          
     </table>                                                                                                

@@ -1,6 +1,9 @@
 <?PHP
 
-include "/var/www/html/data/config.inc.php";
+require "db.inc.php";
+
+GLOBAL $db_handle;
+
 function getBetween($content, $start, $end)
 {
     $r = explode($start, $content);
@@ -12,12 +15,10 @@ function getBetween($content, $start, $end)
     return '';
 }
 
-    $db_handle = mysqli_connect($DBServer, $DBUser, $DBPassword);
-    $db_found = mysqli_select_db($db_handle, $DBName);
-    $SQL = "select * from devices order by id asc";
-    $result = mysqli_query($db_handle, $SQL);
+    $stm = $db_handle->prepare("select * from devices order by id asc");
+    $stm->execute();
     $errorcount = 0;
-    while ($db_field = mysqli_fetch_assoc($result))
+    while ($db_field = $stm->fetch(PDO::FETCH_ASSOC))
     {
         $id = $db_field['id'];
         $ip = $db_field['ip'];
@@ -72,17 +73,18 @@ function getBetween($content, $start, $end)
                 #echo $noofbackups;
                 
             }
-            $sql2 = "UPDATE devices SET version = $version, lastbackup = '$date', noofbackups = '$noofbackups' WHERE id = '$id'";
-            if (mysqli_query($db_handle, $sql2))
+            $stm2 = $db_handle->prepare("UPDATE devices SET version = :version, lastbackup = :date, noofbackups = :noofbackups WHERE  id = :id");
+            $stm2->bindValue(':version', $version, PDO::PARAM_STR);
+            $stm2->bindValue(':date', $date, PDO::PARAM_STR);
+            $stm2->bindValue(':noofbackups', $noofbackups, PDO::PARAM_INT);
+            $stm2->bindValue(':id', $id, PDO::PARAM_INT);
+            $stm2->execute();
+            if (!$stm2->execute())
             {
-            }
-            else
-            {
-                $errorcount = $errorcount + 1;
+                $errorcount ++;
             }
         }
         else
         {
         }
     }
-?> 

@@ -1,6 +1,6 @@
 <!DOCTYPE html>                                                                                              
 <?PHP
-include "data/config.inc.php";
+include "db.inc.php";
 include "data/settings.inc.php";
 
 if($_POST["sort"]!="")

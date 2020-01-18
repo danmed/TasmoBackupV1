@@ -1,10 +1,8 @@
 <?PHP
 /* MYSQL Configuration */
-$DBType		=	'mysql';
+$DBType        =    'dbtype';
 $DBServer       =       'mysqlserver';
 $DBUser         =       'mysqlusername';
 $DBPassword     =       'mysqlpassword';
-$DBName         =       'tasmobackup';
-
-#$DBType	=	'sqlite';
-#$DBName	=	'tasmobackup';
+$DBName         =       'dbname';
+?>

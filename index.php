@@ -278,11 +278,12 @@ if ($task == "delete")
       $stm->bindValue(':ip', $ip, PDO::PARAM_STR);
 
       $stm->execute();
-
+	$show_modal = 1;
         $output = $name . " deleted successfully from the database.";
         $output2 = "<br><font color='red'><b><i>!!NO BACKUPS WERE DELETED. PLEASE DO THIS MANUALLY!!</i></b>";
 
     } catch(PDOException $e) {
+	$show_modal = 1;
         $output = "Error deleting  " . $name . " : " . $e->getMessage();
     }
 }

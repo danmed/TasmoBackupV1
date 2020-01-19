@@ -1,261 +1,109 @@
 <!DOCTYPE html>                                                                                              
 <?PHP
-require "db.inc.php";
+require "functions.inc.php";
 include "data/settings.inc.php";
 
 GLOBAL $db_handle;
 
-$task="";
+$task='';
+$password='';
+$user='admin';
 if(isset($_POST["task"])) $task = $_POST["task"];
+if(isset($_POST["user"])) $user = $_POST["user"];
 if(isset($_POST["password"])) $password = $_POST["password"];
 if(isset($_POST["ip"])) $device = $ip = $_POST["ip"];
 if(isset($_POST["name"])) $name = $_POST["name"];
 
-if(isset($password) && $password!="") {
-  $device = "admin:".$password."@".$ip;
-}
-
-function backupSingle($db_handle,$id,$name,$ip,$user,$password)
-{
-        $savename = preg_replace('/\s+/', '_', $name);
-        $savename = preg_replace('/[^A-Za-z0-9\-]/', '', $savename);
-        if (!file_exists('data/backups/' . $savename))
-        {
-            $oldmask = umask(0);
-            mkdir('data/backups/' . $savename, 0777, true);
-            umask($oldmask);
-        }
-        $backupurl = "http://admin:" . $password . "@" . $ip . "/dl";
-        $date = date('Y-m-d H:i:s');
-        $savedate = preg_replace('/\s+/', '_', $date);
-        $savedate = preg_replace('/[^A-Za-z0-9\-]/', '', $savedate);
-
-        $url = 'http://' . $ip . '/cm?cmnd=status%202&user=admin&password=' . $password;
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $data = curl_exec($ch);
-        $error = curl_errno($ch);
-        curl_close($ch);
-        
-        if(!$error) {
-
-          $version = "'" . getBetween($data, '"Version":"', '"') . "'";
-
-          $saveto = "data/backups/" . $savename . "/" . $savedate . ".dmp";
-
-          $fp = fopen($saveto, 'w+');
-          if ($fp === false)
-          {
-            throw new Exception('Could not open: ' . $saveto);
-          }
-
-          $ch = curl_init($backupurl);
-          curl_setopt($ch, CURLOPT_FILE, $fp);
-          curl_setopt($ch, CURLOPT_TIMEOUT, 20);
-          curl_exec($ch);
-          $error = curl_errno($ch);
-          $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-          fclose($fp);
-          curl_close($ch);
-          
-          if (!$error && $statusCode == 200)
-          {
-
-            $directory = "data/backups/" . $savename . "/";
-
-            // Initialize filecount variavle
-            $filecount = 0;
-
-            $files2 = glob($directory . "*");
-
-            if ($files2)
-            {
-                $noofbackups = count($files2);
-                #echo $noofbackups;
-                
-            }
-
-            $stm2 = $db_handle->prepare("UPDATE devices SET version = :version, lastbackup = :date, noofbackups = :noofbackups WHERE id = :id");
-            $stm2->bindValue(':version', $version, PDO::PARAM_STR);
-            $stm2->bindValue(':date', $date, PDO::PARAM_STR);
-            $stm2->bindValue(':noofbackups', $noofbackups, PDO::PARAM_STR);
-            $stm2->bindValue(':id', $id, PDO::PARAM_INT);
-
-            if (!$stm2->execute())
-            {
-
-                return true;
-            }
-
-          }
-          else
-          {
-              return true;
-          }
-
-        } else {
-          // Device is offline
-          return true;
-        }
-        return false;
-}
-
-
-
-function getBetween($content, $start, $end)
-{
-    $r = explode($start, $content);
-    if (isset($r[1]))
-    {
-        $r = explode($end, $r[1]);
-        return $r[0];
-    }
-    return '';
-}
-
 if ($task == "discover")
 {
 
-    $ch = curl_init("http://" . $device);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $text = curl_exec($ch);
-
-    if (strpos($text, 'Tasmota') !== false)
-    {
-
-        //Get Version
-        $url = 'http://' . $ip . '/cm?cmnd=status%202&user=admin&password=' . $password;
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $data = curl_exec($ch);
-        curl_close($ch);
-        $version = getBetween($data, '"Version":"', '"');
-
-        //Get Name
-        $url = 'http://' . $ip . '/cm?cmnd=status&user=admin&password=' . $password;
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $data = curl_exec($ch);
-        curl_close($ch);
-        $name = getBetween($data, 'FriendlyName":["', '"');
-        $name = str_replace("'", "", $name);
-
-        $stm = $db_handle->prepare("select count(*) from devices where ip = :ip");
-        $stm->bindValue(':ip', $ip, PDO::PARAM_STR);
-        $stm->execute();
-        if ($stm->fetchColumn() < 1)
-        {
-            #$SQL       = "select * from devices order by id asc";
-            $stm2 = $db_handle->prepare("INSERT INTO devices (name,ip,version,password) VALUES (:name, :ip, :version, :password)");
-            $stm2->bindValue(':name', $name, PDO::PARAM_STR);
-            $stm2->bindValue(':ip', $ip, PDO::PARAM_STR);
-            $stm2->bindValue(':version', $version, PDO::PARAM_STR);
-            $stm2->bindValue(':password', $password, PDO::PARAM_STR);
-
-            if ($stm2->execute())
-            {
-                $show_modal = 1;
+    $show_modal = true;
+    $output = "Does not appear to be a Tasmota device!!";
+    if(getTasmotaScan($ip,$user,$password)) {
+        if(getTasmotaStatus($ip,$user,$password)) {
+            if(getTasmotaStatus2($ip,$user,$password)) {
+                if(dbDeviceExist($ip)) {
+                    $show_modal=true;
+                    $output = 'This device already exists in the database!';
+                } else {
+                    $name=$status['Status']['FriendlyName'][0];
+                    $version=$status2['StatusFWR']['Version'];
+                    if(dbDeviceAdd($name,$ip,$version,$password)) {
+                        $show_modal = true;
                 $output = "<center><b>" . $name . " Added Successfully!</b><center>";
-            }
-            else
-            {
-                $show_modal = 1;
-                $output = "Error updating record: " . mysqli_error($db_handle) . "<br>";
+                    } else {
+                        $show_modal = true;
+                        $output = "Error adding device";
             }
         }
-        else
-        {
-            $show_modal = 1;
-            $output = "This device already exists in the database!";
         }
     }
-
-    else
-    {
-        $show_modal = 1;
-        $output = "Does not appear to be a Tasmota device!!";
     }
 }
 
 if ($task == "edit")
 {
-$old_ip = $_POST['oldip'];
-$old_name = $_POST['oldname'];
+    if(isset($_POST['oldip'])) $old_ip = $_POST['oldip'];
+    if(isset($_POST['oldname'])) $old_name = $_POST['oldname'];
 
-$old_folder = preg_replace('/\s+/', '', $old_name);
-$old_folder = "data/" . $old_folder;
-
-$new_folder = preg_replace('/\s+/', '', $name);
-$new_folder = "data/" . $new_folder;
-$old_folder = realpath("/" . $old_folder);
-$new_folder = realpath("/" . $new_folder);
-
-
-    $stm = $db_handle->prepare("UPDATE devices SET name = :name, ip = :ip, password = :password WHERE ip = :oldip");
-    $stm->bindValue(':name', $name, PDO::PARAM_STR);
-    $stm->bindValue(':ip', $ip, PDO::PARAM_STR);
-    $stm->bindValue(':pasword', $password, PDO::PARAM_STR);
-    $stm->bindValue(':oldip', $old_ip, PDO::PARAM_STR);
+    if(isset($old_ip) && isset($ip)) {
+        $old_folder = preg_replace('/\s+/', '', $old_name);
+        $old_folder = "data/" . $old_folder;
     
+        $new_folder = preg_replace('/\s+/', '', $name);
+        $new_folder = "data/" . $new_folder;
 
-            if ($stm->execute())
+        if (dbDeviceRename($old_ip,$name,$ip,$password))
             {
-                $show_modal = 1;
 		if($name !== $old_name)
 			{
+                $old_folder = realpath("/" . $old_folder);
+                $new_folder = realpath("/" . $new_folder);
 				if(file_exists(realpath("/" . $old_folder)))
 					{
-echo $old_folder . "<br>";
-echo $new_folder . "<br>";
+                    echo $old_folder . "<br>";
+                    echo $new_folder . "<br>";
 					rename($old_folder, $new_folder);
 					}
 			}
+            $show_modal = true;
                 $output = "<center><b>" . $name . " updated up successfully</b><br></center>";
             }
             else
             {
-                $show_modal = 1;
-                echo "<center><b>Error updating record: " . mysqli_error($db_handle) . "<br>";
+            $show_modal = true;
+            echo "<center><b>Error updating record for ".$old_ip." ".$name." <br>";
             }
 
+    }
 }
 
 // SINGLE BACKUP ROUTINE
 if ($task == "singlebackup")
 {
-    $stm = $db_handle->prepare("select * from devices where ip = :ip");
-    $stm->bindValue(':ip', $ip, PDO::PARAM_STR);
-    $stm->execute();
-    while ($db_field = $stm->fetch(PDO::FETCH_ASSOC))
+    $show_modal = true;
+    $output = "<center><b>Device not found: ".$ip."</b></center>";
+
+    $devices = dbDeviceIp($ip);
+    if($devices!==false) {
+        foreach($devices as $db_field)
     {
 
-        if(backupSingle($db_handle,$db_field['id'],$db_field['name'],$db_field['ip'],'admin',$db_field['password']))
+            if(backupSingle($db_field['id'],$db_field['name'],$db_field['ip'],'admin',$db_field['password']))
         {
-            $show_modal = 1;
+                $show_modal = true;
             $output = "<center><b>Backup failed</b></center>";
+            } else {
+                $show_model = true;
+                $output = "Backup completed successfully!";
+            }
         }
-
     }
 }
 
 if ($task == "backupall")
 {
-    $stm = $db_handle->prepare("select * from devices order by id asc");
-    $stm->execute();
-    $errorcount = 0;
-    while ($db_field = $stm->fetch(PDO::FETCH_ASSOC))
-    {
-        if(backupSingle($db_handle,$db_field['id'],$db_field['name'],$db_field['ip'],'admin',$db_field['password']))
-        {
-          $errorcount++;
-        }
-    }
+    $errorcount = backupAll();
 
     $show_modal = true;
     if ($errorcount < 1)
@@ -274,17 +122,14 @@ if ($task == "delete")
 {
     $show_modal = true;
     try {
-      $stm = $db_handle->prepare("delete from devices where ip = :ip");
-      $stm->bindValue(':ip', $ip, PDO::PARAM_STR);
-
-      $stm->execute();
-	$show_modal = 1;
+        if(dbDeviceDel($ip)) {
         $output = $name . " deleted successfully from the database.";
         $output2 = "<br><font color='red'><b><i>!!NO BACKUPS WERE DELETED. PLEASE DO THIS MANUALLY!!</i></b>";
-
+        } else {
+            $output = "Error deleting  " . $ip;
+        }
     } catch(PDOException $e) {
-	$show_modal = 1;
-        $output = "Error deleting  " . $name . " : " . $e->getMessage();
+        $output = "Error deleting  " . $ip . " : " . $e->getMessage();
     }
 }
 
@@ -307,7 +152,7 @@ if ($task == "noofbackups")
     }
     $output = implode("<br>", $out);
 
-    $show_modal = 1;
+    $show_modal = true;
 
 }
 
@@ -357,9 +202,8 @@ $(document).ready(function() {
 <?PHP
 $relcount = 1;
 
-    $stm = $db_handle->prepare("select * from devices order by name desc");
-    $stm->execute();
-    while ($db_field = $stm->fetch(PDO::FETCH_ASSOC))
+    $devices = dbDevicesSort();
+    foreach ($devices as $db_field )
     {
         $id = $relcount;
         $name = $db_field['name'];
@@ -369,7 +213,7 @@ $relcount = 1;
         $numberofbackups = $db_field['noofbackups'];
         $password = $db_field['password'];
 
-        print "<tr valign='middle'><td>" . $name . "</td><td><center><a href='http://" . $ip . "' target='_blank'>" . $ip . "</a></td><td><center><img src='" . (strlen($password) > 0 ? 'lock.png' : 'lock-open-variant.png') . "'></td><td><center>" . $version . "</td><td><center>" . $lastbackup . "</td><Td><center><form method='POST' action='index.php'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='noofbackups' name='task'><input type='submit' value='" . $numberofbackups . "' class='btn-xs btn-info'></form></td><td><center><form method='POST' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='singlebackup' name='task'><input type='submit' value='Backup' class='btn-xs btn-success'></form></td><td><center><form method='POST' action='edit.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='edit' name='task'><input type='submit' value='Edit' class='btn-xs btn-warning'></form></td><td><center><form method='POST' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='delete' name='task'><input type='submit' value='Delete' class='btn-xs btn-danger'></form></td></tr>";
+        echo "<tr valign='middle'><td>" . $name . "</td><td><center><a href='http://" . $ip . "' target='_blank'>" . $ip . "</a></td><td><center><img src='" . (strlen($password) > 0 ? 'lock.png' : 'lock-open-variant.png') . "'></td><td><center>" . $version . "</td><td><center>" . $lastbackup . "</td><Td><center><form method='POST' action='index.php'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='noofbackups' name='task'><input type='submit' value='" . $numberofbackups . "' class='btn-xs btn-info'></form></td><td><center><form method='POST' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='singlebackup' name='task'><input type='submit' value='Backup' class='btn-xs btn-success'></form></td><td><center><form method='POST' action='edit.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='edit' name='task'><input type='submit' value='Edit' class='btn-xs btn-warning'></form></td><td><center><form method='POST' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='delete' name='task'><input type='submit' value='Delete' class='btn-xs btn-danger'></form></td></tr>";
         $relcount = $relcount + 1;
     }
 

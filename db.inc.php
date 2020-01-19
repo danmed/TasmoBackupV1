@@ -25,6 +25,17 @@ if($DBType=='mysql') {
     noofbackups int(11) DEFAULT NULL,
     password varchar(128) DEFAULT NULL )
     ");
+
+  $db_handle->exec("CREATE TABLE IF NOT EXISTS backups (
+    id bigint(20) AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    deviceid int(11) NOT NULL,
+    name varchar(128) NOT NULL,
+    version varchar(128) NOT NULL,
+    date datetime DEFAULT NULL,
+    filename varchar(1080),
+    data text,
+    INDEX (deviceid,date) )
+    ");
 }
 
 if($DBType=='sqlite') {
@@ -37,5 +48,108 @@ if($DBType=='sqlite') {
     noofbackups INTEGER DEFAULT NULL,
     password varchar(128) DEFAULT NULL )
     ");
+
+  $db_handle->exec("CREATE TABLE IF NOT EXISTS backups (
+    id INTEGER AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    deviceid INTEGER NOT NULL,
+    name varchar(128) NOT NULL,
+    version varchar(128) NOT NULL,
+    date datetime DEFAULT NULL,
+    filename varchar(1080),
+    data text )
+    ");
+
+  $db_handle->exec("CREATE INDEX IF NOT EXISTS backupsdeviceid
+    ON backups(deviceid, date)
+    ");
 }
 
+function dbDeviceExist($ip)
+{
+        GLOBAL $db_handle;
+        $stm = $db_handle->prepare("select count(*) from devices where ip = :ip");
+        $stm->bindValue(':ip', $ip, PDO::PARAM_STR);
+        if(!$stm->execute()) return false;
+        if ($stm->fetchColumn() < 1)
+        {
+                return false;
+        } else {
+                return true;
+        }
+}
+
+function dbDeviceIp($ip)
+{
+        GLOBAL $db_handle;
+        $stm = $db_handle->prepare("select * from devices where ip = :ip");
+        $stm->bindValue(':ip', $ip, PDO::PARAM_STR);
+        if(!$stm->execute()) return false;
+        return $stm->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function dbDevices()
+{
+        GLOBAL $db_handle;
+        $stm = $db_handle->prepare("select * from devices");
+        if(!$stm->execute()) return false;
+        return $stm->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function dbDevicesSort()
+{
+        GLOBAL $db_handle;
+        $stm = $db_handle->prepare("select * from devices order by name desc");
+        if(!$stm->execute()) return false;
+        return $stm->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function dbDeviceAdd($name,$ip,$version,$password)
+{
+        GLOBAL $db_handle;
+        $stm = $db_handle->prepare("INSERT INTO devices (name,ip,version,password) VALUES (:name, :ip, :version, :password)");
+        $stm->bindValue(':name', $name, PDO::PARAM_STR);
+        $stm->bindValue(':ip', $ip, PDO::PARAM_STR);
+        $stm->bindValue(':version', $version, PDO::PARAM_STR);
+        $stm->bindValue(':password', $password, PDO::PARAM_STR);
+
+        return $stm->execute();
+}
+
+function dbDeviceRename($oldip,$name,$ip,$password)
+{
+        GLOBAL $db_handle;
+        $stm = $db_handle->prepare("UPDATE devices SET name = :name, ip = :ip, password = :password WHERE ip = :oldip");
+        $stm->bindValue(':name', $name, PDO::PARAM_STR);
+        $stm->bindValue(':ip', $ip, PDO::PARAM_STR);
+        $stm->bindValue(':pasword', $password, PDO::PARAM_STR);
+        $stm->bindValue(':oldip', $oldip, PDO::PARAM_STR);
+
+        return $stm->execute();
+}
+
+function dbDeviceDel($ip)
+{
+        GLOBAL $db_handle;
+        $stm = $db_handle->prepare("delete from devices where ip = :ip");
+        $stm->bindValue(':ip', $ip, PDO::PARAM_STR);
+
+        return $stm->execute();
+}
+
+function dbNewBackup($id,$name,$version,$date,$noofbackups,$filename) {
+	GLOBAL $db_handle;
+	$stm = $db_handle->prepare("INSERT backups(deviceid,name,version,date,filename) VALUES(:deviceid, :name, :version, :date, :filename)");
+        $stm->bindValue(':deviceid', $id, PDO::PARAM_INT);
+        $stm->bindValue(':name', $name, PDO::PARAM_STR);
+        $stm->bindValue(':version', $version, PDO::PARAM_STR);
+        $stm->bindValue(':date', $date, PDO::PARAM_STR);
+        $stm->bindValue(':filename', $filename, PDO::PARAM_STR);
+        if(!$stm->execute()) return false;
+
+	$stm = $db_handle->prepare("UPDATE devices SET version = :version, lastbackup = :date, noofbackups = :noofbackups WHERE id = :id");
+        $stm->bindValue(':version', $version, PDO::PARAM_STR);
+        $stm->bindValue(':date', $date, PDO::PARAM_STR);
+        $stm->bindValue(':noofbackups', $noofbackups, PDO::PARAM_STR);
+        $stm->bindValue(':id', $id, PDO::PARAM_INT);
+        return $stm->execute();
+}

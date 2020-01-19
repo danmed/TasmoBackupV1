@@ -1,8 +1,8 @@
 <!DOCTYPE html>                                                                                              
 <?PHP
-require "db.inc.php";
+require "functions.inc.php";
 
-$ip = $_POST["ip"];
+if(isset($_POST['ip'])) $ip = $_POST['ip'];
 
 ?>
 <html lang="en">                                                                                            
@@ -51,10 +51,8 @@ $(document).ready(function() {
 <?PHP
 $relcount = 1;
 
-    $stm = $db_handle->prepare("select * from devices where ip = :ip");
-    $stm->bindValue(':ip', $ip, PDO::PARAM_STR);
-    $stm->execute();
-    while ($db_field = $stm->fetch(PDO::FETCH_ASSOC))
+    $devices = dbDeviceIp($ip);
+    foreach($devices as $db_field)
     {
         $id = $relcount;
         $name = $db_field['name'];

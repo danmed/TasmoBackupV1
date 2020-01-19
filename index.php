@@ -20,8 +20,8 @@ if ($task == "discover")
     $show_modal = true;
     $output = "Does not appear to be a Tasmota device!!";
     if(getTasmotaScan($ip,$user,$password)) {
-        if(getTasmotaStatus($ip,$user,$password)) {
-            if(getTasmotaStatus2($ip,$user,$password)) {
+        if($status=getTasmotaStatus($ip,$user,$password)) {
+            if($status2=getTasmotaStatus2($ip,$user,$password)) {
                 if(dbDeviceExist($ip)) {
                     $show_modal=true;
                     $output = 'This device already exists in the database!';
@@ -87,12 +87,12 @@ if ($task == "singlebackup")
     $devices = dbDeviceIp($ip);
     if($devices!==false) {
         foreach($devices as $db_field)
-    {
+        {
 
             if(backupSingle($db_field['id'],$db_field['name'],$db_field['ip'],'admin',$db_field['password']))
-        {
+            {
                 $show_modal = true;
-            $output = "<center><b>Backup failed</b></center>";
+                $output = "<center><b>Backup failed</b></center>";
             } else {
                 $show_model = true;
                 $output = "Backup completed successfully!";

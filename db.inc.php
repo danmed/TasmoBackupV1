@@ -50,7 +50,7 @@ if($DBType=='sqlite') {
     ");
 
   $db_handle->exec("CREATE TABLE IF NOT EXISTS backups (
-    id INTEGER AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     deviceid INTEGER NOT NULL,
     name varchar(128) NOT NULL,
     version varchar(128) NOT NULL,
@@ -138,13 +138,16 @@ function dbDeviceDel($ip)
 
 function dbNewBackup($id,$name,$version,$date,$noofbackups,$filename) {
 	GLOBAL $db_handle;
-	$stm = $db_handle->prepare("INSERT backups(deviceid,name,version,date,filename) VALUES(:deviceid, :name, :version, :date, :filename)");
+	$stm = $db_handle->prepare("INSERT INTO backups(deviceid,name,version,date,filename) VALUES(:deviceid, :name, :version, :date, :filename)");
         $stm->bindValue(':deviceid', $id, PDO::PARAM_INT);
         $stm->bindValue(':name', $name, PDO::PARAM_STR);
         $stm->bindValue(':version', $version, PDO::PARAM_STR);
         $stm->bindValue(':date', $date, PDO::PARAM_STR);
         $stm->bindValue(':filename', $filename, PDO::PARAM_STR);
-        if(!$stm->execute()) return false;
+        if(!$stm->execute()) {
+	    trigger_error("insert error: ".$stm->errorInfo()[2],E_USER_NOTICE);
+            return false;
+        }
 
 	$stm = $db_handle->prepare("UPDATE devices SET version = :version, lastbackup = :date, noofbackups = :noofbackups WHERE id = :id");
         $stm->bindValue(':version', $version, PDO::PARAM_STR);

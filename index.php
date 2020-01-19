@@ -20,8 +20,8 @@ if ($task == "discover")
     $show_modal = true;
     $output = "Does not appear to be a Tasmota device!!";
     if(getTasmotaScan($ip,$user,$password)) {
-        if(getTasmotaStatus($ip,$user,$password)) {
-            if(getTasmotaStatus2($ip,$user,$password)) {
+        if($status=getTasmotaStatus($ip,$user,$password)) {
+            if($status2=getTasmotaStatus2($ip,$user,$password)) {
                 if(dbDeviceExist($ip)) {
                     $show_modal=true;
                     $output = 'This device already exists in the database!';

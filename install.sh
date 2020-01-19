@@ -2,7 +2,7 @@
 
 if [ ! -f /var/www/html/data/settings.inc.php ]; then
     cp /var/www/html/settings.inc.php /var/www/html/data/settings.inc.php
-    chmod 777 /var/www/html/data/backups
+    chmod 777 /var/www/html/data/backups/settings.inc.php
 fi
 
 if [ ! -f /var/www/html/data/config.inc.php ]; then

@@ -87,12 +87,12 @@ if ($task == "singlebackup")
     $devices = dbDeviceIp($ip);
     if($devices!==false) {
         foreach($devices as $db_field)
-    {
+        {
 
             if(backupSingle($db_field['id'],$db_field['name'],$db_field['ip'],'admin',$db_field['password']))
-        {
+            {
                 $show_modal = true;
-            $output = "<center><b>Backup failed</b></center>";
+                $output = "<center><b>Backup failed</b></center>";
             } else {
                 $show_model = true;
                 $output = "Backup completed successfully!";

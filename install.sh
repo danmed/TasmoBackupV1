@@ -14,6 +14,8 @@ if [ ! -f var/www/html/data/backups ]; then
     chmod 777 /var/www/html/data/backups
 fi
 
+chmod 777 /var/www/html/data
+
 sed -i "s/mysqlserver/$MYSQL_SERVER/g" /var/www/html/data/config.inc.php
 sed -i "s/mysqlusername/$MYSQL_USERNAME/g" /var/www/html/data/config.inc.php
 sed -i "s/mysqlpassword/$MYSQL_PASSWORD/g" /var/www/html/data/config.inc.php

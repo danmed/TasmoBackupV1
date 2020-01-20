@@ -3,7 +3,7 @@
 require_once('data/config.inc.php');
 
 global $db_handle;
-
+echo $DBType;
 if($DBType=='mysql') {
   $db_handle = new \PDO( 'mysql:host='.$DBServer.';dbname='.$DBName, $DBUser, $DBPassword);
 }

@@ -22,6 +22,7 @@ Backup the configs of all your Tasmota devices
 * Create a folder called data
 * Create a folder called data/backups
 * Chmod 777 data/backups
+* chmod 777 data
 * Copy config.inc.php.example to data/config.inc.php (This will prevent it being overwitten on new pulls)
 * Copy settings.inc.php to data/settings.inc.php(This will prevent it being overwitten on new pulls)
 * chmod 777 data/settings.inc.php
@@ -33,8 +34,8 @@ Backup the configs of all your Tasmota devices
 
 * Clone this repo
 * Edit docker-compose.yml to define your MySQL information and Volume location.
+* If using MySQL you will need to have a blank database already present on your MYSQl server.
 * ```docker-compose up -d```
-* Navigate to http://ipaddress:8259/createdb.php to create the database or import the tasmobackup.sql template in this repo.
 * Navigate to http://ipaddress:8259
 * Note : If you get your MySQL details wrong at this stage, you can change them by editing config.inc.php in your data folder.
 

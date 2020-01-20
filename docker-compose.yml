@@ -11,6 +11,7 @@ services:
             - MYSQL_USERNAME=USERNAME
             - MYSQL_PASSWORD=PASSWORD
             # change below to mysql if you don't want to use sqlite
+            # you will need to have a mysql server (set above) with a blank database already created.
             - DBTYPE=sqlite
             - DBNAME=tasmobackup
         container_name: TasmoBackup

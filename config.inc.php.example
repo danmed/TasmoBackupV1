@@ -1,8 +1,7 @@
 <?PHP
 /* MYSQL Configuration */
-$DBType        =    'dbtype';
+$DBType         =       'dbtype';
 $DBServer       =       'mysqlserver';
 $DBUser         =       'mysqlusername';
 $DBPassword     =       'mysqlpassword';
 $DBName         =       'dbname';
-?>

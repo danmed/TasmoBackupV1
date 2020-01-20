@@ -6,10 +6,12 @@ services:
         volumes:
             - ./data:/var/www/html/data
         environment:
+            # MYSQL env's are not needed if you are using sqlite
             - MYSQL_SERVER=IPADDRESS
             - MYSQL_USERNAME=USERNAME
             - MYSQL_PASSWORD=PASSWORD
-            - DBTYPE=mysql or sqlite
+            # change below to mysql if you don't want to use sqlite
+            - DBTYPE=sqlite
             - DBNAME=tasmobackup
         container_name: TasmoBackup
         image: 'danmed/tasmobackup_beta'

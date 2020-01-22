@@ -17,4 +17,4 @@ services:
             # if using Sqlite the data/ is required!
             - DBNAME=data/tasmobackup
         container_name: TasmoBackup
-        image: 'danmed/tasmobackup_beta'
+        image: 'danmed/tasmobackupv1'

@@ -68,3 +68,5 @@ $relcount = 1;
            </tbody>                                                                                          
     </table>                                                                                                
     </div>     
+	  </body>
+	  </html>

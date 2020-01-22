@@ -99,6 +99,7 @@ function dbBackupList($name)
 {
         GLOBAL $db_handle;
         $stm = $db_handle->prepare("select * from backups where name = :name order by date desc");
+	$stm->bindValue(':name', $name, PDO::PARAM_STR);
         if(!$stm->execute()) return false;
         return $stm->fetchAll(PDO::FETCH_ASSOC);
 }

@@ -95,6 +95,14 @@ function dbDevices()
         return $stm->fetchAll(PDO::FETCH_ASSOC);
 }
 
+function dbBackupList($name)
+{
+        GLOBAL $db_handle;
+        $stm = $db_handle->prepare("select * from backups where name = :name order by date desc");
+        if(!$stm->execute()) return false;
+        return $stm->fetchAll(PDO::FETCH_ASSOC);
+}
+
 function dbDevicesSort()
 {
         GLOBAL $db_handle;

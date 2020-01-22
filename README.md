@@ -32,12 +32,19 @@ Backup the configs of all your Tasmota devices
 
 # Docker-compose
 
+MYSQL
 * Clone this repo
 * Edit docker-compose.yml to define your MySQL information and Volume location.
 * If using MySQL you will need to have a blank database already present on your MYSQl server.
 * ```docker-compose up -d```
 * Navigate to http://ipaddress:8259
-* Note : If you get your MySQL details wrong at this stage, you can change them by editing config.inc.php in your data folder.
+* Note : If you get your MySQL details wrong at this stage, you can change them by changing the env variables and restarting the container.
+
+SQLITE
+* Clone this repo
+* Edit docker-compose.yml to change your data folder location.
+* ```docker-compose up -d```
+* Navigate to http://ipaddress:8259
 
 # Scheduled Backups
 * backupall.php exists to do literally that.. Schedule this with your chosen means (nodered, curl, scheduled tasks etc)

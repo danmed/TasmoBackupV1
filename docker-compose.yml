@@ -14,6 +14,7 @@ services:
             # you will need to have a mysql server (set above) with a blank database already created.
             - DBTYPE=sqlite
             # if using Mysql remove the data/ from the below line
+            # if using Sqlite the data/ is required!
             - DBNAME=data/tasmobackup
         container_name: TasmoBackup
         image: 'danmed/tasmobackup_beta'

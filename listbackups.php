@@ -29,7 +29,7 @@ if(isset($_POST["name"])) $name = $_POST["name"];
 <script type="text/javascript" class="init">                                                                
 $(document).ready(function() {                                                                              
         $('#status').DataTable({                                                                            
-        "order": [[<?PHP echo $sort; ?>, "asc" ]],
+        "order": [[1, "desc" ]],
         "pageLength": <?PHP echo $amount; ?>,
         "statesave": true,
         "autoWidth": true

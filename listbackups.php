@@ -29,7 +29,7 @@ if(isset($_POST["name"])) $name = $_POST["name"];
 <script type="text/javascript" class="init">                                                                
 $(document).ready(function() {                                                                              
         $('#status').DataTable({                                                                            
-        "order": [[1, "desc" ]],
+        "order": [[0, "desc" ]],
         "pageLength": <?PHP echo $amount; ?>,
         "statesave": true,
         "autoWidth": true
@@ -45,7 +45,7 @@ $(document).ready(function() {
     <table class="table table-striped table-bordered" id="status">                                          
     <thead>                                                                                                  
 	    <tr><th colspan="9"><center><b><a href="index.php"><?PHP echo $name; ?></a></th></tr>                                                
-        <tr><th><b>VERSION</th><th>DATE</th><th>FILE</th></tr>
+        <tr><th><b>DATE</th><th>VERSION</th><th>FILE</th></tr>
     </thead>                                                                                                
     <tbody>  
 <?PHP
@@ -60,7 +60,7 @@ $relcount = 1;
         $filename = $db_field['filename'];
 
 
-        echo "<tr valign='middle'><td>" . $version . "</td><td><center>" . $date . "</td><td><a href='" . $filename . "'>DOWNLOAD</a></td></tr>";
+        echo "<tr valign='middle'><td>" . $date . "</td><td><center>" . $version . "</td><td><a href='" . $filename . "'>DOWNLOAD</a></td></tr>";
         $relcount = $relcount + 1;
     }
 

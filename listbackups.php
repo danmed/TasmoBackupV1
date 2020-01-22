@@ -60,7 +60,7 @@ $relcount = 1;
         $filename = $db_field['filename'];
 
 
-        echo "<tr valign='middle'><td>" . $version . "</td><td><center>" . $date . "</td><td><a href='" . $filename . "'>DOWNLOAD</a></td></tr>;
+        echo "<tr valign='middle'><td>" . $version . "</td><td><center>" . $date . "</td><td><a href='" . $filename . "'>DOWNLOAD</a></td></tr>";
         $relcount = $relcount + 1;
     }
 

@@ -1,4 +1,6 @@
-# TasmoBackup
+# IF YOU ARE COMING HERE FROM THE OLD VERSION - YOU WILL NEED TO START AGAIN DUE TO BREAKING CHANGES. ALL DEVICES WILL NEED TO BE ADDED AGAIN.
+
+# TasmoBackupV1
 Backup the configs of all your Tasmota devices
 
 # Features

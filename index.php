@@ -41,42 +41,6 @@ if ($task == "discover")
     }
 }
 
-if ($task == "discoverall")
-{
-
-	if(count($_POST['ip']) > 0 && !empty($_POST['ip'][0])) {
-       foreach($_POST['ip'] as $key => $checked) {
-          $id = $_POST['id'][$key];
-          // rest of the data and processings
-	
-    $show_modal = true;
-    $output = "Does not appear to be a Tasmota device!!";
-    if(getTasmotaScan($ip,$user,$password)) {
-        if($status=getTasmotaStatus($ip,$user,$password)) {
-            if($status2=getTasmotaStatus2($ip,$user,$password)) {
-                if(dbDeviceExist($ip)) {
-                    $show_modal=true;
-                    $output = 'This device already exists in the database!';
-                } else {
-                    $name=$status['Status']['FriendlyName'][0];
-                    $version=$status2['StatusFWR']['Version'];
-                    if(dbDeviceAdd($name,$ip,$version,$password)) {
-                        $show_modal = true;
-                $output = "<center><b>" . $name . " Added Successfully!</b><center>";
-                    } else {
-                        $show_modal = true;
-                        $output = "Error adding device";
-            }
-        }
-        }
-    }
-    }
-       
-   }
-}
-}
-
-
 if ($task == "edit")
 {
     if(isset($_POST['oldip'])) $old_ip = $_POST['oldip'];

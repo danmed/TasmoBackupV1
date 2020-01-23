@@ -36,8 +36,9 @@ $(document).ready(function() {
     <div class="container">                                                                                  
     <table class="table table-striped table-bordered" id="status">                                          
     <thead>                                                                                                  
-    <tr><th colspan="9"><center><b>TasmoBackup</th></tr>                                                
-        <tr><th><b>NAME</th><th>IP</th><th><b>ADD</b></th></tr>
+    <tr><th colspan="9"><center><b>TasmoBackup</th></tr>
+	    <form action="index.php" method="POST"><input type="hidden" name="task" value="discover">
+        <tr><th><b>ADD</th><th>NAME</th><th><b>IP</b></th></tr>
     </thead>                                                                                                
     <tbody>  
 
@@ -73,18 +74,17 @@ for( $octet4=$range[3][0]; $octet4<=(isset($range[3][1])? $range[3][1]:$range[3]
 	        	{
 		if($status=getTasmotaStatus($ip,$user,$password)) {
                         $name=$status['Status']['FriendlyName'][0];
-                                echo "<tr valign='middle'><td>" . $name . "</td>".
-				     "<td><center><a href='http://" . $ip . "'>" . $ip . "</a></td>".
-                                     "<td><center><form method='POST' action='index.php' target='_blank'>".
-                                     "<input type='hidden' value='discover' name='task'>".
-                                     "<input type='hidden' name='ip' value='" . $ip . "'>".
-                                     "<input type='submit' value='Add' class='btn-xs btn-success'></form></td></tr>";
+                                echo "<tr valign='middle'><td><center><input type='checkbox' name='ip' value='" . $ip . "'></td>".
+				     "<td>" . $name . "</td>".
+				     "<td><center><a href='http://" . $ip . "'>" . $ip . "</a></td></tr>";
+
 			}
 		}
 } 
 }
 ?>
-
+	    <tr><td colspan="3"><center><input type=submit class='btn-xs btn-success' value='Add Devices'></td></tr>
+	    </form>
 </tbody>                                                                                          
     </table>                                                                                                
     </div>     

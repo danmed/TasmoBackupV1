@@ -226,7 +226,7 @@ $relcount = 1;
   <form method='POST' action='index.php'><input type='hidden' value='discover' name='task'><input type="text" name="ip" placeholder="ip address"><input type="password" name="password" placeholder="password"><input type='submit' value='Add' class='btn-xs btn-danger'></form>
 <form method="POST" action="scan.php"><input type=text name=range placeholder="192.168.1.1-255"><input type=hidden name=task value=scan><input type=submit value=Discover class='btn-xs btn-danger'></form>
 <br><br>
-<div style='text-align:right;font-size:11px;'><hr/><a href='https://bit.ly/tasmobackup' target='_blank' style='color:#aaa;'>TasmoBackup 1.0 by Dan Medhurst</a></div>
+<div style='text-align:right;font-size:11px;'><hr/><a href='https://github.com/danmed/TasmoBackupV1' target='_blank' style='color:#aaa;'>TasmoBackup 1.0 by Dan Medhurst</a></div>
 
     <?php
 if (isset($show_modal) && $show_modal):

@@ -41,6 +41,46 @@ if ($task == "discover")
     }
 }
 
+if ($task == "discoverall")
+{
+
+	 $aDoor = $_POST['ip'];
+  if(empty($ip)) 
+  {
+    echo("You didn't select any devices.");
+  } 
+  else 
+  {
+    $N = count($ip);
+
+    for($i=0; $i < $N; $i++)
+    {
+      $show_modal = true;
+    $output = "Does not appear to be a Tasmota device!!";
+    if(getTasmotaScan($ip[$i],$user,$password)) {
+        if($status=getTasmotaStatus($ip[$i],$user,$password)) {
+            if($status2=getTasmotaStatus2($ip[$i],$user,$password)) {
+                  $name=$status['Status']['FriendlyName'][0];
+                    $version=$status2['StatusFWR']['Version'];
+                    if(dbDeviceAdd($name,$ip[$i],$version,$password)) {
+                        $show_modal = true;
+                $output = "<center><b>All Devices Added Successfully!</b><center>";
+                    } else {
+                        $show_modal = true;
+                        $output = "Error adding device";
+           
+        }
+        }
+    }
+    }
+    }
+  }
+
+}
+
+
+
+
 if ($task == "edit")
 {
     if(isset($_POST['oldip'])) $old_ip = $_POST['oldip'];

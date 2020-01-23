@@ -33,9 +33,9 @@ Backup the configs of all your Tasmota devices
 * Navigate to http://ipaddress:8259
 
 # Docker-compose
-
-///version: '2'
-///services:
+```yaml
+version: '2'
+services:
     tasmobackup:
         ports:
             - '8259:80'

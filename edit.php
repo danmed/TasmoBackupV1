@@ -1,8 +1,10 @@
 <!DOCTYPE html>                                                                                              
-<?PHP
+<?php
 require "functions.inc.php";
 
-if(isset($_POST['ip'])) $ip = $_POST['ip'];
+if (isset($_POST['ip'])) {
+    $ip = $_POST['ip'];
+}
 
 ?>
 <html lang="en">                                                                                            
@@ -48,22 +50,19 @@ $(document).ready(function() {
     </thead>                                                                                                
     <tbody>  
 
-<?PHP
+<?php
 $relcount = 1;
 
     $devices = dbDeviceIp($ip);
-    foreach($devices as $db_field)
-    {
+    foreach ($devices as $db_field) {
         $id = $relcount;
         $name = $db_field['name'];
         $ip = $db_field['ip'];
-        $password = $db_field['password'];
-
-?>
+        $password = $db_field['password']; ?>
 
 
 
-<?PHP
+<?php
         print "<tr valign='middle'><td><form method='POST' action='index.php'><input type='hidden' name='name' value='" . $name . "'><input type='hidden' name='task' value='edit'><input type='hidden' name='oldip' value='" . $ip . "'><input type='hidden' name='oldip' value='" . $ip . "'>" . $name . "</td><td><center><input type='text' name='ip' value='" . $ip . "'></td><td><center><center><input type='password' name='password' value='" . $password . "'></td><td><center><input type='submit' value='Submit' class='btn-xs btn-success'></form></td></tr>";
         $relcount ++;
     }

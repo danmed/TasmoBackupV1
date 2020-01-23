@@ -1,29 +1,27 @@
 <!DOCTYPE html>                                                                                              
-<?PHP
+<?php
 include "db.inc.php";
 include "data/settings.inc.php";
 
-if($_POST["sort"]!="")
-{
-$oldsort = $sort;
-$newsort = $_POST["sortoption"];
-$newsort = "\"$newsort\"";
-$oldsort = "\"$oldsort\"";
-$str = file_get_contents('data/settings.inc.php');
-$str = str_replace("$oldsort", "$newsort", $str);
-file_put_contents('data/settings.inc.php', $str);
+if ($_POST["sort"]!="") {
+    $oldsort = $sort;
+    $newsort = $_POST["sortoption"];
+    $newsort = "\"$newsort\"";
+    $oldsort = "\"$oldsort\"";
+    $str = file_get_contents('data/settings.inc.php');
+    $str = str_replace("$oldsort", "$newsort", $str);
+    file_put_contents('data/settings.inc.php', $str);
 }
 
-if($_POST["amount"]!="")
-{
-$oldamount = $amount;
-$newamount = $_POST["amountoption"];
-$newamount = "\"$newamount\"";
-$oldamount = "\"$oldamount\"";
-$str = file_get_contents('data/settings.inc.php');
-$str = str_replace("$oldamount", "$newamount", $str);
-file_put_contents('data/settings.inc.php', $str);
-$amount = trim($newamount, '"');
+if ($_POST["amount"]!="") {
+    $oldamount = $amount;
+    $newamount = $_POST["amountoption"];
+    $newamount = "\"$newamount\"";
+    $oldamount = "\"$oldamount\"";
+    $str = file_get_contents('data/settings.inc.php');
+    $str = str_replace("$oldamount", "$newamount", $str);
+    file_put_contents('data/settings.inc.php', $str);
+    $amount = trim($newamount, '"');
 }
 ?>
 <html lang="en">                                                                                            
@@ -70,7 +68,7 @@ $(document).ready(function() {
     <tbody>  
 
 <tr valign='middle'><td>Sort Column</td><td><form method='POST' action='settings.php'><center><input type="hidden" name="sort" value="sort"><select name ="sortoption"><option value="0">Name</option><option value="1">IP</option><option value="2">Auth</option><option value="3">Version</option><option value="4">Last Backup</option></select></td><td><center><input type='submit' value='Submit' class='btn-xs btn-success'></form></td></tr>
-<tr valign='middle'><td>Amount of Rows</td><td><center><form method='POST' action='settings.php'><input type="hidden" name="amount" value="amount"><input type='text' name='amountoption' value='<?PHP echo $amount; ?>'></td><td><center><input type='submit' value='Submit' class='btn-xs btn-success'></form></td></tr>
+<tr valign='middle'><td>Amount of Rows</td><td><center><form method='POST' action='settings.php'><input type="hidden" name="amount" value="amount"><input type='text' name='amountoption' value='<?php echo $amount; ?>'></td><td><center><input type='submit' value='Submit' class='btn-xs btn-success'></form></td></tr>
            </tbody>                                                                                          
     </table>                                                                                                
     </div>     

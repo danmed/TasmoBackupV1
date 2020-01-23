@@ -34,9 +34,8 @@ Backup the configs of all your Tasmota devices
 
 # Docker-compose
 
-```
-version: '2'
-services:
+///version: '2'
+///services:
     tasmobackup:
         ports:
             - '8259:80'

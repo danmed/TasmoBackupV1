@@ -43,6 +43,7 @@ $(document).ready(function() {
     <tbody>  
 
 <?php 
+	    $id=1;
 require 'functions.inc.php';
 
 
@@ -74,9 +75,10 @@ for( $octet4=$range[3][0]; $octet4<=(isset($range[3][1])? $range[3][1]:$range[3]
 	        	{
 		if($status=getTasmotaStatus($ip,$user,$password)) {
                         $name=$status['Status']['FriendlyName'][0];
-                                echo "<tr valign='middle'><td><center><input type='checkbox' name='ip' value='" . $ip . "'></td>".
+                                echo "<tr valign='middle'><td><center><input type='hidden' name='id[]' value='" . $id . "'><input type='checkbox' name='ip' value='" . $ip . "'></td>".
 				     "<td>" . $name . "</td>".
 				     "<td><center><a href='http://" . $ip . "'>" . $ip . "</a></td></tr>";
+				$id=$id+1;
 
 			}
 		}

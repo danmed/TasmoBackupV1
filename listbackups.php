@@ -1,10 +1,12 @@
 <!DOCTYPE html>                                                                                              
-<?PHP
+<?php
 require "functions.inc.php";
 include "data/settings.inc.php";
 
-GLOBAL $db_handle;
-if(isset($_POST["name"])) $name = $_POST["name"];
+global $db_handle;
+if (isset($_POST["name"])) {
+    $name = $_POST["name"];
+}
 ?>
 <html lang="en">                                                                                            
 <head>                                                                                                      
@@ -30,7 +32,7 @@ if(isset($_POST["name"])) $name = $_POST["name"];
 $(document).ready(function() {                                                                              
         $('#status').DataTable({                                                                            
         "order": [[0, "desc" ]],
-        "pageLength": <?PHP echo $amount; ?>,
+        "pageLength": <?php echo $amount; ?>,
         "statesave": true,
         "autoWidth": true
 } );            
@@ -44,16 +46,15 @@ $(document).ready(function() {
     <div class="container">                                                                                  
     <table class="table table-striped table-bordered" id="status">                                          
     <thead>                                                                                                  
-	    <tr><th colspan="9"><center><b><a href="index.php"><?PHP echo $name; ?></a></th></tr>                                                
+	    <tr><th colspan="9"><center><b><a href="index.php"><?php echo $name; ?></a></th></tr>                                                
         <tr><th><b>DATE</th><th>VERSION</th><th>FILE</th></tr>
     </thead>                                                                                                
     <tbody>  
-<?PHP
+<?php
 $relcount = 1;
 
     $devices = dbBackupList($name);
-    foreach ($devices as $db_field )
-    {
+    foreach ($devices as $db_field) {
         $id = $relcount;
         $version = $db_field['version'];
         $date = $db_field['date'];

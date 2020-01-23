@@ -55,6 +55,18 @@ services:
         container_name: TasmoBackup
         image: 'danmed/tasmobackupv1'
 ```
+# Docker Run
+
+SQLITE: 
+```
+docker run -d -p 8259:80 -v ./data:/var/www/html/data -e DBTYPE=sqlite -e DBNAME=data/tasmobackup --name TasmoBackup danmed/tasmobackupv1
+```
+Note : pay attention to the difference's between the sqlite and mysql database names.
+
+MYSQL:
+```
+docker run -d -p 8259:80 -v ./data:/var/www/html/data -e DBTYPE=mysql -e MYSQL_SERVER=192.168.2.10 -e MYSQL_USERNAME=root MYSQL_PASSWORD=password -e DBNAME=tasmobackup --name TasmoBackup danmed/tasmobackupv1
+```
 
 # Scheduled Backups
 * backupall.php exists to do literally that.. Schedule this with your chosen means (nodered, curl, scheduled tasks etc)

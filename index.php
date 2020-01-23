@@ -60,14 +60,15 @@ if ($task == "discoverall")
     if(getTasmotaScan($ip[$i],$user,$password)) {
         if($status=getTasmotaStatus($ip[$i],$user,$password)) {
             if($status2=getTasmotaStatus2($ip[$i],$user,$password)) {
+		    if(dbDeviceExist($ip[$i])) {
+                    $outputalready = $ip[$i] . ", " . $outputalready;
+                } else {
                   $name=$status['Status']['FriendlyName'][0];
                     $version=$status2['StatusFWR']['Version'];
                     if(dbDeviceAdd($name,$ip[$i],$version,$password)) {
-                        $show_modal = true;
-                $output = "<center><b>All Devices Added Successfully!</b><center>";
+                      	$outputok = $name . ", " . $outputok;
                     } else {
-                        $show_modal = true;
-                        $output = "Error adding device";
+                        $outputbad = $name . ", " . $outputbad;
            
         }
         }
@@ -75,7 +76,12 @@ if ($task == "discoverall")
     }
     }
   }
-
+  }
+	$show_modal=true;
+	$output = $outputalready . " already exist.<br>" . $outputbad . " unable to be added.<br>" . $outputok . " added successfully.";		
+			
+	
+	
 }
 
 

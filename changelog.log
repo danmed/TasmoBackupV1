@@ -1,0 +1,8 @@
+##v1.01
+* Added multi select for scan
+* Code again cleaned up by patrickdk
+
+##v1.0
+* Initial re-release.
+* Code tidied up by patrickdk
+* Backup list is now based on table and has versions

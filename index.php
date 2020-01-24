@@ -1,96 +1,91 @@
 <!DOCTYPE html>                                                                                              
-<?PHP
+<?php
 require "functions.inc.php";
 include "data/settings.inc.php";
 
-GLOBAL $db_handle;
+global $db_handle;
 
 $task='';
 $password='';
 $user='admin';
-if(isset($_POST["task"])) $task = $_POST["task"];
-if(isset($_POST["user"])) $user = $_POST["user"];
-if(isset($_POST["password"])) $password = $_POST["password"];
-if(isset($_POST["ip"])) $device = $ip = $_POST["ip"];
-if(isset($_POST["name"])) $name = $_POST["name"];
-
-if ($task == "discover")
-{
-
-    $show_modal = true;
-    $output = "Does not appear to be a Tasmota device!!";
-    if(getTasmotaScan($ip,$user,$password)) {
-        if($status=getTasmotaStatus($ip,$user,$password)) {
-            if($status2=getTasmotaStatus2($ip,$user,$password)) {
-                if(dbDeviceExist($ip)) {
-                    $show_modal=true;
-                    $output = 'This device already exists in the database!';
-                } else {
-                    $name=$status['Status']['FriendlyName'][0];
-                    $version=$status2['StatusFWR']['Version'];
-                    if(dbDeviceAdd($name,$ip,$version,$password)) {
-                        $show_modal = true;
-                $output = "<center><b>" . $name . " Added Successfully!</b><center>";
-                    } else {
-                        $show_modal = true;
-                        $output = "Error adding device";
-            }
-        }
-        }
-    }
-    }
+if (isset($_POST["task"])) {
+    $task = $_POST["task"];
+}
+if (isset($_POST["user"])) {
+    $user = $_POST["user"];
+}
+if (isset($_POST["password"])) {
+    $password = $_POST["password"];
+}
+if (isset($_POST["ip"])) {
+    $device = $ip = $_POST["ip"];
+}
+if (isset($_POST["name"])) {
+    $name = $_POST["name"];
 }
 
-if ($task == "edit")
-{
-    if(isset($_POST['oldip'])) $old_ip = $_POST['oldip'];
-    if(isset($_POST['oldname'])) $old_name = $_POST['oldname'];
+if ($task == "discover") {
+    $show_modal = true;
+    $output = '<center>'.addTasmotaDevice($ip, $user, $password).'<br></center>';
+}
 
-    if(isset($old_ip) && isset($ip)) {
+if ($task == "discoverall") {
+    $show_modal = true;
+    $output = '<center>';
+    if (!is_array($ip)) {
+        $output .= "You didn't select any devices.<br>";
+    } else {
+        foreach($ip as $i) {
+            $output .= addTasmotaDevice($i, $user, $password).'<br>';
+        }
+    }
+    $output .= '</center>'; 
+}
+
+
+if ($task == "edit") {
+    if (isset($_POST['oldip'])) {
+        $old_ip = $_POST['oldip'];
+    }
+    if (isset($_POST['oldname'])) {
+        $old_name = $_POST['oldname'];
+    }
+
+    if (isset($old_ip) && isset($ip)) {
         $old_folder = preg_replace('/\s+/', '', $old_name);
         $old_folder = "data/" . $old_folder;
     
         $new_folder = preg_replace('/\s+/', '', $name);
         $new_folder = "data/" . $new_folder;
 
-        if (dbDeviceRename($old_ip,$name,$ip,$password))
-            {
-		if($name !== $old_name)
-			{
+        if (dbDeviceRename($old_ip, $name, $ip, $password)) {
+            if ($name !== $old_name) {
                 $old_folder = realpath("/" . $old_folder);
                 $new_folder = realpath("/" . $new_folder);
-				if(file_exists(realpath("/" . $old_folder)))
-					{
+                if (file_exists(realpath("/" . $old_folder))) {
                     echo $old_folder . "<br>";
                     echo $new_folder . "<br>";
-					rename($old_folder, $new_folder);
-					}
-			}
-            $show_modal = true;
-                $output = "<center><b>" . $name . " updated up successfully</b><br></center>";
+                    rename($old_folder, $new_folder);
+                }
             }
-            else
-            {
+            $show_modal = true;
+            $output = "<center><b>" . $name . " updated up successfully</b><br></center>";
+        } else {
             $show_modal = true;
             echo "<center><b>Error updating record for ".$old_ip." ".$name." <br>";
-            }
-
+        }
     }
 }
 
 // SINGLE BACKUP ROUTINE
-if ($task == "singlebackup")
-{
+if ($task == "singlebackup") {
     $show_modal = true;
     $output = "<center><b>Device not found: ".$ip."</b></center>";
 
     $devices = dbDeviceIp($ip);
-    if($devices!==false) {
-        foreach($devices as $db_field)
-        {
-
-            if(backupSingle($db_field['id'],$db_field['name'],$db_field['ip'],'admin',$db_field['password']))
-            {
+    if ($devices!==false) {
+        foreach ($devices as $db_field) {
+            if (backupSingle($db_field['id'], $db_field['name'], $db_field['ip'], 'admin', $db_field['password'])) {
                 $show_modal = true;
                 $output = "<center><b>Backup failed</b></center>";
             } else {
@@ -101,59 +96,48 @@ if ($task == "singlebackup")
     }
 }
 
-if ($task == "backupall")
-{
+if ($task == "backupall") {
     $errorcount = backupAll();
 
     $show_modal = true;
-    if ($errorcount < 1)
-    {
-
+    if ($errorcount < 1) {
         $output = "All backups completed successfully!";
-
-    }
-    else
-    {
+    } else {
         $output = "<font color='red'><b>Not all backups completed successfully!</b></font>";
     }
 }
 
-if ($task == "delete")
-{
+if ($task == "delete") {
     $show_modal = true;
     try {
-        if(dbDeviceDel($ip)) {
-        $output = $name . " deleted successfully from the database.";
-        $output2 = "<br><font color='red'><b><i>!!NO BACKUPS WERE DELETED. PLEASE DO THIS MANUALLY!!</i></b>";
+        if (dbDeviceDel($ip)) {
+            $output = $name . " deleted successfully from the database.";
+            $output2 = "<br><font color='red'><b><i>!!NO BACKUPS WERE DELETED. PLEASE DO THIS MANUALLY!!</i></b>";
         } else {
             $output = "Error deleting  " . $ip;
         }
-    } catch(PDOException $e) {
+    } catch (PDOException $e) {
         $output = "Error deleting  " . $ip . " : " . $e->getMessage();
     }
 }
 
-if ($task == "noofbackups")
-{
-
+if ($task == "noofbackups") {
     $findname = preg_replace('/\s+/', '_', $name);
     $findname = preg_replace('/[^A-Za-z0-9\-]/', '', $findname);
     $directory = "data/backups/" . $findname;
-    $scanned_directory = array_diff(scandir($directory) , array(
+    $scanned_directory = array_diff(scandir($directory), array(
         '..',
         '.'
     ));
 
     $out = array();
-    foreach ($scanned_directory as $value)
-    {
+    foreach ($scanned_directory as $value) {
         $link = strtolower(implode("-", explode(" ", $value)));
         $out[] = '<a href="data/backups/' . $findname . '/' . $link . '">' . $link . '</a>';
     }
     $output = implode("<br>", $out);
 
     $show_modal = true;
-
 }
 
 ?>
@@ -180,8 +164,8 @@ if ($task == "noofbackups")
 <script type="text/javascript" class="init">                                                                
 $(document).ready(function() {                                                                              
         $('#status').DataTable({                                                                            
-        "order": [[<?PHP echo $sort; ?>, "asc" ]],
-        "pageLength": <?PHP echo $amount; ?>,
+        "order": [[<?php echo $sort; ?>, "asc" ]],
+        "pageLength": <?php echo $amount; ?>,
         "statesave": true,
         "autoWidth": true
 } );            
@@ -199,12 +183,11 @@ $(document).ready(function() {
         <tr><th><b>NAME</th><th>IP</th><th>AUTH</th><th><b>VERSION</th><th>LAST BACKUP</th><th><b>FILES</th><th><b>BACKUP</b></th><th>EDIT</th><th><b>DELETE</b></th></tr>
     </thead>                                                                                                
     <tbody>  
-<?PHP
+<?php
 $relcount = 1;
 
     $devices = dbDevicesSort();
-    foreach ($devices as $db_field )
-    {
+    foreach ($devices as $db_field) {
         $id = $relcount;
         $name = $db_field['name'];
         $ip = $db_field['ip'];
@@ -226,7 +209,7 @@ $relcount = 1;
   <form method='POST' action='index.php'><input type='hidden' value='discover' name='task'><input type="text" name="ip" placeholder="ip address"><input type="password" name="password" placeholder="password"><input type='submit' value='Add' class='btn-xs btn-danger'></form>
 <form method="POST" action="scan.php"><input type=text name=range placeholder="192.168.1.1-255"><input type=hidden name=task value=scan><input type=submit value=Discover class='btn-xs btn-danger'></form>
 <br><br>
-<div style='text-align:right;font-size:11px;'><hr/><a href='https://github.com/danmed/TasmoBackupV1' target='_blank' style='color:#aaa;'>TasmoBackup 1.0 by Dan Medhurst</a></div>
+<div style='text-align:right;font-size:11px;'><hr/><a href='https://github.com/danmed/TasmoBackupV1' target='_blank' style='color:#aaa;'>TasmoBackup 1.01 by Dan Medhurst</a></div>
 
     <?php
 if (isset($show_modal) && $show_modal):
@@ -253,9 +236,13 @@ endif;
       </div>
       <div class="modal-body">
         <p><center>
-          <?PHP if(isset($output)) echo $output; ?>
+          <?php if (isset($output)) {
+    echo $output;
+} ?>
           <br>
-          <?PHP if(isset($output2)) echo $output2; ?>
+          <?php if (isset($output2)) {
+    echo $output2;
+} ?>
         </p>
       </div>
       <div class="modal-footer">

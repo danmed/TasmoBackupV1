@@ -29,5 +29,5 @@ if ($_POST["export"]!="") {
     }
     fclose($fp);
 }
-header("Location: settings.php");
+//header("Location: settings.php");
 ?>

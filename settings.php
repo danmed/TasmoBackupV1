@@ -72,7 +72,7 @@ $(document).ready(function() {
 
 <tr valign='middle'><td>Sort Column</td><td><form method='POST' action='settings.php'><center><input type="hidden" name="sort" value="sort"><select name ="sortoption"><option value="0">Name</option><option value="1">IP</option><option value="2">Auth</option><option value="3">Version</option><option value="4">Last Backup</option></select></td><td><center><input type='submit' value='Submit' class='btn-xs btn-success'></form></td></tr>
 <tr valign='middle'><td>Amount of Rows</td><td><center><form method='POST' action='settings.php'><input type="hidden" name="amount" value="amount"><input type='text' name='amountoption' value='<?php echo $amount; ?>'></td><td><center><input type='submit' value='Submit' class='btn-xs btn-success'></form></td></tr>
-<tr valign='middle'><td>Export Devices</td><td><center><form method='POST' action='settings.php'><input type="hidden" name="export" value="export"><select name ="sortoption"><option value="0">CSV</option></td><td><center><input type='submit' value='Submit' class='btn-xs btn-success'></form></td></tr>
+<tr valign='middle'><td>Export Devices</td><td><center><form method='POST' action='export.php'><input type="hidden" name="export" value="export"><select name ="sortoption"><option value="0">CSV</option></td><td><center><input type='submit' value='Submit' class='btn-xs btn-success'></form></td></tr>
            </tbody>                                                                                          
     </table>                                                                                                
     </div>     

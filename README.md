@@ -12,26 +12,6 @@ Backup the configs of all your Tasmota devices
 * Download individual backups
 * No duplicates (based on IP)
 
-# Requirements
-
-* PHP
-* PHP CURL - sudo apt-get install curl
-* Mysql / MariaDB
-
-# Install
-
-* Clone this repo
-* Create a folder called data
-* Create a folder called data/backups
-* Chmod 777 data/backups
-* chmod 777 data
-* Copy config.inc.php.example to data/config.inc.php (This will prevent it being overwitten on new pulls)
-* Copy settings.inc.php to data/settings.inc.php(This will prevent it being overwitten on new pulls)
-* chmod 777 data/settings.inc.php
-* Edit config.inc.php to reflect your MYSQL server, username and password
-* Navigate to http://ipaddress:8259/createdb.php to create the database
-* Navigate to http://ipaddress:8259
-
 # Docker-compose
 ```yaml
 version: '2'

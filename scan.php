@@ -47,7 +47,9 @@ $(document).ready(function() {
 
 <?php
 require 'functions.inc.php';
+require 'mqtt.inc.php';
 
+global $settings;
 
 if ($_POST["task"]=="scan") {
     $password='';
@@ -57,6 +59,9 @@ if ($_POST["task"]=="scan") {
     }
     if (isset($_POST['password'])) {
         $password=$_POST['password'];
+    }
+    if (isset($_POST['topic'])) {
+        $mqtt_topic=$_POST['topic'];
     }
     set_time_limit(0);
     print(str_repeat(" ", 300) . "\n");
@@ -82,6 +87,22 @@ if ($_POST["task"]=="scan") {
                             echo "<tr valign='middle'><td><center><input type='checkbox' name='ip[]' value='" . $ip . "'></td>".
                      "<td>" . $name . "</td>".
                      "<td><center><a href='http://" . $ip . "'>" . $ip . "</a></td></tr>";
+                        }
+                    }
+
+                    if($settings['mqtt_host']) {
+                        $mqtt=setupMQTT($settings['mqtt_host'], $settings['mqtt_port'], $settings['mqtt_user'], $settings['mqtt_password']);
+                        if(!isset($mqtt_topic)) $mqtt_topic=$settings['mqtt_topic'];
+                        $results=getTasmotaMQTTScan($mqtt,$mqtt_topic);
+                        if(count($results)>0) {
+                            foreach($results as $found) {
+                                $ip=$found['ip'];
+                                $name='MQTT ';
+                                if(isset($found['name'])) $name='MQTT '.$found['name'];
+                                echo "<tr valign='middle'><td><center><input type='checkbox' name='ip[]' value='" . $ip . "'></td>".
+                                     "<td>" . $name . "</td>".
+                                     "<td><center><a href='http://" . $ip . "'>" . $ip . "</a></td></tr>";
+                            }
                         }
                     }
                 }

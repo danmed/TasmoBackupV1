@@ -1,6 +1,5 @@
 <?PHP
 
-include "data/settings.inc.php";
 require "functions.inc.php";
 
 global $db_handle;

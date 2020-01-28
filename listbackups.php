@@ -1,9 +1,10 @@
 <!DOCTYPE html>                                                                                              
 <?php
 require "functions.inc.php";
-include "data/settings.inc.php";
 
 global $db_handle;
+global $settings;
+
 if (isset($_POST["name"])) {
     $name = $_POST["name"];
 }
@@ -32,7 +33,7 @@ if (isset($_POST["name"])) {
 $(document).ready(function() {                                                                              
         $('#status').DataTable({                                                                            
         "order": [[0, "desc" ]],
-        "pageLength": <?php echo $amount; ?>,
+        "pageLength": <?php echo $settings['amount']; ?>,
         "statesave": true,
         "autoWidth": true
 } );            

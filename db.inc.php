@@ -3,6 +3,7 @@
 require_once('data/config.inc.php');
 
 global $db_handle;
+global $settings;
 
 if ($DBType=='mysql') {
     $db_handle = new \PDO('mysql:host='.$DBServer.';dbname='.$DBName, $DBUser, $DBPassword);
@@ -38,6 +39,11 @@ if ($DBType=='mysql') {
     data text,
     INDEX (deviceid,date) )
     ");
+
+    $db_handle->exec("CREATE TABLE IF NOT EXISTS settings (
+    name varchar(128) PRIMARY KEY NOT NULL,
+    value varchar(255) NOT NULL
+    ");
 }
 
 if ($DBType=='sqlite') {
@@ -64,6 +70,30 @@ if ($DBType=='sqlite') {
     $db_handle->exec("CREATE INDEX IF NOT EXISTS backupsdeviceid
     ON backups(deviceid, date)
     ");
+
+    $db_handle->exec("CREATE TABLE IF NOT EXISTS settings (
+    name varchar(128) PRIMARY KEY NOT NULL,
+    value varchar(255) NOT NULL
+    ");
+}
+
+$stm = $db_handle->prepare("select name,value from settings");
+if($stm->execute()) {
+    while($result=$stm->fetch(PDO::FETCH_ASSOC)) {
+        $settings[$result['name']]=$result['value'];
+    }
+}
+
+function dbSettingsUpdate($name,$value)
+{
+    global $db_handle;
+    $stm = $db_handle->prepare("UPDATE settings SET value = :value WHERE name = :name");
+    if($stm->execute($value,$name))
+        return true;
+    $stm = $db_handle->prepare("INSERT INTO settings(name,value) VALUES(:name,:value)");
+    if($stm->execute($name,$value))
+        return true;
+    return false;
 }
 
 function dbDeviceExist($ip)

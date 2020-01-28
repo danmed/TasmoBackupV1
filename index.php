@@ -1,9 +1,9 @@
 <!DOCTYPE html>                                                                                              
 <?php
 require "functions.inc.php";
-include "data/settings.inc.php";
 
 global $db_handle;
+global $settings;
 
 $task='';
 $password='';
@@ -164,8 +164,8 @@ if ($task == "noofbackups") {
 <script type="text/javascript" class="init">                                                                
 $(document).ready(function() {                                                                              
         $('#status').DataTable({                                                                            
-        "order": [[<?php echo $sort; ?>, "asc" ]],
-        "pageLength": <?php echo $amount; ?>,
+        "order": [[<?php echo $settings['sort']; ?>, "asc" ]],
+        "pageLength": <?php echo $settings['amount']; ?>,
         "statesave": true,
         "autoWidth": true
 } );            

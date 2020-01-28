@@ -1,6 +1,5 @@
 <?php
 require "db.inc.php";
-include "data/settings.inc.php";
 
 function getBetween($content, $start, $end)
 {

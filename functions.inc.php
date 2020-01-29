@@ -85,7 +85,7 @@ function getTasmotaBackup($ip, $user, $password, $filename)
     $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     fclose($fp);
     curl_close($ch);
-          
+
     if (!$err && $statusCode == 200) {
         return true;
     }

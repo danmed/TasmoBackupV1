@@ -42,7 +42,7 @@ if ($DBType=='mysql') {
 
     $db_handle->exec("CREATE TABLE IF NOT EXISTS settings (
     name varchar(128) PRIMARY KEY NOT NULL,
-    value varchar(255) NOT NULL
+    value varchar(255) NOT NULL )
     ");
 }
 
@@ -73,7 +73,7 @@ if ($DBType=='sqlite') {
 
     $db_handle->exec("CREATE TABLE IF NOT EXISTS settings (
     name varchar(128) PRIMARY KEY NOT NULL,
-    value varchar(255) NOT NULL
+    value varchar(255) NOT NULL )
     ");
 }
 
@@ -87,13 +87,13 @@ if($stm->execute()) {
 function dbSettingsUpdate($name,$value)
 {
     global $db_handle;
+    global $settings;
     $stm = $db_handle->prepare("UPDATE settings SET value = :value WHERE name = :name");
-    if($stm->execute($value,$name))
-        return true;
+    $stm->execute(array(':value'=>$value,':name'=>$name));
     $stm = $db_handle->prepare("INSERT INTO settings(name,value) VALUES(:name,:value)");
-    if($stm->execute($name,$value))
-        return true;
-    return false;
+    $stm->execute(array(':value'=>$value,':name'=>$name));
+    $settings[$name]=$value;
+    return true;
 }
 
 function dbDeviceExist($ip)

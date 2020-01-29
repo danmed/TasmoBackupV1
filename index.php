@@ -1,4 +1,4 @@
-<!DOCTYPE html>                                                                                              
+<!DOCTYPE html>
 <?php
 require "functions.inc.php";
 
@@ -39,7 +39,7 @@ if ($task == "discoverall") {
             $output .= addTasmotaDevice($i, $user, $password).'<br>';
         }
     }
-    $output .= '</center>'; 
+    $output .= '</center>';
 }
 
 
@@ -54,7 +54,7 @@ if ($task == "edit") {
     if (isset($old_ip) && isset($ip)) {
         $old_folder = preg_replace('/\s+/', '', $old_name);
         $old_folder = "data/" . $old_folder;
-    
+
         $new_folder = preg_replace('/\s+/', '', $name);
         $new_folder = "data/" . $new_folder;
 
@@ -141,48 +141,48 @@ if ($task == "noofbackups") {
 }
 
 ?>
-<html lang="en">                                                                                            
-<head>                                                                                                      
-<!-- Global site tag (gtag.js) - Google Analytics -->                                                        
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-116906-4"></script>                        
-<script>                                                                                                    
-  window.dataLayer = window.dataLayer || [];                                                                
-  function gtag(){dataLayer.push(arguments);}                                                                
-  gtag('js', new Date());                                                                                    
-                                                                                                            
-  gtag('config', 'UA-116906-4');                                                                            
-</script>                                                                                                    
-                                                                                                            
-<title>TasmoBackup</title>                                                                              
-  <meta charset="utf-8">                                                                                    
-  <meta name="viewport" content="width=device-width, initial-scale=1">                                      
-  <link rel="stylesheet" href="resources/bootstrap.min.css">      
-  <script src="resources/jquery.min.js"></script>                  
-  <script src="resources/bootstrap.min.js"></script>                
+<html lang="en">
+<head>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-116906-4"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-116906-4');
+</script>
+
+<title>TasmoBackup</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="resources/bootstrap.min.css">
+  <script src="resources/jquery.min.js"></script>
+  <script src="resources/bootstrap.min.js"></script>
   <link rel="stylesheet" type="text/css" href="resources/datatables.min.css"/>
   <script type="text/javascript" src="resources/datatables.min.js"></script>
-<script type="text/javascript" class="init">                                                                
-$(document).ready(function() {                                                                              
-        $('#status').DataTable({                                                                            
-        "order": [[<?php echo $settings['sort']; ?>, "asc" ]],
-        "pageLength": <?php echo $settings['amount']; ?>,
+<script type="text/javascript" class="init">
+$(document).ready(function() {
+        $('#status').DataTable({
+        "order": [[<?php echo isset($settings['sort'])?$settings['sort']:0; ?>, "asc" ]],
+        "pageLength": <?php echo isset($settings['amount'])?$settings['amount']:100; ?>,
         "statesave": true,
         "autoWidth": true
-} );            
-} );                                                                                                        
-                                                                                                            
-        </script>                                                                                            
-</head>                                                                                                      
-                                                                                                            
-  <body><font size="2">                                                                                      
-                                                  
-    <div class="container">                                                                                  
-    <table class="table table-striped table-bordered" id="status">                                          
-    <thead>                                                                                                  
-	    <tr><th colspan="9"><center><b>TasmoBackup <a href="settings.php"><img src="settings.png"></a></th></tr>                                                
+} );
+} );
+
+        </script>
+</head>
+
+  <body><font size="2">
+
+    <div class="container">
+    <table class="table table-striped table-bordered" id="status">
+    <thead>
+	    <tr><th colspan="9"><center><b>TasmoBackup <a href="settings.php"><img src="settings.png"></a></th></tr>
         <tr><th><b>NAME</th><th>IP</th><th>AUTH</th><th><b>VERSION</th><th>LAST BACKUP</th><th><b>FILES</th><th><b>BACKUP</b></th><th>EDIT</th><th><b>DELETE</b></th></tr>
-    </thead>                                                                                                
-    <tbody>  
+    </thead>
+    <tbody>
 <?php
 $relcount = 1;
 
@@ -200,14 +200,15 @@ $relcount = 1;
         $relcount = $relcount + 1;
     }
 
-?>                                                                                                          
-           </tbody>                                                                                          
-    </table>                                                                                                
-    </div>     
+?>
+           </tbody>
+    </table>
+    </div>
 
 <center><form method='POST' action='index.php'><input type='hidden' value='backupall' name='task'><input type='submit' value='Backup All' class='btn-xs btn-success'></form><br>
   <form method='POST' action='index.php'><input type='hidden' value='discover' name='task'><input type="text" name="ip" placeholder="ip address"><input type="password" name="password" placeholder="password"><input type='submit' value='Add' class='btn-xs btn-danger'></form>
 <form method="POST" action="scan.php"><input type=text name=range placeholder="192.168.1.1-255"><input type="password" name="password" placeholder="password"><input type=hidden name=task value=scan><input type=submit value=Discover class='btn-xs btn-danger'></form>
+<form method="POST" action="scan.php"><input type=text name=mqtt_topic value='<?php echo isset($settings['mqtt_topic'])?$settings['mqtt_topic']:'tasmotas'; ?>'><input type="password" name="password" placeholder="password"><input type=hidden name=task value=mqtt><input type=submit value="MQTT Discover" class='btn-xs btn-danger'></form>
 <br><br>
 <div style='text-align:right;font-size:11px;'><hr/><a href='https://github.com/danmed/TasmoBackupV1' target='_blank' style='color:#aaa;'>TasmoBackup 1.01 by Dan Medhurst</a></div>
 

@@ -75,9 +75,8 @@ function collectMQTTStatus($topic, $msg)
         $name=$topics[0];
     if($name) {
         $mqtt_found[$name]['status']=$msg;
-        echo "status0: $name\t$msg\n";
     }
-    return;    
+    return;
 }
 
 function collectMQTTStatus2($topic, $msg)
@@ -93,7 +92,6 @@ function collectMQTTStatus2($topic, $msg)
         $name=$topics[0];
     if($name) {
         $mqtt_found[$name]['status2']=$msg;
-        echo "status2: $name\t$msg\n";
     }
     return;
 }
@@ -111,8 +109,7 @@ function collectMQTTStatus5($topic, $msg)
         $name=$topics[0];
     if($name) {
         $mqtt_found[$name]['status5']=$msg;
-        echo "status5: $name\t$msg\n";
     }
-    return;    
+    return;
 }
 

@@ -28,6 +28,18 @@ if (isset($_POST['mqtt_password'])) {
 if (isset($_POST['mqtt_topic'])) {
     dbSettingsUpdate('mqtt_topic',$_POST['mqtt_topic']);
 }
+if (isset($_POST['backup_minhours'])) {
+    dbSettingsUpdate('backup_minhours',intval($_POST['backup_minhours']));
+}
+if (isset($_POST['backup_maxdays'])) {
+    dbSettingsUpdate('backup_maxdays',intval($_POST['backup_maxdays']));
+}
+if (isset($_POST['backup_maxcount'])) {
+    dbSettingsUpdate('backup_maxcount',intval($_POST['backup_maxcount']));
+}
+if (isset($_POST['backup_folder'])) {
+    dbSettingsUpdate('backup_folder',$_POST['backup_folder']);
+}
 
 
 ?>
@@ -82,6 +94,10 @@ $(document).ready(function() {
 <tr valign='middle'><td>MQTT Username</td><td><center><input type="text" name='mqtt_user' value='<?php if(isset($settings['mqtt_user'])) echo $settings['mqtt_user']; ?>'></td></tr>
 <tr valign='middle'><td>MQTT Password</td><td><center><input type="text" name='mqtt_password' value='<?php if(isset($settings['mqtt_password'])) echo $settings['mqtt_password']; ?>'></td></tr>
 <tr valign='middle'><td>MQTT Topic</td><td><center><input type="text" name='mqtt_topic' value='<?php echo isset($settings['mqtt_topic'])?$settings['mqtt_topic']:'tasmotas'; ?>'></td></tr>
+<tr valign='middle'><td>Backup All Min Hours</td><td><center><input type="text" name='backup_minhours' value='<?php echo isset($settings['backup_minhours'])?$settings['backup_minhours']:'23'; ?>'></td></tr>
+<tr valign='middle'><td>Backup Max Days Old</td><td><center><input type="text" name='backup_maxdays' value='<?php echo isset($settings['backup_maxdays'])?$settings['backup_maxdays']:''; ?>'></td></tr>
+<tr valign='middle'><td>Backup Max Count</td><td><center><input type="text" name='backup_maxcount' value='<?php echo isset($settings['backup_maxcount'])?$settings['backup_maxcount']:''; ?>'></td></tr>
+<tr valign='middle'><td>Backup Data Directory</td><td><center><input type="text" name='backup_folder' value='<?php echo $settings['backup_folder']; ?>'></td></tr>
 
 <tr><td>&nbsp;</td><td><input type='submit' value='Save' class='btn-xs btn-success'></td></tr>
            </tbody>

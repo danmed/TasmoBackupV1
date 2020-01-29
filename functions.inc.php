@@ -92,22 +92,41 @@ function getTasmotaBackup($ip, $user, $password, $filename)
     return false;
 }
 
+function backupCleanup($id)
+{
+    global $db_handle;
+    global $settings;
+
+    $backupfolder = $settings['backup_folder'];
+
+    $days=0;
+    $count=0;
+    if(isset($settings['backup_maxdays']))
+        $days=intval($settings['backup_maxdays']);
+    if(isset($settings['backup_maxcount']))
+        $count=intval($settings['backup_maxcount']);
+    if($days>0 || $count>0)
+        return dbBackupTrim($id,$days,$count);
+    return true;
+}
+
 function backupSingle($id, $name, $ip, $user, $password)
 {
     global $db_handle;
+    global $settings;
 
-    $backupfolder = 'data/backups/';
+    $backupfolder = $settings['backup_folder'];
 
     $savename = preg_replace('/\s+/', '_', $name);
-    $savename = preg_replace('/[^A-Za-z0-9\-]/', '', $savename);
+    $savename = preg_replace('/[^A-Za-z0-9_\-]/', '', $savename);
     if (!file_exists($backupfolder . $savename)) {
         $oldmask = umask(0);
         mkdir($backupfolder . $savename, 0777, true);
         umask($oldmask);
     }
     $date = date('Y-m-d H:i:s');
-    $savedate = preg_replace('/\s+/', '_', $date);
-    $savedate = preg_replace('/[^A-Za-z0-9\-]/', '', $savedate);
+    $savedate = preg_replace('/(\s+|:)/', '_', $date);
+    $savedate = preg_replace('/[^A-Za-z0-9_\-]/', '', $savedate);
 
     if ($status2=getTasmotaStatus2($ip, $user, $password)) {
         $version = $status2['StatusFWR']['Version'];
@@ -143,12 +162,19 @@ function backupSingle($id, $name, $ip, $user, $password)
 function backupAll()
 {
     global $db_handle;
-    $stm = $db_handle->prepare("select * from devices order by id asc");
-    $stm->execute();
+    global $settings;
+
+    $hours=0;
+    if(isset($settings['backup_minhours']))
+        $hours=intval($settings['backup_minhours']);
+    $stm = $db_handle->prepare("select * from devices where lastbackup > :date");
+    $stm->execute(array(":date" => date('Y-m-d H:i:s',time()-(3600*$hours))));
     $errorcount = 0;
     while ($db_field = $stm->fetch(PDO::FETCH_ASSOC)) {
         if (backupSingle($db_field['id'], $db_field['name'], $db_field['ip'], 'admin', $db_field['password'])) {
             $errorcount++;
+        } else {
+            backupCleanup($db_field['id']);
         }
     }
     return $errorcount;

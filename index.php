@@ -52,22 +52,7 @@ if ($task == "edit") {
     }
 
     if (isset($old_ip) && isset($ip)) {
-        $old_folder = preg_replace('/\s+/', '', $old_name);
-        $old_folder = "data/" . $old_folder;
-
-        $new_folder = preg_replace('/\s+/', '', $name);
-        $new_folder = "data/" . $new_folder;
-
         if (dbDeviceRename($old_ip, $name, $ip, $password)) {
-            if ($name !== $old_name) {
-                $old_folder = realpath("/" . $old_folder);
-                $new_folder = realpath("/" . $new_folder);
-                if (file_exists(realpath("/" . $old_folder))) {
-                    echo $old_folder . "<br>";
-                    echo $new_folder . "<br>";
-                    rename($old_folder, $new_folder);
-                }
-            }
             $show_modal = true;
             $output = "<center><b>" . $name . " updated up successfully</b><br></center>";
         } else {
@@ -124,7 +109,7 @@ if ($task == "delete") {
 if ($task == "noofbackups") {
     $findname = preg_replace('/\s+/', '_', $name);
     $findname = preg_replace('/[^A-Za-z0-9\-]/', '', $findname);
-    $directory = "data/backups/" . $findname;
+    $directory = $settings['backup_folder'] . $findname;
     $scanned_directory = array_diff(scandir($directory), array(
         '..',
         '.'
@@ -133,7 +118,7 @@ if ($task == "noofbackups") {
     $out = array();
     foreach ($scanned_directory as $value) {
         $link = strtolower(implode("-", explode(" ", $value)));
-        $out[] = '<a href="data/backups/' . $findname . '/' . $link . '">' . $link . '</a>';
+        $out[] = '<a href="' . $settings['backup_folder'] . $findname . '/' . $link . '">' . $link . '</a>';
     }
     $output = implode("<br>", $out);
 
@@ -184,11 +169,10 @@ $(document).ready(function() {
     </thead>
     <tbody>
 <?php
-$relcount = 1;
 
     $devices = dbDevicesSort();
     foreach ($devices as $db_field) {
-        $id = $relcount;
+        $id = $db_field['id'];
         $name = $db_field['name'];
         $ip = $db_field['ip'];
         $version = $db_field['version'];
@@ -196,8 +180,7 @@ $relcount = 1;
         $numberofbackups = $db_field['noofbackups'];
         $password = $db_field['password'];
 
-        echo "<tr valign='middle'><td>" . $name . "</td><td><center><a href='http://" . $ip . "' target='_blank'>" . $ip . "</a></td><td><center><img src='" . (strlen($password) > 0 ? 'lock.png' : 'lock-open-variant.png') . "'></td><td><center>" . $version . "</td><td><center>" . $lastbackup . "</td><Td><center><form method='POST' action='listbackups.php'><input type='hidden' value='" . $name . "' name='name'><input type='submit' value='" . $numberofbackups . "' class='btn-xs btn-info'></form></td><td><center><form method='POST' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='singlebackup' name='task'><input type='submit' value='Backup' class='btn-xs btn-success'></form></td><td><center><form method='POST' action='edit.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='edit' name='task'><input type='submit' value='Edit' class='btn-xs btn-warning'></form></td><td><center><form method='POST' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='delete' name='task'><input type='submit' value='Delete' class='btn-xs btn-danger'></form></td></tr>";
-        $relcount = $relcount + 1;
+        echo "<tr valign='middle'><td>" . $name . "</td><td><center><a href='http://" . $ip . "' target='_blank'>" . $ip . "</a></td><td><center><img src='" . (strlen($password) > 0 ? 'lock.png' : 'lock-open-variant.png') . "'></td><td><center>" . $version . "</td><td><center>" . $lastbackup . "</td><Td><center><form method='POST' action='listbackups.php'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='" . $id . "' name='id'><input type='submit' value='" . $numberofbackups . "' class='btn-xs btn-info'></form></td><td><center><form method='POST' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='singlebackup' name='task'><input type='submit' value='Backup' class='btn-xs btn-success'></form></td><td><center><form method='POST' action='edit.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='edit' name='task'><input type='submit' value='Edit' class='btn-xs btn-warning'></form></td><td><center><form method='POST' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='delete' name='task'><input type='submit' value='Delete' class='btn-xs btn-danger'></form></td></tr>";
     }
 
 ?>

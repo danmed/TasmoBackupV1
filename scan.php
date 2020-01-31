@@ -27,7 +27,7 @@ global $settings;
 <script type="text/javascript" class="init">
 $(document).ready(function() {
         $('#status').DataTable({
-        "order": [[<?php echo isset($settings['sort'])?$settings['sort']:0; ?>, "asc" ]],
+        "order": [[1, "asc" ]],
         "pageLength": <?php echo isset($settings['amount'])?$settings['amount']:100; ?>,
         "statesave": true,
         "autoWidth": true

@@ -5,7 +5,7 @@ COPY *.png /var/www/html/
 COPY *.sh /var/www/html/
 COPY *.example /var/www/html/
 COPY resources /var/www/html/resources
-COPY lib /var/www/html/
+COPY lib /var/www/html/lib
 RUN rm /var/www/html/index.html \
  && mv /var/www/html/install.sh /etc/my_runonce/install.sh \
  && mv /var/www/html/runalways.sh /etc/my_runalways/runalways.sh \

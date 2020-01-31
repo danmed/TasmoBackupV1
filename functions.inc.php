@@ -167,7 +167,7 @@ function backupAll()
     $hours=0;
     if(isset($settings['backup_minhours']))
         $hours=intval($settings['backup_minhours']);
-    $stm = $db_handle->prepare("select * from devices where lastbackup > :date");
+    $stm = $db_handle->prepare("select * from devices where lastbackup < :date or lastbackup is NULL ");
     $stm->execute(array(":date" => date('Y-m-d H:i:s',time()-(3600*$hours))));
     $errorcount = 0;
     while ($db_field = $stm->fetch(PDO::FETCH_ASSOC)) {

@@ -4,7 +4,7 @@ COPY *.php /var/www/html/
 COPY *.png /var/www/html/
 COPY *.sh /var/www/html/
 COPY *.example /var/www/html/
-COPY resources /var/www/html/
+COPY resources /var/www/html/resources
 COPY lib /var/www/html/
 RUN rm /var/www/html/index.html \
  && mv /var/www/html/install.sh /etc/my_runonce/install.sh \

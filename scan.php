@@ -1,4 +1,10 @@
-<html lang="en">
+<?php
+require 'functions.inc.php';
+require 'mqtt.inc.php';
+
+global $settings;
+
+?><html lang="en">
 <head>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-116906-4"></script>
@@ -21,8 +27,8 @@
 <script type="text/javascript" class="init">
 $(document).ready(function() {
         $('#status').DataTable({
-        "order": [[0, "asc" ]],
-        "pageLength": 25,
+        "order": [[1, "asc" ]],
+        "pageLength": <?php echo isset($settings['amount'])?$settings['amount']:100; ?>,
         "statesave": true,
         "autoWidth": true
 } );
@@ -34,22 +40,17 @@ $(document).ready(function() {
   <body><font size="2">
 
     <div class="container">
-    <table class="table table-striped table-bordered" id="status">
-    <thead>
-    <tr><th colspan="9"><center><b>TasmoBackup</th></tr>
 	    <form action="index.php" method="POST">
                 <input type="hidden" name="task" value="discoverall">
                 <?php if(isset($_POST['user'])) { echo '<input type="hidden" name="user" value="'.$_POST['user'].'">'; } ?>
                 <?php if(isset($_POST['password'])) { echo '<input type="hidden" name="password" value="'.$_POST['password'].'">'; } ?>
-        <tr><th><b>ADD</th><th>NAME</th><th><b>IP</b></th></tr>
+    <table class="table table-striped table-bordered" id="status">
+    <thead>
+    <tr><th colspan="3"><center><b>TasmoBackup</b></th></tr>
+    <tr><th><b>ADD</b></th><th><b>NAME</b></th><th><b>IP</b></th></tr>
     </thead>
     <tbody>
-
 <?php
-require 'functions.inc.php';
-require 'mqtt.inc.php';
-
-global $settings;
 
 $password='';
 $user='admin';
@@ -85,9 +86,9 @@ if ($_POST["task"]=="scan") {
                     if (getTasmotaScan($ip, $user, $password)) {
                         if ($status=getTasmotaStatus($ip, $user, $password)) {
                             $name=$status['Status']['FriendlyName'][0];
-                            echo "<tr valign='middle'><td><center><input type='checkbox' name='ip[]' value='" . $ip . "'></td>".
+                            echo "<tr valign='middle'><td><center><input type='checkbox' name='ip[]' value='" . $ip . "'></center></td>".
                      "<td>" . $name . "</td>".
-                     "<td><center><a href='http://" . $ip . "'>" . $ip . "</a></td></tr>";
+                     "<td><center><a href='http://" . $ip . "'>" . $ip . "</a></center></td></tr>";
                         }
                     }
 
@@ -107,16 +108,16 @@ if ($_POST["task"]=="mqtt") {
                 $ip=$found['ip'];
                 $name='Unknown';
                 if(isset($found['name'])) $name=$found['name'];
-                echo "<tr valign='middle'><td><center><input type='checkbox' name='ip[]' value='" . $ip . "'></td>".
+                echo "<tr valign='middle'><td><center><input type='checkbox' name='ip[]' value='" . $ip . "'></center></td>".
                      "<td>" . $name . "</td>".
-                     "<td><center><a href='http://" . $ip . "'>" . $ip . "</a></td></tr>";
+                     "<td><center><a href='http://" . $ip . "'>" . $ip . "</a></center></td></tr>";
             }
         }
     }
 }
 ?>
-	    <tr><td colspan="3"><center><input type=submit class='btn-xs btn-success' value='Add Devices'></td></tr>
-	    </form>
 </tbody>
+	    <tr><td colspan="3"><center><input type=submit class='btn-xs btn-success' value='Add Devices'></center></td></tr>
     </table>
+    </form>
     </div>

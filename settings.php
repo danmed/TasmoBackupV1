@@ -83,7 +83,7 @@ $(document).ready(function() {
     <table class="table table-striped table-bordered" id="status">
     <thead>
     <tr><th colspan="2"><center><b><a href="index.php">TasmoBackup</a></th></tr>
-        <tr><th><b>Setting</th><th>Value</th></tr>
+        <tr><th><b>Setting</b></th><th><b>Value</b></th></tr>
     </thead>
     <tbody>
 
@@ -99,8 +99,8 @@ $(document).ready(function() {
 <tr valign='middle'><td>Backup Max Count</td><td><center><input type="text" name='backup_maxcount' value='<?php echo isset($settings['backup_maxcount'])?$settings['backup_maxcount']:''; ?>'></td></tr>
 <tr valign='middle'><td>Backup Data Directory</td><td><center><input type="text" name='backup_folder' value='<?php echo $settings['backup_folder']; ?>'></td></tr>
 
+</tbody>
 <tr><td>&nbsp;</td><td><input type='submit' value='Save' class='btn-xs btn-success'></td></tr>
-           </tbody>
     </table>
     <table>
     </form>

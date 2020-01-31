@@ -3,6 +3,7 @@
 require_once('data/config.inc.php');
 
 global $db_handle;
+global $settings;
 
 if ($DBType=='mysql') {
     $db_handle = new \PDO('mysql:host='.$DBServer.';dbname='.$DBName, $DBUser, $DBPassword);
@@ -38,6 +39,11 @@ if ($DBType=='mysql') {
     data text,
     INDEX (deviceid,date) )
     ");
+
+    $db_handle->exec("CREATE TABLE IF NOT EXISTS settings (
+    name varchar(128) PRIMARY KEY NOT NULL,
+    value varchar(255) NOT NULL )
+    ");
 }
 
 if ($DBType=='sqlite') {
@@ -64,6 +70,32 @@ if ($DBType=='sqlite') {
     $db_handle->exec("CREATE INDEX IF NOT EXISTS backupsdeviceid
     ON backups(deviceid, date)
     ");
+
+    $db_handle->exec("CREATE TABLE IF NOT EXISTS settings (
+    name varchar(128) PRIMARY KEY NOT NULL,
+    value varchar(255) NOT NULL )
+    ");
+}
+
+$stm = $db_handle->prepare("select name,value from settings");
+if($stm->execute()) {
+    while($result=$stm->fetch(PDO::FETCH_ASSOC)) {
+        $settings[$result['name']]=$result['value'];
+    }
+}
+if(!isset($settings['backup_folder']))
+    $settings['backup_folder']='data/backups/';
+
+
+function dbSettingsUpdate($name,$value)
+{
+    global $db_handle;
+    global $settings;
+    $stm = $db_handle->prepare("REPLACE INTO settings(name,value) VALUES(:name,:value)");
+    if(!$stm->execute(array(':value'=>$value,':name'=>$name)))
+        return false;
+    $settings[$name]=$value;
+    return true;
 }
 
 function dbDeviceExist($ip)
@@ -102,11 +134,74 @@ function dbDevices()
     return $stm->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function dbBackupList($name)
+function dbBackupList($id,$days=0)
 {
     global $db_handle;
-    $stm = $db_handle->prepare("select * from backups where name = :name order by date desc");
-    $stm->bindValue(':name', $name, PDO::PARAM_STR);
+
+    $days=intval($days);
+    $datecond='';
+    if($days>0) {
+        $date = date('Y-m-d H:i:s',time()-(86400*$days));
+        $datecond = ' and date < "'.$date.'" ';
+    }
+    $stm = $db_handle->prepare("select * from backups where deviceid = :id ".$datecond." order by date desc");
+    $stm->bindValue(':id', $id, PDO::PARAM_INT);
+    if (!$stm->execute()) {
+        return false;
+    }
+    return $stm->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function dbBackupCount($id)
+{
+    global $db_handle;
+
+    $stm = $db_handle->prepare("select count(*) from backups where deviceid = :id");
+    $stm->bindValue(':id', $id, PDO::PARAM_INT);
+    if (!$stm->execute()) {
+        return false;
+    }
+    return $stm->fetchColumn();
+}
+
+function dbBackupTrim($id,$days,$count)
+{
+    global $db_handle;
+
+    $days=intval($days);
+    $count=intval($count);
+    if($days==0 && $count==0)
+        return true;
+
+    $result=dbBackupList($id,$days);
+    if(!is_array($result))
+        return false;
+    if(count($result)<1)
+        return true;
+    if($count>0) {
+        $backups=dbBackupCount($id);
+        $count=($backups-$count); // Number to save - total backups - Number over age = number to remove
+        if($count>count($result))
+            $count=count($result);
+    } else {
+        $count=count($result);
+    }
+    if($count>0) {
+        for(;$count>0;$count--) {
+            $backup=array_pop($result);
+            unlink($backup['filename']);
+            $stm = $db_handle->prepare("delete from backups where id = :id");
+            $stm->execute(array(":id" => $backup['id']));
+        }
+        dbDeviceBackups($id);
+    }
+}
+
+function dbDevicesListBackups($count)
+{
+    global $db_handle;
+    $stm = $db_handle->prepare("select id from devices where noofbackups > :count ");
+    $stm->bindValue(':count', $count, PDO::PARAM_INT);
     if (!$stm->execute()) {
         return false;
     }
@@ -156,6 +251,27 @@ function dbDeviceDel($ip)
     return $stm->execute();
 }
 
+function dbDeviceBackups($id,$date=null,$version=null)
+{
+    global $db_handle;
+
+    $count = dbBackupCount($id);
+    $versioncond='';
+    if(isset($version))
+        $versioncond='version = :version, ';
+    $datecond='';
+    if(isset($date))
+        $datecond='lastbackup = :date, ';
+    $stm = $db_handle->prepare("UPDATE devices SET ".$versioncond.$datecond.' noofbackups = :noofbackups WHERE id = :id');
+    if(isset($version))
+        $stm->bindValue(':version', $version, PDO::PARAM_STR);
+    if(isset($date))
+        $stm->bindValue(':date', $date, PDO::PARAM_STR);
+    $stm->bindValue(':noofbackups', $count, PDO::PARAM_STR);
+    $stm->bindValue(':id', $id, PDO::PARAM_INT);
+    return $stm->execute();
+}
+
 function dbNewBackup($id, $name, $version, $date, $noofbackups, $filename)
 {
     global $db_handle;
@@ -169,11 +285,5 @@ function dbNewBackup($id, $name, $version, $date, $noofbackups, $filename)
         trigger_error("insert error: ".$stm->errorInfo()[2], E_USER_NOTICE);
         return false;
     }
-
-    $stm = $db_handle->prepare("UPDATE devices SET version = :version, lastbackup = :date, noofbackups = :noofbackups WHERE id = :id");
-    $stm->bindValue(':version', $version, PDO::PARAM_STR);
-    $stm->bindValue(':date', $date, PDO::PARAM_STR);
-    $stm->bindValue(':noofbackups', $noofbackups, PDO::PARAM_STR);
-    $stm->bindValue(':id', $id, PDO::PARAM_INT);
-    return $stm->execute();
+    return dbDeviceBackups($id,$date,$version);
 }

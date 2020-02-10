@@ -4,6 +4,7 @@
   "slug": "tasmobackup",
   "description": "Tasmota Backup Description",
   "url": "https://github.com/danmed/TasmoBackupV1",
+  "image": "danmed/tasmobackupv1",
   "arch": ["armv7", "aarch64", "amd64", "i386"],
   "homeassistant_api": false,
   "host_network": false,

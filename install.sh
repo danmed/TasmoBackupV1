@@ -9,6 +9,7 @@ if [ ! -f /var/www/html/data/config.inc.php ]; then
         done
     else
         mkdir /var/www/html/data
+        chmod 777 /vat/www/html/data
     fi
     cp /var/www/html/config.inc.php.example /var/www/html/data/config.inc.php
 fi

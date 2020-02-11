@@ -210,6 +210,10 @@ function dbBackupDel($id)
     $stm = $db_handle->prepare("delete from backups where id = :id");
     $stm->bindValue(':id',$id, PDO::PARAM_INT);
     return $stm->execute();
+    $stm = $db_handle->prepare("delete from backups where id = :id");
+    UPDATE backups SET backupcount = backupcount - 1 WHERE id = :id
+    $stm->bindValue(':id',$id, PDO::PARAM_INT);
+    return $stm->execute();
 }
 
 function dbDevicesListBackups($count)

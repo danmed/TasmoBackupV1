@@ -164,13 +164,13 @@ function dbBackupCount($id)
     return $stm->fetchColumn();
 }
 
-function dbBackupTrim($id,$days,$count)
+function dbBackupTrim($id,$days,$count,$all=false)
 {
     global $db_handle;
 
     $days=intval($days);
     $count=intval($count);
-    if($days==0 && $count==0)
+    if($days==0 && $count==0 && !$all)
         return true;
 
     $result=dbBackupList($id,$days);
@@ -245,9 +245,16 @@ function dbDeviceRename($oldip, $name, $ip, $password)
 function dbDeviceDel($ip)
 {
     global $db_handle;
-    $stm = $db_handle->prepare("delete from devices where ip = :ip");
+    $stm = $db_handle->prepare("select id from devices where ip = :ip");
     $stm->bindValue(':ip', $ip, PDO::PARAM_STR);
-
+    if (!$stm->execute())
+        return false;
+    $id=intval($stm->fetchColumn());
+    if($id==0)
+        return false;
+    dbBackupTrim($id,0,0,true);
+    $stm = $db_handle->prepare("delete from devices where id = :id");
+    $stm->bindValue(':id', $id, PDO::PARAM_INT);
     return $stm->execute();
 }
 

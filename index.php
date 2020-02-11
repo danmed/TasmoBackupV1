@@ -97,8 +97,7 @@ if ($task == "delete") {
     try {
         if (dbDeviceDel($ip)) {
             $output = $name . " deleted successfully from the database.";
-            $output2 = "<br><font color='red'><b><i>!!NO BACKUPS WERE DELETED. PLEASE DO THIS MANUALLY!!</i></b>";
-        } else {
+            } else {
             $output = "Error deleting  " . $ip;
         }
     } catch (PDOException $e) {

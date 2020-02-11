@@ -13,7 +13,7 @@ if (isset($_POST["id"])) {
 }
 if (isset($_POST["delbackup"])) {
 	$show_modal = true;
-    	$output = '<center>'.dbBackupDel($id.'<br></center>';
+    	$output = '<center>'.dbBackupDel($id).'<br></center>';
 }
 
 ?>

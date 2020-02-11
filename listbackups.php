@@ -13,7 +13,7 @@ if (isset($_POST["id"])) {
 }
 if (isset($_POST["delbackup"])) {
 	$show_modal = true;
-    	$output = '<center>'.dbBackupDel($id).'<br></center>';
+    	$output = '<center>'.dbBackupDel($_POST["backupid"]).'<br></center>';
 }
 
 ?>
@@ -63,13 +63,13 @@ $(document).ready(function() {
 
     $backups = dbBackupList($id);
     foreach ($backups as $db_field) {
-        $id = $db_field['id'];
+        $backupid = $db_field['id'];
         $version = $db_field['version'];
         $date = $db_field['date'];
         $filename = $db_field['filename'];
 
 
-        echo "<tr valign='middle'><td>" . $date . "</td><td><center>" . $version . "</td><td><a href='" . $filename . "'>DOWNLOAD</a></td><td><center><form action='listbackups.php' method='POST'><input type='hidden' name='delbackup' value='delbackup'><input type='hidden' name='id' value='" . $id . "'><input type='hidden' name='name' value='" . $name . "'><input type='submit' value='Delete' class='btn-xs btn-danger'></form></td></tr>";
+        echo "<tr valign='middle'><td>" . $date . "</td><td><center>" . $version . "</td><td><a href='" . $filename . "'>DOWNLOAD</a></td><td><center><form action='listbackups.php' method='POST'><input type='hidden' name='delbackup' value='delbackup'><input type='hidden' name='backupid' value='" . $backupid . "'><input type='hidden' name='id' value='" . $id . "'><input type='hidden' name='name' value='" . $name . "'><input type='submit' value='Delete' class='btn-xs btn-danger'></form></td></tr>";
     }
 
 ?>

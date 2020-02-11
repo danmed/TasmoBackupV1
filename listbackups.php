@@ -12,8 +12,8 @@ if (isset($_POST["id"])) {
     $id = intval($_POST["id"]);
 }
 if (isset($_POST["delbackup"])) {
-	$show_modal = true;
-    	$output = '<center>'.dbBackupDel($_POST["backupid"]).'<br></center>';
+	dbBackupDel($_POST["backupid"]);
+	dbDeviceBackups($id);
 }
 
 ?>

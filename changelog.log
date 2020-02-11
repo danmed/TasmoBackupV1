@@ -1,3 +1,7 @@
+##v1.02
+* Added delete backup option
+* Added remove backups when deleting device
+
 ##v1.01
 * Added multi select for scan
 * Code again cleaned up by patrickdk

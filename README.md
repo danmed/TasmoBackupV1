@@ -3,6 +3,11 @@
 # TasmoBackupV1
 Backup the configs of all your Tasmota devices
 
+# Latest Changes
+* Delete individual backups - 11.02.2020
+* Delete backups when device deleted - 11.02.2020
+* MQTT search for devices by topic
+
 # Features
 * Add single devices
 * Discover devices
@@ -62,11 +67,4 @@ docker run -d -p 8259:80 -v ./data:/var/www/html/data -e DBTYPE=mysql -e MYSQL_S
 
 # To-Do
 
-* ~~Create install.php~~
-* ~~Schedule for all backups~~
-* ~~Auto Discover devices - In Progress~~
-* ~~Prevent duplicates~~
-* Delete backups when device removed (Make sure it is accurate!)
-* ~~Make backup location customisable~~
-* ~~Edit function to change name of devices~~
-* Retention (Number of backups)
+* Add confirm option before deleting device or individual backups

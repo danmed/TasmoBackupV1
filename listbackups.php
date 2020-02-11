@@ -11,6 +11,10 @@ if (isset($_POST["name"])) {
 if (isset($_POST["id"])) {
     $id = intval($_POST["id"]);
 }
+if (isset($_POST["delbackup"])) {
+	dbBackupDel($id);
+}
+
 ?>
 <html lang="en">
 <head>
@@ -64,7 +68,7 @@ $(document).ready(function() {
         $filename = $db_field['filename'];
 
 
-        echo "<tr valign='middle'><td>" . $date . "</td><td><center>" . $version . "</td><td><a href='" . $filename . "'>DOWNLOAD</a></td></tr>";
+        echo "<tr valign='middle'><td>" . $date . "</td><td><center>" . $version . "</td><td><a href='" . $filename . "'>DOWNLOAD</a></td><td><center><form action='listbackups.php' method='POST'><input type='hidden' name='delbackup' value='delbackup'><input type='hidden' name='id' value='" . $id . "'><input type='submit' value='Delete' class='btn-xs btn-danger'></form></tr>";
     }
 
 ?>

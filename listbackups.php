@@ -56,7 +56,7 @@ $(document).ready(function() {
     <table class="table table-striped table-bordered" id="status">
     <thead>
 	    <tr><th colspan="3"><center><b><a href="index.php"><?php echo $name; ?></a></th></tr>
-        <tr><th><b>DATE</b></th><th><b>VERSION</b></th><th><b>FILE</b></th></tr>
+		    <tr><th><b>DATE</b></th><th><b>VERSION</b></th><th><b>FILE</b></th><th><b>DELETE</b></th></tr>
     </thead>
     <tbody>
 <?php

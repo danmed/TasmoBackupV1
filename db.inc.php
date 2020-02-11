@@ -197,6 +197,21 @@ function dbBackupTrim($id,$days,$count,$all=false)
     }
 }
 
+function dbBackupDel($id)
+{
+    global $db_handle;
+    $stm = $db_handle->prepare("select * from backups where id = :id");
+    $stm->bindValue(':id',$id, PDO::PARAM_INT);
+    if(!$stm->execute())
+        return false;
+    $row=$stm->fetch(PDO::FETCH_ASSOC);
+    if(isset($row['filename']))
+        unlink($row['filename']);
+    $stm = $db_handle->prepare("delete from backups where id = :id");
+    $stm->bindValue(':id',$id, PDO::PARAM_INT);
+    return $stm->execute();
+}
+
 function dbDevicesListBackups($count)
 {
     global $db_handle;

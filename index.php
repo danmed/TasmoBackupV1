@@ -159,7 +159,7 @@ $(document).ready(function() {
 $('#delconfirm').click(function(){
      /* when the submit button in the modal is clicked, submit the form */
     alert('submitting');
-    $('#deleteform').submit();
+    $(this).closest("form").submit();
 });
 
 

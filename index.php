@@ -156,7 +156,7 @@ $(document).ready(function() {
 } );
 
 
-$('#submit').click(function(){
+$('#delconfirm').click(function(){
      /* when the submit button in the modal is clicked, submit the form */
     alert('submitting');
     $('#deleteform').submit();
@@ -258,7 +258,7 @@ endif;
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <a href="#" id="submit" class="btn btn-success success">Submit</a>
+                <a href="#" id="delconfirm" class="btn btn-danger">Delete</a>
             </div>
         </div>
     </div>

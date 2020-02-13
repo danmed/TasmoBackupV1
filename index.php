@@ -154,11 +154,13 @@ $(document).ready(function() {
         "autoWidth": true
 } );
 } );
-$('#submit').click(function(){
-     /* when the submit button in the modal is clicked, submit the form */
-    alert('submitting');
-    $('#formfield').submit();
+
+
+$('form button[type="submit"]').on('click', function () {
+   $(this).parents('form').submit();
 });
+
+
         </script>
 </head>
 

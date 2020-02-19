@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <?php
-require "functions.inc.php";
+require "lib/functions.inc.php";
 
 if (isset($_POST['ip'])) {
     $ip = $_POST['ip'];

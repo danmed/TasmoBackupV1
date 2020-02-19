@@ -1,5 +1,4 @@
-ARG BUILD_FROM=php:7.2-apache
-FROM ${BUILD_FROM}
+FROM i386/php:7.2-apache
 MAINTAINER Dan Medhurst (danmed@gmail.com)
 COPY qemu-*-static /usr/bin/
 COPY *.php /var/www/html/

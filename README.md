@@ -4,6 +4,7 @@
 Backup the configs of all your Tasmota devices
 
 # Latest Changes
+* Confirmation before deleting a device - 13.02.2020
 * Delete individual backups - 11.02.2020
 * Delete backups when device deleted - 11.02.2020
 * MQTT search for devices by topic
@@ -67,4 +68,4 @@ docker run -d -p 8259:80 -v ./data:/var/www/html/data -e DBTYPE=mysql -e MYSQL_S
 
 # To-Do
 
-* Add confirm option before deleting device or individual backups
+

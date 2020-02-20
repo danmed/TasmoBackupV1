@@ -5,7 +5,7 @@
   "description": "Tasmota Backup Description",
   "url": "https://github.com/danmed/TasmoBackupV1",
   "image": "patrickdk/tasmobackupv1",
-  "arch": ["amd64","i386","aarch64","armv7","armv5"],
+  "arch": ["amd64","i386","aarch64","armv7"],
   "homeassistant_api": false,
   "host_network": false,
   "startup": "application",

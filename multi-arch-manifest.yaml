@@ -1,0 +1,25 @@
+image: patrickdk/tasmobackupv1:latest
+manifests:
+  - image: patrickdk/tasmobackupv1:latest-amd64
+    platform:
+      architecture: amd64
+      os: linux
+  - image: patrickdk/tasmobackupv1:latest-i386
+    platform:
+      architecture: i386
+      os: linux
+  - image: patrickdk/tasmobackupv1:latest-armv5
+    platform:
+      architecture: arm
+      os: linux
+      variant: v5
+  - image: patrickdk/tasmobackupv1:latest-armv7
+    platform:
+      architecture: arm
+      os: linux
+      variant: v7
+  - image: patrickdk/tasmobackupv1:latest-aarch64
+    platform:
+      architecture: arm64
+      os: linux
+      variant: v8

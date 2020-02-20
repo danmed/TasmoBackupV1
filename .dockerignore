@@ -1,0 +1,14 @@
+.dockerignore
+.git
+.gitignore
+data
+Dockerfile
+Dockerfile.aarch64
+Dockerfile.armv7
+Dockerfile.i386
+hooks
+multi-arch-manifest.yaml
+qemu-aarch64-static
+qemu-arm-static
+qemu-i386-static
+repository.json

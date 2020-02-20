@@ -9,9 +9,16 @@ chmod +x manifest-tool
 VERSION1="${IMAGE_NAME%-*}"
 VERSION="${VERSION1#*/}"
 
-sed -i -e "s|danmed/tasmobackupv1:latest|${VERSION}|" multi-arch-manifest.yaml
-set
-echo ---
-cat multi-arch-manifest.yaml
-echo ---
-./manifest-tool push from-spec multi-arch-manifest.yaml
+
+if ./manifest-tool inspect "${VERSION}-amd64"; then
+  if ./manifest-tool inspect "${VERSION}-i386"; then
+    if ./manifest-tool inspect "${VERSION}-armv7"; then
+      if ./manifest-tool inspect "${VERSION}-aarch64"; then
+        sed -i -e "s|danmed/tasmobackupv1:latest|${VERSION}|" multi-arch-manifest.yaml
+        ./manifest-tool push from-spec multi-arch-manifest.yaml
+      fi
+    fi
+  fi
+fi
+
+exit 0

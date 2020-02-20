@@ -1,6 +1,10 @@
 <?php
 require "db.inc.php";
 
+$strJsonFileContents = file_get_contents("./HA_addon/config.json");
+$array = json_decode($strJsonFileContents, true);
+$GLOBAL['VERSION']=$array['version'];
+
 function getBetween($content, $start, $end)
 {
     $r = explode($start, $content);

@@ -191,7 +191,7 @@ $(document).ready(function() {
 <form method="POST" action="scan.php"><input type=text name=range placeholder="192.168.1.1-255"><input type="password" name="password" placeholder="password"><input type=hidden name=task value=scan><input type=submit value=Discover class='btn-xs btn-danger'></form>
 <form method="POST" action="scan.php"><input type=text name=mqtt_topic value='<?php echo isset($settings['mqtt_topic'])?$settings['mqtt_topic']:'tasmotas'; ?>'><input type="password" name="password" placeholder="password"><input type=hidden name=task value=mqtt><input type=submit value="MQTT Discover" class='btn-xs btn-danger'></form>
 <br><br>
-<div style='text-align:right;font-size:11px;'><hr/><a href='https://github.com/danmed/TasmoBackupV1' target='_blank' style='color:#aaa;'>TasmoBackup 1.02 by Dan Medhurst</a></div>
+<div style='text-align:right;font-size:11px;'><hr/><a href='https://github.com/danmed/TasmoBackupV1' target='_blank' style='color:#aaa;'>TasmoBackup <?php echo $GLOBAL['VERSION']; ?> by Dan Medhurst</a></div>
 
     <?php
 if (isset($show_modal) && $show_modal):

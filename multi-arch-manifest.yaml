@@ -6,7 +6,7 @@ manifests:
       os: linux
   - image: patrickdk/tasmobackupv1:latest-i386
     platform:
-      architecture: i386
+      architecture: 386
       os: linux
   - image: patrickdk/tasmobackupv1:latest-armv7
     platform:

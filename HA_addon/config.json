@@ -1,7 +1,7 @@
 {
   "name": "TasmoBackup TESTING",
   "version": "1.02.08",
-  "name": "TasmoBackup",
+  "slug": "tasmobackup",
   "description": "Tasmota Backup TESTING",
   "url": "https://github.com/patrickdk77/TasmoBackupV1",
   "image": "patrickdk/tasmobackupv1",

@@ -8,11 +8,6 @@ manifests:
     platform:
       architecture: i386
       os: linux
-  - image: patrickdk/tasmobackupv1:latest-armv5
-    platform:
-      architecture: arm
-      os: linux
-      variant: v5
   - image: patrickdk/tasmobackupv1:latest-armv7
     platform:
       architecture: arm

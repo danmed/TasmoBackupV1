@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <?php
 
-require "functions.inc.php";
+require "lib/functions.inc.php";
 
 global $db_handle;
 global $settings;

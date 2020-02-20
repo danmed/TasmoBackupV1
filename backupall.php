@@ -1,5 +1,5 @@
 <?PHP
 
-require "functions.inc.php";
+require "lib/functions.inc.php";
 
 $errorcount=backupAll();

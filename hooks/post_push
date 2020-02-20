@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Use manifest-tool to create the manifest, given the experimental
+# "docker manifest" command isn't available yet on Docker Hub.
+
+curl -Lo manifest-tool https://github.com/estesp/manifest-tool/releases/download/v0.9.0/manifest-tool-linux-amd64
+chmod +x manifest-tool
+
+VERSION1="${IMAGE_NAME%-*}"
+VERSION="${VERSION1##*:}"
+
+sed -i -e "s|:latest|:${VERSION}|" multi-arch-manifest.yaml
+set
+echo ---
+cat multi-arch-manifest.yaml
+echo ---
+./manifest-tool push from-spec multi-arch-manifest.yaml

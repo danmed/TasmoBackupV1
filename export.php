@@ -1,6 +1,6 @@
 <?PHP
 
-require "functions.inc.php";
+require "lib/functions.inc.php";
 
 global $db_handle;
 

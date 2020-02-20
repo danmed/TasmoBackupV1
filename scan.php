@@ -1,6 +1,6 @@
 <?php
-require 'functions.inc.php';
-require 'mqtt.inc.php';
+require 'lib/functions.inc.php';
+require 'lib/mqtt.inc.php';
 
 global $settings;
 

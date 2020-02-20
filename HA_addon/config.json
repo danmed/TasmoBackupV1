@@ -1,9 +1,9 @@
 {
-  "name": "TasmoBackup",
+  "name": "TasmoBackup TESTING",
   "version": "1.02.08",
   "slug": "tasmobackup",
-  "description": "Tasmota Backup",
-  "url": "https://github.com/danmed/TasmoBackupV1",
+  "description": "Tasmota Backup TESTING",
+  "url": "https://github.com/patrickdk/TasmoBackupV1",
   "image": "patrickdk/tasmobackupv1",
   "arch": ["amd64","i386","aarch64","armv7"],
   "homeassistant_api": false,

@@ -6,11 +6,11 @@
 curl -Lo manifest-tool https://github.com/estesp/manifest-tool/releases/download/v0.9.0/manifest-tool-linux-amd64
 chmod +x manifest-tool
 
-VERSION="${IMAGE_NAME%-*}"
+VERSION="${IMAGE_NAME#:*}"
 
 sed -i -e "s|:latest|:${VERSION}|" multi-arch-manifest.yaml
 set
 echo ---
 cat multi-arch-manifest.yaml
 echo ---
-#./manifest-tool push from-spec multi-arch-manifest.yaml
+./manifest-tool push from-spec multi-arch-manifest.yaml

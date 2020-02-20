@@ -3,6 +3,8 @@ FROM ${BUILD_FROM}
 MAINTAINER Dan Medhurst (danmed@gmail.com)
 COPY . /usr/bin/
 RUN echo "Start" \
+ && mv /var/www/html/install.sh /usr/bin/ \
+ && mv /var/www/html/qemu* /usr/bin/ \
  && chmod 755 /usr/bin/install.sh \
  && echo 'PassEnv DBTYPE'  >> /etc/apache2/conf-enabled/expose-env.conf \
  && echo 'PassEnv DBNAME'   >> /etc/apache2/conf-enabled/expose-env.conf \

@@ -7,9 +7,9 @@ curl -Lo manifest-tool https://github.com/estesp/manifest-tool/releases/download
 chmod +x manifest-tool
 
 VERSION1="${IMAGE_NAME%-*}"
-VERSION="${VERSION1##*:}"
+VERSION="${VERSION1#*/}"
 
-sed -i -e "s|:latest|:${VERSION}|" multi-arch-manifest.yaml
+sed -i -e "s|danmed/tasmobackupv1:latest|${VERSION}|" multi-arch-manifest.yaml
 set
 echo ---
 cat multi-arch-manifest.yaml

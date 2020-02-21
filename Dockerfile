@@ -1,9 +1,10 @@
 ARG BUILD_FROM=php:7.2-apache
 ARG BUILD_FROM_PREFIX
 ARG ARCH
+ARG QEMU_ARCH
 FROM ${BUILD_FROM_PREFIX}${BUILD_FROM}
 MAINTAINER Dan Medhurst (danmed@gmail.com)
-COPY install.sh qemu-${ARCH}-static /usr/bin/
+COPY install.sh qemu-${QEMU_ARCH}-static /usr/bin/
 COPY . /var/www/html/
 RUN echo "Start" \
  && rm -f install.sh qemu* \

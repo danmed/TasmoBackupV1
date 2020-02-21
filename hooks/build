@@ -12,9 +12,11 @@ for arch in ${verified_build_architectures[@]}; do
   echo "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
 
   BUILD_FROM_PREFIX="${build_from_prefix_map[${arch}]}"
+  QEMU_ARCH="${docker_qemu_arch_map[${arch}]}"
   docker build \
-    --build-arg BASE_IMAGE_PREFIX=${BUILD_FROM_PREFIX} \
+    --build-arg BUILD_FROM_PREFIX=${BUILD_FROM_PREFIX} \
     --build-arg ARCH=${arch} \
+    --build-arg QEMU_ARCH=${QEMU_ARCH} \
     --file $DOCKERFILE_PATH \
     --tag "${IMAGE_NAME}-${arch}"  \
     .

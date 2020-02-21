@@ -1,3 +1,63 @@
 #!/bin/bash
+set -eu
 
-docker build --file "${DOCKERFILE_PATH}" --build-arg BUILD_DATE="$(date -u +"%Y-%m-%dT%H:%M:%SZ")" --build-arg VCS_REF="$(git rev-parse --short HEAD)" --tag "$IMAGE_NAME" .
+echo "🔵 build"
+source hooks/.config
+
+echo "✅ Will build the following architectures: $verified_build_architectures"
+echo "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+
+for arch in ${verified_build_architectures[@]}; do
+  echo "✅ building $arch"
+  echo "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+
+  BUILD_FROM_PREFIX="${build_from_prefix_map[${arch}]}"
+  docker build \
+    --build-arg BASE_IMAGE_PREFIX=${BUILD_FROM_PREFIX} \
+    --build-arg ARCH=${arch} \
+    --file $DOCKERFILE_PATH \
+    --tag "${IMAGE_NAME}-${arch}"  \
+    .
+done
+
+echo "✅ images built:"
+echo "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+docker image ls
+
+# https://github.com/moby/moby/issues/36552
+#
+tempdir=$(mktemp -d -t yolo.XXXXXXXX)
+cd $tempdir
+
+for arch in ${verified_build_architectures[@]}; do
+  echo "✅ yolo fixing platform $arch"
+  echo "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+
+  manifest_arch=${docker_to_manifest_map[${arch}]}
+  variant_arch=${docker_to_variant_map[${arch}]}
+  docker save "${IMAGE_NAME}-${arch}"| tar xv
+
+  for filename in */json; do
+    [ -e "$filename" ] || continue
+    jq --compact-output 'del(.architecture)' < "$filename" | sponge "$filename"
+    jq --compact-output 'del(.variant)' < "$filename" | sponge "$filename"
+  done
+
+  for filename in *.json; do
+    [ -e "$filename" ] || continue
+    ! [ $filename = "manifest.json" ] || continue
+
+    jq --arg architecture "$manifest_arch" \
+       --compact-output '.architecture=$architecture' < "$filename" | sponge "$filename"
+    if [ -n "${variant_arch}" ]; then
+      jq --arg architecture "$variant_arch" \
+         --compact-output '.variant=$variant' < "$filename" | sponge "$filename"
+    fi 
+  done
+
+  tar cv . | docker load
+  rm -rf $tempdir/*
+done
+
+trap "exit 1"          HUP INT PIPE QUIT TERM
+trap "rm -rf $tempdir" EXIT

@@ -42,7 +42,7 @@ echo "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯�
 #      - wait for https://github.com/moby/moby/issues/14080
 #
 for arch in ${build_architectures[@]}; do
-  cp /usr/bin/qemu-${docker_qemu_arch_map[${arch}]}-static qemu-${arch}-static
+  cp /usr/bin/qemu-${docker_qemu_arch_map[${arch}]}-static qemu-${docker_qemu_arch_map[${arch}]}-static
 done
 
 ls -la

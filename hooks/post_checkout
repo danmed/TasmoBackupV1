@@ -32,7 +32,7 @@ jq --arg experimental enabled '. + {experimental: $experimental}' | \
 sponge ~/.docker/config.json
 
 # enable support for squash
-echo DOCKER_OPTS="--experimental=true" >> /etc/defaults/docker
+echo DOCKER_OPTS="--experimental=true" >> /etc/default/docker
 service docker restart
 
 echo "✅ Copy qemu binaries into docker build context"

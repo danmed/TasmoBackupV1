@@ -31,4 +31,5 @@ sed -i "s#dbname#$DBNAME#g" /var/www/html/data/config.inc.php
 #  docker-php-ext-install mysqli pdo_mysql
 #fi
 
-exec "$@"
+su nobody -s /bin/sh -c "$@"
+#exec "$@"

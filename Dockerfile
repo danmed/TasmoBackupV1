@@ -1,4 +1,4 @@
-ARG BUILD_FROM=php:7.2-apache
+ARG BUILD_FROM=patrickdk/docker-php-nginx:latest
 ARG BUILD_FROM_PREFIX
 FROM ${BUILD_FROM_PREFIX}${BUILD_FROM}
 MAINTAINER Dan Medhurst (danmed@gmail.com)
@@ -18,7 +18,7 @@ RUN echo "Start" \
  && echo 'PassEnv MYSQL_USERNAME'  >> /etc/apache2/conf-enabled/expose-env.conf \
  && echo 'PassEnv MYSQL_PASSWORD'  >> /etc/apache2/conf-enabled/expose-env.conf \
  && echo "Done"
-CMD [ "/usr/bin/install.sh", "apache2-foreground" ]
+CMD [ "/usr/bin/install.sh", "/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf" ]
 
 LABEL maintainer="Dan Medhurst (danmed@gmail.com)" \
   org.label-schema.schema-version="1.0" \

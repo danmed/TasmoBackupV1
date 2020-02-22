@@ -7,10 +7,10 @@ ARG QEMU_ARCH
 ARG BUILD_DATE
 ARG VCS_REF
 ARG BUILD_VERSION
-COPY install.sh qemu-${QEMU_ARCH}-static* /usr/bin/
-COPY . /var/www/html/
 USER root
 WORKDIR /
+COPY install.sh qemu-${QEMU_ARCH}-static* /usr/bin/
+COPY . /var/www/html/
 RUN echo "Start" \
  && rm -f install.sh qemu-*-static \
  && chmod 755 /usr/bin/install.sh \

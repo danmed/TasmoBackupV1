@@ -17,7 +17,7 @@ for arch in ${verified_build_architectures[@]}; do
 
   BUILD_FROM_PREFIX="${build_from_prefix_map[${arch}]}"
   QEMU_ARCH="${docker_qemu_arch_map[${arch}]}"
-  docker build --squash \
+  docker build \
     --build-arg BUILD_FROM_PREFIX=${BUILD_FROM_PREFIX} \
     --build-arg ARCH=${arch} \
     --build-arg QEMU_ARCH=${QEMU_ARCH} \

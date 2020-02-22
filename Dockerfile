@@ -14,11 +14,6 @@ WORKDIR /
 RUN echo "Start" \
  && rm -f install.sh qemu-*-static \
  && chmod 755 /usr/bin/install.sh \
- && echo 'PassEnv DBTYPE'  >> /etc/apache2/conf-enabled/expose-env.conf \
- && echo 'PassEnv DBNAME'   >> /etc/apache2/conf-enabled/expose-env.conf \
- && echo 'PassEnv MYSQL_SERVER'  >> /etc/apache2/conf-enabled/expose-env.conf \
- && echo 'PassEnv MYSQL_USERNAME'  >> /etc/apache2/conf-enabled/expose-env.conf \
- && echo 'PassEnv MYSQL_PASSWORD'  >> /etc/apache2/conf-enabled/expose-env.conf \
  && echo "Done"
 USER nobody
 WORKDIR /var/www/html

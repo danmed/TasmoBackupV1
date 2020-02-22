@@ -37,7 +37,7 @@ for arch in ${verified_build_architectures[@]}; do
       docker manifest annotate ${IMAGE_NAME} \
         ${IMAGE_NAME}-${arch} \
         --os linux \
-        --arch ${docker_to_manifest_map[${arch}]}
+        --arch ${docker_to_manifest_map[${arch}]} \
         --variant ${docker_to_variant_map[${arch}]}
     else
       docker manifest annotate ${IMAGE_NAME} \

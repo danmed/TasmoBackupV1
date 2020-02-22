@@ -20,12 +20,12 @@ RUN echo "Start" \
  && echo "Done"
 CMD [ "/usr/bin/install.sh", "apache2-foreground" ]
 
-LABEL maintainer="Dan Medhurst (danmed@gmail.com)"
-LABEL org.label-schema.schema-version="1.0"
-LABEL org.label-schema.build-date=${BUILD_DATE}
-LABEL org.label-schema.name="danmed/tasmobackupv1"
-LABEL org.label-schema.description="Tasmota Backup"
-LABEL org.label-schema.url="https://github.com/danmed/TasmoBackupV1"
-LABEL org.label-schema.vcs-url="https://github.com/danmed/TasmoBackupV1"
-LABEL org.label-schema.vcs-ref=${VCS_REF}
-LABEL org.label-schema.version=${BUILD_VERSION}
+LABEL maintainer="Dan Medhurst (danmed@gmail.com)" \
+  org.label-schema.schema-version="1.0" \
+  org.label-schema.build-date="${BUILD_DATE}" \
+  org.label-schema.name="danmed/tasmobackupv1" \
+  org.label-schema.description="Tasmota Backup" \
+  org.label-schema.url="https://github.com/danmed/TasmoBackupV1" \
+  org.label-schema.vcs-url="https://github.com/danmed/TasmoBackupV1" \
+  org.label-schema.vcs-ref="${VCS_REF}" \
+  org.label-schema.version="${BUILD_VERSION}"

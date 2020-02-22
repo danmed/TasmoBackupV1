@@ -15,8 +15,6 @@ RUN echo "Start" \
  && rm -f install.sh qemu-*-static \
  && chmod 755 /usr/bin/install.sh \
  && echo "Done"
-USER nobody
-WORKDIR /var/www/html
 CMD [ "/usr/bin/install.sh", "/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf" ]
 
 LABEL maintainer="Dan Medhurst (danmed@gmail.com)" \

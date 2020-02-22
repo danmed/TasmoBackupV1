@@ -4,6 +4,7 @@ set -eu
 echo "🔵 post_checkout"
 source hooks/.config
 
+
 echo "✅ Install qemu + binfmt support"
 echo "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
 # it's an Ubuntu VM and you can install stuff.
@@ -29,6 +30,10 @@ mkdir -p ~/.docker
 jq --null-input --argjson auths "$DOCKERCFG" '. + {auths: $auths}' | \
 jq --arg experimental enabled '. + {experimental: $experimental}' | \
 sponge ~/.docker/config.json
+
+# enable support for squash
+echo DOCKER_OPTS="--experimental=true" >> /etc/defaults/docker
+service docker restart
 
 echo "✅ Copy qemu binaries into docker build context"
 echo "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"

@@ -3,9 +3,8 @@
 .gitignore
 data
 Dockerfile
-Dockerfile.aarch64
-Dockerfile.armv7
-Dockerfile.i386
 hooks
 multi-arch-manifest.yaml
 repository.json
+docker-compose.yml
+docker

@@ -12,7 +12,7 @@ WORKDIR /
 COPY install.sh qemu-${QEMU_ARCH}-static* /usr/bin/
 COPY . /var/www/html/
 RUN echo "Start" \
- && rm -f install.sh qemu-*-static \
+ && rm -f /var/www/html/install.sh /var/www/html/qemu-*-static \
  && chmod 755 /usr/bin/install.sh \
  && echo "Done"
 CMD [ "/usr/bin/install.sh", "/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf" ]

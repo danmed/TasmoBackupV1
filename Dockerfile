@@ -9,6 +9,8 @@ ARG VCS_REF
 ARG BUILD_VERSION
 COPY install.sh qemu-${QEMU_ARCH}-static* /usr/bin/
 COPY . /var/www/html/
+USER root
+WORKDIR /
 RUN echo "Start" \
  && rm -f install.sh qemu-*-static \
  && chmod 755 /usr/bin/install.sh \
@@ -18,6 +20,8 @@ RUN echo "Start" \
  && echo 'PassEnv MYSQL_USERNAME'  >> /etc/apache2/conf-enabled/expose-env.conf \
  && echo 'PassEnv MYSQL_PASSWORD'  >> /etc/apache2/conf-enabled/expose-env.conf \
  && echo "Done"
+USER nobody
+WORKDIR /var/www/html
 CMD [ "/usr/bin/install.sh", "/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf" ]
 
 LABEL maintainer="Dan Medhurst (danmed@gmail.com)" \

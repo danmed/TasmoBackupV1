@@ -59,7 +59,7 @@ for arch in ${verified_build_architectures[@]}; do
     jq --arg architecture "$manifest_arch" \
        --compact-output '.architecture=$architecture' < "$filename" | sponge "$filename"
     if [ -n "${variant_arch}" ]; then
-      jq --arg architecture "$variant_arch" \
+      jq --arg variant "$variant_arch" \
          --compact-output '.variant=$variant' < "$filename" | sponge "$filename"
     fi 
   done

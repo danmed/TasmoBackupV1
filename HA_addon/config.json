@@ -1,6 +1,6 @@
 {
   "name": "TasmoBackup",
-  "version": "1.03.00",
+  "version": "1.03.01",
   "slug": "tasmobackup",
   "description": "Tasmota Backup",
   "url": "https://github.com/danmed/TasmoBackupV1",

@@ -1,3 +1,7 @@
+##v1.03
+* Made install.sh script more reliable, fix permissions for alpine
+* multiarch support
+
 ##v1.02
 * Added delete backup option
 * Added remove backups when deleting device

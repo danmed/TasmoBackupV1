@@ -14,7 +14,7 @@ if [ ! -f /var/www/html/data/config.inc.php ]; then
     cp /var/www/html/config.inc.php.example /var/www/html/data/config.inc.php
 fi
 
-if [ ! -f var/www/html/data/backups ]; then
+if [ ! -f /var/www/html/data/backups ]; then
     mkdir --mode=775 /var/www/html/data/backups
     chown www-data:www-data /var/www/html/data/backups
 else

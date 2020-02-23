@@ -18,8 +18,9 @@ if [ ! -f var/www/html/data/backups ]; then
     mkdir --mode=775 /var/www/html/data/backups
     chown www-data:www-data /var/www/html/data/backups
 else
-    USER=$(stat -c '%U' /path/to/your/file)
+    USER=$(stat -c '%U' /var/www/html/data/backups)
     if [ "${USER}" != "www-data" ]; then
+        chown -R www-data:www-data /var/www/html/data/*
         chown -R www-data:www-data /var/www/html/data
     fi
 fi

@@ -1,7 +1,7 @@
 #!/bin/sh
 
-if [ ! -f /var/www/html/data/config.inc.php ]; then
-    if [ -f /data/options.json ]; then
+if [ ! -e /var/www/html/data/config.inc.php ]; then
+    if [ -e /data/options.json ]; then
         rm /var/www/html/data
         ln -s /data /var/www/html/data
         for keyval in $(grep -E '": [^\{]' /data/options.json | sed -e 's/: /=/' -e "s/\(\,\)$//"); do
@@ -14,7 +14,7 @@ if [ ! -f /var/www/html/data/config.inc.php ]; then
     cp /var/www/html/config.inc.php.example /var/www/html/data/config.inc.php
 fi
 
-if [ ! -f /var/www/html/data/backups ]; then
+if [ ! -e /var/www/html/data/backups ]; then
     mkdir --mode=775 /var/www/html/data/backups
     chown www-data:www-data /var/www/html/data/backups
 else

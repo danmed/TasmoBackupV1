@@ -2,8 +2,11 @@
 
 if [ ! -e /var/www/html/data/config.inc.php ]; then
     if [ -e /data/options.json ]; then
-        rm /var/www/html/data
-        ln -s /data /var/www/html/data
+        if [ -d /var/www/html/data ]; then
+            rm /var/www/html/data
+        else
+            ln -s /data /var/www/html/data
+        fi
         for keyval in $(grep -E '": [^\{]' /data/options.json | sed -e 's/: /=/' -e "s/\(\,\)$//"); do
             eval export $keyval
         done

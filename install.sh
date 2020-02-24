@@ -14,13 +14,19 @@ if [ ! -e /var/www/html/data/config.inc.php ]; then
     cp /var/www/html/config.inc.php.example /var/www/html/data/config.inc.php
 fi
 
+if [ -e /data/options.json ]; then
+    USER=$(stat -c '%U' /data)
+    if [ "${USER}" != "www-data" ]; then
+        chown -R www-data:www-data /data
+    fi
+fi    
+
 if [ ! -e /var/www/html/data/backups ]; then
     mkdir --mode=775 /var/www/html/data/backups
     chown www-data:www-data /var/www/html/data/backups
 else
     USER=$(stat -c '%U' /var/www/html/data/backups)
     if [ "${USER}" != "www-data" ]; then
-        chown -R www-data:www-data /var/www/html/data/*
         chown -R www-data:www-data /var/www/html/data
     fi
 fi

@@ -1,6 +1,6 @@
 {
   "name": "TasmoBackup",
-  "version": "1.03.03",
+  "version": "1.03.04",
   "slug": "tasmobackup",
   "description": "Tasmota Backup",
   "url": "https://github.com/danmed/TasmoBackupV1",
@@ -11,7 +11,7 @@
   "startup": "application",
   "boot": "auto",
   "ingress": true,
-  "ingress_port": 8080,
+  "ingress_port": 80,
   "options": {
     "DBTYPE": "sqlite",
     "DBNAME": "data/tasmobackupdb"
@@ -25,8 +25,8 @@
   },
   "panel_admin": true,
   "ports": {
-    "8080/tcp": null
+    "80/tcp": null
   },
-  "ports_description": {"8080/tcp": "TasmoBackup Web Interface"},
-  "webui": "http://[HOST]:[PORT:8080]"
+  "ports_description": {"80/tcp": "TasmoBackup Web Interface"},
+  "webui": "http://[HOST]:[PORT:80]"
 }

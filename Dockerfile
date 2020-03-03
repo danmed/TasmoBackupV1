@@ -1,24 +1,20 @@
-ARG BUILD_FROM=php:7.2-apache
+ARG BUILD_FROM=patrickdk/docker-php-nginx:latest
 ARG BUILD_FROM_PREFIX
-FROM ${BUILD_FROM_PREFIX}${BUILD_FROM}
+FROM ${BUILD_FROM}${BUILD_FROM_PREFIX}
 MAINTAINER Dan Medhurst (danmed@gmail.com)
 ARG ARCH
 ARG QEMU_ARCH
 ARG BUILD_DATE
 ARG VCS_REF
 ARG BUILD_VERSION
+WORKDIR /
 COPY install.sh qemu-${QEMU_ARCH}-static* /usr/bin/
-COPY . /var/www/html/
+COPY --chown=www-data . /var/www/html/
 RUN echo "Start" \
- && rm -f install.sh qemu-*-static \
+ && rm -f /var/www/html/install.sh /var/www/html/qemu-*-static \
  && chmod 755 /usr/bin/install.sh \
- && echo 'PassEnv DBTYPE'  >> /etc/apache2/conf-enabled/expose-env.conf \
- && echo 'PassEnv DBNAME'   >> /etc/apache2/conf-enabled/expose-env.conf \
- && echo 'PassEnv MYSQL_SERVER'  >> /etc/apache2/conf-enabled/expose-env.conf \
- && echo 'PassEnv MYSQL_USERNAME'  >> /etc/apache2/conf-enabled/expose-env.conf \
- && echo 'PassEnv MYSQL_PASSWORD'  >> /etc/apache2/conf-enabled/expose-env.conf \
  && echo "Done"
-CMD [ "/usr/bin/install.sh", "apache2-foreground" ]
+CMD [ "/usr/bin/install.sh", "/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf" ]
 
 LABEL maintainer="Dan Medhurst (danmed@gmail.com)" \
   org.label-schema.schema-version="1.0" \

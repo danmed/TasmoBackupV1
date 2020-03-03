@@ -3,7 +3,7 @@ require "db.inc.php";
 
 $strJsonFileContents = file_get_contents("./HA_addon/config.json");
 $array = json_decode($strJsonFileContents, true);
-$GLOBAL['VERSION']=$array['version'];
+$GLOBALS['VERSION']=$array['version'];
 
 function getBetween($content, $start, $end)
 {
@@ -121,6 +121,22 @@ function backupSingle($id, $name, $ip, $user, $password)
 
     $backupfolder = $settings['backup_folder'];
 
+echo "<!-- autoupdate1 $name -->\n";
+    if (!isset($settings['autoupdate_name']) || (isset($settings['autoupdate_name']) && $settings['autoupdate_name']=='Y')) {
+echo "<!-- autoupdate2 $name -->\n";
+        if ($status=getTasmotaStatus($ip, $user, $password)) {
+            $name=$status['Status']['FriendlyName'][0];
+echo "<!-- autoupdate3 $name -->\n";
+        }
+    }
+echo "<!-- autoupdate4 $name -->\n";
+    if ($status2=getTasmotaStatus2($ip, $user, $password)) {
+        $version = $status2['StatusFWR']['Version'];
+    } else {
+        // Device is offline
+        return true;
+    }
+
     $savename = preg_replace('/\s+/', '_', $name);
     $savename = preg_replace('/[^A-Za-z0-9_\-]/', '', $savename);
     if (!file_exists($backupfolder . $savename)) {
@@ -132,33 +148,25 @@ function backupSingle($id, $name, $ip, $user, $password)
     $savedate = preg_replace('/(\s+|:)/', '_', $date);
     $savedate = preg_replace('/[^A-Za-z0-9_\-]/', '', $savedate);
 
-    if ($status2=getTasmotaStatus2($ip, $user, $password)) {
-        $version = $status2['StatusFWR']['Version'];
+    $saveto = $backupfolder . $savename . "/" . $savedate . ".dmp";
 
-        $saveto = $backupfolder . $savename . "/" . $savedate . ".dmp";
+    if (getTasmotaBackup($ip, $user, $password, $saveto)) {
+        $directory = $backupfolder . $savename . "/";
+/*
+        // Initialize filecount variavle
+        $filecount = 0;
 
-        if (getTasmotaBackup($ip, $user, $password, $saveto)) {
-            $directory = $backupfolder . $savename . "/";
+        $files2 = glob($directory . "*");
 
-            // Initialize filecount variavle
-            $filecount = 0;
-
-            $files2 = glob($directory . "*");
-
-            if ($files2) {
-                $noofbackups = count($files2);
-                #echo $noofbackups;
-            }
-
-            if (!dbNewBackup($id, $name, $version, $date, $noofbackups, $saveto)) {
-                return true;
-            }
-            return false;
+        if ($files2) {
+            $noofbackups = count($files2);
+            #echo $noofbackups;
         }
-        return true;
-    } else {
-        // Device is offline
-        return true;
+*/
+        if (!dbNewBackup($id, $name, $version, $date, 1, $saveto)) {
+            return true;
+        }
+        return false;
     }
     return false;
 }
@@ -206,3 +214,69 @@ function addTasmotaDevice($ip, $user, $password)
     }
     return $ip.': Device not found.';
 }
+
+
+function TBHeader($name=false,$favicon=true,$init=false,$track=true)
+{
+?>
+<html lang="en">
+<head>
+<?php if($favicon) {
+?>
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="icon" sizes="16x16 32x32 64x64" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="196x196" href="favicon/192.png">
+<link rel="icon" type="image/png" sizes="160x160" href="favicon/160.png">
+<link rel="icon" type="image/png" sizes="96x96" href="favicon/96.png">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon/64.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon/32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon/16.png">
+<link rel="apple-touch-icon" href="favicon/57.png">
+<link rel="apple-touch-icon" sizes="114x114" href="favicon/114.png">
+<link rel="apple-touch-icon" sizes="72x72" href="favicon/72.png">
+<link rel="apple-touch-icon" sizes="144x144" href="favicon/144.png">
+<link rel="apple-touch-icon" sizes="60x60" href="favicon/60.png">
+<link rel="apple-touch-icon" sizes="120x120" href="favicon/120.png">
+<link rel="apple-touch-icon" sizes="76x76" href="favicon/76.png">
+<link rel="apple-touch-icon" sizes="152x152" href="favicon/152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="favicon/180.png">
+<?php }
+
+if($track) {
+?>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-116906-4"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-116906-4');
+</script>
+<?php } ?>
+<title>TasmoBackup<?php if($name!==false) { echo ': '.$name; } ?></title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="resources/bootstrap.min.css">
+  <script src="resources/jquery.min.js"></script>
+  <script src="resources/bootstrap.min.js"></script>
+<?php if($init!==false) { ?>
+  <link rel="stylesheet" type="text/css" href="resources/datatables.min.css"/>
+  <script type="text/javascript" src="resources/datatables.min.js"></script>
+<script type="text/javascript" class="init">
+<?php echo $init; ?>
+</script>
+<?php } ?>
+</head>
+<?php
+}
+
+function TBFooter()
+{
+    global $VERSION;
+?>
+<br><br>
+<div style='text-align:right;font-size:11px;'><hr/><a href='https://github.com/danmed/TasmoBackupV1' target='_blank' style='color:#aaa;'>TasmoBackup <?php echo $GLOBALS['VERSION']; ?> by Dan Medhurst</a></div>
+<?php
+}
+

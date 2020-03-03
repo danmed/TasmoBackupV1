@@ -273,7 +273,7 @@ function dbDeviceDel($ip)
     return $stm->execute();
 }
 
-function dbDeviceBackups($id,$date=null,$version=null)
+function dbDeviceBackups($id,$date=null,$version=null,$name=null)
 {
     global $db_handle;
 
@@ -281,12 +281,17 @@ function dbDeviceBackups($id,$date=null,$version=null)
     $versioncond='';
     if(isset($version))
         $versioncond='version = :version, ';
+    $namecond='';
+    if(isset($name))
+        $namecond='name = :name, ';
     $datecond='';
     if(isset($date))
         $datecond='lastbackup = :date, ';
-    $stm = $db_handle->prepare("UPDATE devices SET ".$versioncond.$datecond.' noofbackups = :noofbackups WHERE id = :id');
+    $stm = $db_handle->prepare("UPDATE devices SET ".$versioncond.$datecond.$namecond.' noofbackups = :noofbackups WHERE id = :id');
     if(isset($version))
         $stm->bindValue(':version', $version, PDO::PARAM_STR);
+    if(isset($name))
+        $stm->bindValue(':name', $name, PDO::PARAM_STR);
     if(isset($date))
         $stm->bindValue(':date', $date, PDO::PARAM_STR);
     $stm->bindValue(':noofbackups', $count, PDO::PARAM_STR);
@@ -297,6 +302,7 @@ function dbDeviceBackups($id,$date=null,$version=null)
 function dbNewBackup($id, $name, $version, $date, $noofbackups, $filename)
 {
     global $db_handle;
+    if(!isset($version) || strlen($version)<2) { $version='Unknown'; }
     $stm = $db_handle->prepare("INSERT INTO backups(deviceid,name,version,date,filename) VALUES(:deviceid, :name, :version, :date, :filename)");
     $stm->bindValue(':deviceid', $id, PDO::PARAM_INT);
     $stm->bindValue(':name', $name, PDO::PARAM_STR);
@@ -307,5 +313,5 @@ function dbNewBackup($id, $name, $version, $date, $noofbackups, $filename)
         trigger_error("insert error: ".$stm->errorInfo()[2], E_USER_NOTICE);
         return false;
     }
-    return dbDeviceBackups($id,$date,$version);
+    return dbDeviceBackups($id,$date,$version,$name);
 }

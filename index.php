@@ -124,57 +124,17 @@ if ($task == "noofbackups") {
     $show_modal = true;
 }
 
-?>
-<html lang="en">
-<head>
-<link rel="shortcut icon" href="favicon.ico">
-<link rel="icon" sizes="16x16 32x32 64x64" href="favicon.ico">
-<link rel="icon" type="image/png" sizes="196x196" href="favicon/192.png">
-<link rel="icon" type="image/png" sizes="160x160" href="favicon/160.png">
-<link rel="icon" type="image/png" sizes="96x96" href="favicon/96.png">
-<link rel="icon" type="image/png" sizes="64x64" href="favicon/64.png">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon/32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="favicon/16.png">
-<link rel="apple-touch-icon" href="favicon/57.png">
-<link rel="apple-touch-icon" sizes="114x114" href="favicon/114.png">
-<link rel="apple-touch-icon" sizes="72x72" href="favicon/72.png">
-<link rel="apple-touch-icon" sizes="144x144" href="favicon/144.png">
-<link rel="apple-touch-icon" sizes="60x60" href="favicon/60.png">
-<link rel="apple-touch-icon" sizes="120x120" href="favicon/120.png">
-<link rel="apple-touch-icon" sizes="76x76" href="favicon/76.png">
-<link rel="apple-touch-icon" sizes="152x152" href="favicon/152.png">
-<link rel="apple-touch-icon" sizes="180x180" href="favicon/180.png">
-
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-116906-4"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-116906-4');
-</script>
-
-<title>TasmoBackup</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="resources/bootstrap.min.css">
-  <script src="resources/jquery.min.js"></script>
-  <script src="resources/bootstrap.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="resources/datatables.min.css"/>
-  <script type="text/javascript" src="resources/datatables.min.js"></script>
-<script type="text/javascript" class="init">
+TBHeader(false,true,'
 $(document).ready(function() {
-        $('#status').DataTable({
-        "order": [[<?php echo isset($settings['sort'])?$settings['sort']:0; ?>, "asc" ]],
-        "pageLength": <?php echo isset($settings['amount'])?$settings['amount']:100; ?>,
+        $(\'#status\').DataTable({
+        "order": [['. isset($settings['sort'])?$settings['sort']:0 .', "asc" ]],
+        "pageLength": '. isset($settings['amount'])?$settings['amount']:100 .',
         "statesave": true,
         "autoWidth": true
 } );
 } );
-        </script>
-</head>
-
+',true);
+?>
   <body><font size="2">
 
     <div class="container">
@@ -205,13 +165,11 @@ $(document).ready(function() {
     </div>
 
 <center><form method='POST' action='index.php'><input type='hidden' value='backupall' name='task'><input type='submit' value='Backup All' class='btn-xs btn-success'></form><br>
-  <form method='POST' action='index.php'><input type='hidden' value='discover' name='task'><input type="text" name="ip" placeholder="ip address"><input type="password" name="password" placeholder="password"><input type='submit' value='Add' class='btn-xs btn-danger'></form>
-<form method="POST" action="scan.php"><input type=text name=range placeholder="192.168.1.1-255"><input type="password" name="password" placeholder="password"><input type=hidden name=task value=scan><input type=submit value=Discover class='btn-xs btn-danger'></form>
-<form method="POST" action="scan.php"><input type=text name=mqtt_topic value='<?php echo isset($settings['mqtt_topic'])?$settings['mqtt_topic']:'tasmotas'; ?>'><input type="password" name="password" placeholder="password"><input type=hidden name=task value=mqtt><input type=submit value="MQTT Discover" class='btn-xs btn-danger'></form>
-<br><br>
-<div style='text-align:right;font-size:11px;'><hr/><a href='https://github.com/danmed/TasmoBackupV1' target='_blank' style='color:#aaa;'>TasmoBackup <?php echo $GLOBAL['VERSION']; ?> by Dan Medhurst</a></div>
-
-    <?php
+<form method='POST' action='index.php'><input type='hidden' value='discover' name='task'><input type="text" name="ip" placeholder="ip address"><input type="password" name="password" placeholder="password" <?php if(isset($settings['tasmota_password'])) { echo 'value="'.$settings['tasmota_password'].'" '; } ?>><input type='submit' value='Add' class='btn-xs btn-danger'></form>
+<form method="POST" action="scan.php"><input type=text name=range placeholder="192.168.1.1-255"><input type="password" name="password" placeholder="password" <?php if(isset($settings['tasmota_password'])) { echo 'value="'.$settings['tasmota_password'].'" '; } ?>><input type=hidden name=task value=scan><input type=submit value=Discover class='btn-xs btn-danger'></form>
+<form method="POST" action="scan.php"><input type=text name=mqtt_topic value='<?php echo isset($settings['mqtt_topic'])?$settings['mqtt_topic']:'tasmotas'; ?>'><input type="password" name="password" placeholder="password" <?php if(isset($settings['tasmota_password'])) { echo 'value="'.$settings['tasmota_password'].'" '; } ?>><input type=hidden name=task value=mqtt><input type=submit value="MQTT Discover" class='btn-xs btn-danger'></form>
+<?php
+TBFooter();
 if (isset($show_modal) && $show_modal):
 ?>
    <script type='text/javascript'>

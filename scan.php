@@ -4,39 +4,18 @@ require 'lib/mqtt.inc.php';
 
 global $settings;
 
-?><html lang="en">
-<head>
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-116906-4"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-116906-4');
-</script>
-
-<title>TasmoBackup</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="resources/bootstrap.min.css">
-  <script src="resources/jquery.min.js"></script>
-  <script src="resources/bootstrap.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="resources/datatables.min.css"/>
-  <script type="text/javascript" src="resources/datatables.min.js"></script>
-<script type="text/javascript" class="init">
+TBHeader('Scan',true,'
 $(document).ready(function() {
-        $('#status').DataTable({
+        $(\'#status\').DataTable({
         "order": [[1, "asc" ]],
-        "pageLength": <?php echo isset($settings['amount'])?$settings['amount']:100; ?>,
+        "pageLength": '. isset($settings['amount'])?$settings['amount']:100 .',
         "statesave": true,
         "autoWidth": true
 } );
 } );
+',true);
 
-        </script>
-</head>
-
+?>
   <body><font size="2">
 
     <div class="container">
@@ -121,3 +100,8 @@ if ($_POST["task"]=="mqtt") {
     </table>
     </form>
     </div>
+<?php
+TBFooter();
+?>
+</body>
+</html>

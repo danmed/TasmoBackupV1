@@ -11,9 +11,18 @@ if (isset($_POST["name"])) {
 if (isset($_POST["id"])) {
     $id = intval($_POST["id"]);
 }
-if (isset($_POST["delbackup"])) {
-	dbBackupDel($_POST["backupid"]);
-	dbDeviceBackups($id);
+if (isset($_POST["action"])) {
+    switch(strtolower($_POST["action"])) {
+        case 'delbackup':
+            dbBackupDel(intval($_POST["backupid"]));
+            dbDeviceBackups($id);
+            break;
+        case 'restorebackup':
+            $device=dbDeviceId($id);
+            $backup=dbBackupId(intval($_POST["backupid"]));
+            restoreTasmotaBackup($device['ip'],'admin',$device['password'],$backup['filename']);
+            break;
+    }
 }
 
 TBHeader('List Backups',true,'
@@ -27,13 +36,13 @@ $(document).ready(function() {
 } );
 ',true);
 ?>
-  <body><font size="2">
+  <body>
 
     <div class="container">
     <table class="table table-striped table-bordered" id="status">
     <thead>
 	    <tr><th colspan="4"><center><b><a href="index.php"><?php echo $name; ?></a></th></tr>
-		    <tr><th><b>DATE</b></th><th><b>NAME</b></th><th><b>VERSION</b></th><th><b>FILE</b></th><th><b>DELETE</b></th></tr>
+		    <tr><th><b>DATE</b></th><th><b>NAME</b></th><th><b>VERSION</b></th><th><b>FILE</b></th><th><b>DELETE</b></th><th><b>RESTORE</b></th></tr>
     </thead>
     <tbody>
 <?php
@@ -54,11 +63,20 @@ $(document).ready(function() {
   <td><a href='<?php echo $filename; ?>'>DOWNLOAD</a></td>
   <td><center>
     <form action='listbackups.php' method='POST'>
-    <input type='hidden' name='delbackup' value='delbackup'>
+    <input type='hidden' name='action' value='delbackup'>
     <input type='hidden' name='backupid' value='<?php echo $backupid; ?>'>
     <input type='hidden' name='id' value='<?php echo $id; ?>'>
     <input type='hidden' name='name' value='<?php echo $name; ?>'>
     <input type='submit' value='Delete' onclick='return window.confirm(\"Are you sure you want to delete <?php echo $filename; ?>\");'class='btn-xs btn-danger'>
+    </form>
+  </td>
+  <td><center>
+    <form action='listbackups.php' method='POST'>
+    <input type='hidden' name='action' value='restorebackup'>
+    <input type='hidden' name='backupid' value='<?php echo $backupid; ?>'>
+    <input type='hidden' name='id' value='<?php echo $id; ?>'>
+    <input type='hidden' name='name' value='<?php echo $name; ?>'>
+    <input type='submit' value='Restore' onclick='return window.confirm(\"Are you sure you want to restore <?php echo $filename; ?> to this device\");'class='btn-xs btn-danger'>
     </form>
   </td>
 </tr>

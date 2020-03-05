@@ -124,6 +124,17 @@ function dbDeviceIp($ip)
     return $stm->fetchAll(PDO::FETCH_ASSOC);
 }
 
+function dbDeviceId($id)
+{
+    global $db_handle;
+    $stm = $db_handle->prepare("select * from devices where id = :id");
+    $stm->bindValue(':id', $id, PDO::PARAM_INT);
+    if (!$stm->execute()) {
+        return false;
+    }
+    return $stm->fetch(PDO::FETCH_ASSOC);
+}
+
 function dbDevices()
 {
     global $db_handle;
@@ -132,6 +143,18 @@ function dbDevices()
         return false;
     }
     return $stm->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function dbBackupId($id)
+{
+    global $db_handle;
+
+    $stm = $db_handle->prepare("select * from backups where id = :id ");
+    $stm->bindValue(':id', $id, PDO::PARAM_INT);
+    if (!$stm->execute()) {
+        return false;
+    }
+    return $stm->fetch(PDO::FETCH_ASSOC);
 }
 
 function dbBackupList($id,$days=0)

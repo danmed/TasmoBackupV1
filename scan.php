@@ -16,7 +16,7 @@ $(document).ready(function() {
 ',true);
 
 ?>
-  <body><font size="2">
+  <body>
 
     <div class="container">
 	    <form action="index.php" method="POST">

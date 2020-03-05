@@ -71,6 +71,29 @@ function getTasmotaStatus2($ip, $user, $password)
     return json_decode($data, true);
 }
 
+function restoreTasmotaBackup($ip, $user, $password, $filename)
+{
+    $url = 'http://'.$user.':'.$password."@".$ip.'/u2';
+
+    $cfile = new CURLFile($filename,'application/octet-stream','config.dmp');
+    $fields = array('u2' => $cfile);
+
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 40);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER,array('Content-Type: multipart/form-data'));
+    $result=curl_exec($ch);
+    $err = curl_errno($ch);
+    $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    if (!$err && $statusCode == 200) {
+        return true;
+    }
+    return false;
+}
+
 function getTasmotaBackup($ip, $user, $password, $filename)
 {
     //Get Backup
@@ -121,15 +144,11 @@ function backupSingle($id, $name, $ip, $user, $password)
 
     $backupfolder = $settings['backup_folder'];
 
-echo "<!-- autoupdate1 $name -->\n";
     if (!isset($settings['autoupdate_name']) || (isset($settings['autoupdate_name']) && $settings['autoupdate_name']=='Y')) {
-echo "<!-- autoupdate2 $name -->\n";
         if ($status=getTasmotaStatus($ip, $user, $password)) {
             $name=$status['Status']['FriendlyName'][0];
-echo "<!-- autoupdate3 $name -->\n";
         }
     }
-echo "<!-- autoupdate4 $name -->\n";
     if ($status2=getTasmotaStatus2($ip, $user, $password)) {
         $version = $status2['StatusFWR']['Version'];
     } else {
@@ -218,8 +237,12 @@ function addTasmotaDevice($ip, $user, $password)
 
 function TBHeader($name=false,$favicon=true,$init=false,$track=true)
 {
+    global $settings;
+//if(isset($settings['theme']) && $settings['theme']=='dark')
+//    echo '<html lang="en" class="theme-dark">';
+//else
+    echo '<html lang="en">';
 ?>
-<html lang="en">
 <head>
 <?php if($favicon) {
 ?>
@@ -241,9 +264,52 @@ function TBHeader($name=false,$favicon=true,$init=false,$track=true)
 <link rel="apple-touch-icon" sizes="152x152" href="favicon/152.png">
 <link rel="apple-touch-icon" sizes="180x180" href="favicon/180.png">
 <?php }
+/*
+<style>
+:root {
+<?php if(isset($settings['theme']) && $settings['theme']=='dark') { ?>
+  --background-color: #111;
+  --page-background: #212121;
+  --text-color: #ededed;
+  --color-alpha: #50a8d8;
+<?php } else { ?>
+  --background-color: #ededed;
+  --page-background: #fff;
+  --text-color: #212121;
+  --color-alpha: #c3423f;
+<?php } ?>
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-color: #111;
+    --page-background: #212121;
+    --text-color: #ededed;
+    --color-alpha: #50a8d8;
+  }
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    --background-color: #ededed;
+    --page-background: #fff;
+    --text-color: #212121;
+    --color-alpha: #c3423f;
+  }
+}
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+.container {
+  background-color: var(--page-background);
+}
+.text--alpha {
+  color: var(--color-alpha);
+}
+</style>
 
-if($track) {
-?>
+<?php 
+*/
+if($track) { ?>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-116906-4"></script>
 <script>

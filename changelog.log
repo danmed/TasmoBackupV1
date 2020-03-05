@@ -1,3 +1,11 @@
+##v1.03.06
+* Add restore button.
+* Update device name, and edit option
+* cleanup header/footers
+* add htaccess expires
+* add favicon and addon logo
+* add custom prefix/topic for mqtt scanning
+
 ##v1.03
 * Made install.sh script more reliable, fix permissions for alpine
 * multiarch support

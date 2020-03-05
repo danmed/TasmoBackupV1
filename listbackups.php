@@ -67,7 +67,7 @@ $(document).ready(function() {
     <input type='hidden' name='backupid' value='<?php echo $backupid; ?>'>
     <input type='hidden' name='id' value='<?php echo $id; ?>'>
     <input type='hidden' name='name' value='<?php echo $name; ?>'>
-    <input type='submit' value='Delete' onclick='return window.confirm(\"Are you sure you want to delete <?php echo $filename; ?>\");'class='btn-xs btn-danger'>
+    <input type='submit' value='Delete' onclick='return window.confirm("Are you sure you want to delete <?php echo $filename; ?>");' class='btn-xs btn-danger'>
     </form>
   </td>
   <td><center>
@@ -76,7 +76,7 @@ $(document).ready(function() {
     <input type='hidden' name='backupid' value='<?php echo $backupid; ?>'>
     <input type='hidden' name='id' value='<?php echo $id; ?>'>
     <input type='hidden' name='name' value='<?php echo $name; ?>'>
-    <input type='submit' value='Restore' onclick='return window.confirm(\"Are you sure you want to restore <?php echo $filename; ?> to this device\");'class='btn-xs btn-danger'>
+    <input type='submit' value='Restore' onclick='return window.confirm("Are you sure you want to restore <?php echo $filename; ?> to this device");' class='btn-xs btn-danger'>
     </form>
   </td>
 </tr>

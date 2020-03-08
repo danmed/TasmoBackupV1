@@ -62,7 +62,7 @@ TBHeader('Settings',true,'
 $(document).ready(function() {
         $(\'#status\').DataTable({
         "order": [],
-        "pageLength": 25,
+        "pageLength": '. (isset($settings['amount'])?$settings['amount']:25) .',
         "statesave": true,
         "autoWidth": true
 } );

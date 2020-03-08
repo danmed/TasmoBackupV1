@@ -6,4 +6,3 @@ $DBServer       =       'mysqlserver';
 $DBUser         =       'mysqlusername';
 $DBPassword     =       'mysqlpassword';
 $DBName         =       'dbname';
-?>

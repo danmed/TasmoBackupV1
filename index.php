@@ -24,111 +24,102 @@ if (isset($_POST["name"])) {
     $name = $_POST["name"];
 }
 
-if ($task == "discover") {
-    $show_modal = true;
-    $output = '<center>'.addTasmotaDevice($ip, $user, $password).'<br></center>';
-}
-
-if ($task == "discoverall") {
-    $show_modal = true;
-    $output = '<center>';
-    if (!is_array($ip)) {
-        $output .= "You didn't select any devices.<br>";
-    } else {
-        foreach($ip as $i) {
-            $output .= addTasmotaDevice($i, $user, $password).'<br>';
-        }
-    }
-    $output .= '</center>';
-}
-
-
-if ($task == "edit") {
-    if (isset($_POST['oldip'])) {
-        $old_ip = $_POST['oldip'];
-    }
-    if (isset($_POST['oldname'])) {
-        $old_name = $_POST['oldname'];
-    }
-
-    if (isset($old_ip) && isset($ip)) {
-        if (dbDeviceRename($old_ip, $name, $ip, $password)) {
-            $show_modal = true;
-            $output = "<center><b>" . $name . " updated up successfully</b><br></center>";
+switch(strtolower($task)) {
+    case 'discover':
+        $show_modal = true;
+        $output = '<center>'.addTasmotaDevice($ip, $user, $password).'<br></center>';
+        break;
+    case 'discoverall':
+        $show_modal = true;
+        $output = '<center>';
+        if (!is_array($ip)) {
+            $output .= "You didn't select any devices.<br>";
         } else {
-            $show_modal = true;
-            echo "<center><b>Error updating record for ".$old_ip." ".$name." <br>";
-        }
-    }
-}
-
-// SINGLE BACKUP ROUTINE
-if ($task == "singlebackup") {
-    $show_modal = true;
-    $output = "<center><b>Device not found: ".$ip."</b></center>";
-
-    $devices = dbDeviceIp($ip);
-    if ($devices!==false) {
-        foreach ($devices as $db_field) {
-            if (backupSingle($db_field['id'], $db_field['name'], $db_field['ip'], 'admin', $db_field['password'])) {
-                $show_modal = true;
-                $output = "<center><b>Backup failed</b></center>";
-            } else {
-                $show_model = true;
-                $output = "Backup completed successfully!";
+            foreach($ip as $i) {
+                $output .= addTasmotaDevice($i, $user, $password).'<br>';
             }
         }
-    }
-}
-
-if ($task == "backupall") {
-    $errorcount = backupAll();
-
-    $show_modal = true;
-    if ($errorcount < 1) {
-        $output = "All backups completed successfully!";
-    } else {
-        $output = "<font color='red'><b>Not all backups completed successfully!</b></font>";
-    }
-}
-
-if ($task == "delete") {
-    $show_modal = true;
-    try {
-        if (dbDeviceDel($ip)) {
-            $output = $name . " deleted successfully from the database.";
-            } else {
-            $output = "Error deleting  " . $ip;
+        $output .= '</center>';
+        break;
+    case 'edit':
+        if (isset($_POST['oldip'])) {
+            $old_ip = $_POST['oldip'];
         }
-    } catch (PDOException $e) {
-        $output = "Error deleting  " . $ip . " : " . $e->getMessage();
-    }
-}
+        if (isset($_POST['oldname'])) {
+            $old_name = $_POST['oldname'];
+        }
+        if (isset($old_ip) && isset($ip)) {
+            if (dbDeviceRename($old_ip, $name, $ip, $password)) {
+                $show_modal = true;
+                $output = "<center><b>" . $name . " updated up successfully</b><br></center>";
+            } else {
+                $show_modal = true;
+                echo "<center><b>Error updating record for ".$old_ip." ".$name." <br>";
+            }
+        }
+        break;
+    case 'singlebackup':
+        $show_modal = true;
+        $output = "<center><b>Device not found: ".$ip."</b></center>";
 
-if ($task == "noofbackups") {
-    $findname = preg_replace('/\s+/', '_', $name);
-    $findname = preg_replace('/[^A-Za-z0-9\-]/', '', $findname);
-    $directory = $settings['backup_folder'] . $findname;
-    $scanned_directory = array_diff(scandir($directory), array(
-        '..',
-        '.'
-    ));
+        $devices = dbDeviceIp($ip);
+        if ($devices!==false) {
+            foreach ($devices as $db_field) {
+                if (backupSingle($db_field['id'], $db_field['name'], $db_field['ip'], 'admin', $db_field['password'])) {
+                    $show_modal = true;
+                    $output = "<center><b>Backup failed</b></center>";
+                } else {
+                    $show_model = true;
+                    $output = "Backup completed successfully!";
+                }
+            }
+        }
+        break;
+    case 'backupall':
+        $errorcount = backupAll();
 
-    $out = array();
-    foreach ($scanned_directory as $value) {
-        $link = strtolower(implode("-", explode(" ", $value)));
-        $out[] = '<a href="' . $settings['backup_folder'] . $findname . '/' . $link . '">' . $link . '</a>';
-    }
-    $output = implode("<br>", $out);
+        $show_modal = true;
+        if ($errorcount < 1) {
+            $output = "All backups completed successfully!";
+        } else {
+            $output = "<font color='red'><b>Not all backups completed successfully!</b></font>";
+        }
+        break;
+    case 'delete':
+        $show_modal = true;
+        try {
+            if (dbDeviceDel($ip)) {
+                $output = $name . " deleted successfully from the database.";
+            } else {
+                $output = "Error deleting  " . $ip;
+            }
+        } catch (PDOException $e) {
+            $output = "Error deleting  " . $ip . " : " . $e->getMessage();
+        }
+        break;
+    case 'noofbackups':
+        $findname = preg_replace('/\s+/', '_', $name);
+        $findname = preg_replace('/[^A-Za-z0-9\-]/', '', $findname);
+        $directory = $settings['backup_folder'] . $findname;
+        $scanned_directory = array_diff(scandir($directory), array('..','.'));
+        $out = array();
+        foreach ($scanned_directory as $value) {
+            $link = strtolower(implode("-", explode(" ", $value)));
+            $out[] = '<a href="' . $settings['backup_folder'] . $findname . '/' . $link . '">' . $link . '</a>';
+        }
+        $output = implode("<br>", $out);
 
-    $show_modal = true;
+        $show_modal = true;
+        break;
+    default:
+        break;
 }
 
 TBHeader(false,true,'
 $(document).ready(function() {
         $(\'#status\').DataTable({
-        "order": [['. isset($settings['sort'])?$settings['sort']:0 .', "asc" ]],
-        "pageLength": '. isset($settings['amount'])?$settings['amount']:100 .',
+        "order": [['. (isset($settings['sort'])?$settings['sort']:0) .', "asc" ]],
+        "pageLength": '. (isset($settings['amount'])?$settings['amount']:100) .',
         "statesave": true,
         "autoWidth": true
 } );

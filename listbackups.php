@@ -29,7 +29,7 @@ TBHeader('List Backups',true,'
 $(document).ready(function() {
         $(\'#status\').DataTable({
         "order": [[0, "desc" ]],
-        "pageLength": '. isset($settings['amount'])?$settings['amount']:25 .',
+        "pageLength": '. (isset($settings['amount'])?$settings['amount']:25) .',
         "statesave": true,
         "autoWidth": true
 } );

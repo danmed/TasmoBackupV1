@@ -10,7 +10,7 @@ TBHeader('Edit Device',true,'
 $(document).ready(function() {
         $(\'#status\').DataTable({
         "order": [[0, "asc" ]],
-        "pageLength": 25,
+        "pageLength": '. (isset($settings['amount'])?$settings['amount']:100) .',
         "statesave": true,
         "autoWidth": true
 } );

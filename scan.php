@@ -8,7 +8,7 @@ TBHeader('Scan',true,'
 $(document).ready(function() {
         $(\'#status\').DataTable({
         "order": [[1, "asc" ]],
-        "pageLength": '. isset($settings['amount'])?$settings['amount']:100 .',
+        "pageLength": '. (isset($settings['amount'])?$settings['amount']:100) .',
         "statesave": true,
         "autoWidth": true
 } );

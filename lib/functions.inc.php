@@ -19,9 +19,12 @@ function getTasmotaScan($ip, $user, $password)
 {
     $url = 'http://'.$user.':'.$password.'@'. $ip . '/';
     $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt_array($ch, array(
+        CURLOPT_FOLLOWLOCATION => false,
+        CURLOPT_TIMEOUT => 15,
+        CURLOPT_CONNECTTIMEOUT => 3,
+        CURLOPT_RETURNTRANSFER => true,
+    ));
     $data = curl_exec($ch);
     $err = curl_errno($ch);
     $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -33,6 +36,57 @@ function getTasmotaScan($ip, $user, $password)
         return true;
     }
     return false;
+}
+
+function getTasmotaScanRange($iprange, $user, $password)
+{
+    $result=array();
+    $options = array(
+        CURLOPT_FOLLOWLOCATION => false,
+        CURLOPT_TIMEOUT => 15,
+        CURLOPT_CONNECTTIMEOUT => 3,
+        CURLOPT_RETURNTRANSFER => true,
+    );
+    $range=15;
+    if($range > count($iprange)) $range=count($iprange);
+    $master = curl_multi_init();
+    for($i=0;$i<$range;$i++) {
+        $url = 'http://'.$user.':'.$password.'@'. $iprange[$i] . '/';
+        $ch = curl_init($url);
+        curl_setopt_array($ch, $options);
+        curl_multi_add_handle($master, $ch);
+    }
+    $i--;
+
+    do {
+        while(($execrun = curl_multi_exec($master, $run)) == CURLM_CALL_MULTI_PERFORM) { ; }
+        if($execrun != CURLM_OK) {
+            break;
+        }
+        while($done = curl_multi_info_read($master)) {
+            $statusCode = curl_getinfo($done['handle'], CURLINFO_HTTP_CODE);
+            $url = parse_url(curl_getinfo($done['handle'], CURLINFO_EFFECTIVE_URL));
+            $data = curl_multi_getcontent($done['handle']);
+            if ($statusCode == 200) {
+                if (strpos($data, 'Tasmota') !== false) {
+                    array_push($result,$url['host']);
+                }
+            }
+            unset($data);
+            unset($url);
+            unset($statusCode);
+            if($i<count($iprange)) {
+                $url = 'http://'.$user.':'.$password.'@'. $iprange[$i++] . '/';
+                $ch = curl_init($url);
+                curl_setopt_array($ch, $options);
+                curl_multi_add_handle($master, $ch);
+            }
+            curl_multi_remove_handle($master, $done['handle']);
+            curl_close($done['handle']);
+        }
+    } while($run);
+    curl_multi_close($master);
+    return $result;
 }
 
 function getTasmotaStatus($ip, $user, $password)

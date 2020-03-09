@@ -2,6 +2,7 @@
 Backup the configs of all your Tasmota devices
 
 # Latest Changes
+* multi-threaded scanning
 * fix datatables length and sort
 * add select-all to add page
 * fixup headers and back links

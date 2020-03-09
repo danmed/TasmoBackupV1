@@ -67,7 +67,10 @@ function getTasmotaMQTTScan($mqtt,$topic)
     foreach($mqtt_found as $found) {
         if(isset($found['status5'])) {
             $status=json_decode($found['status5'],true);
-            $tmp['ip']=$status['StatusNET']['IPAddress'];
+            if(isset($status['StatusNET']['IP']))		// < 5.12.0
+                $tmp['ip']=$status['StatusNET']['IP'];
+            if(isset($status['StatusNET']['IPAddress']))	// >= 5.12.0
+                $tmp['ip']=$status['StatusNET']['IPAddress'];
             if(isset($found['status'])) {
                 $status=json_decode($found['status'],true);
                 $tmp['name']=$status['Status']['FriendlyName'][0];

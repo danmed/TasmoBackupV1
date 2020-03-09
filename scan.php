@@ -59,26 +59,29 @@ if ($_POST["task"]=="scan") {
         $range[$index] = array_map('intval', explode('-', $octet));
     }
 
+    $iprange=array();
     // 4 for loops to generate the ip address 4 octets
     for ($octet1=$range[0][0]; $octet1<=(isset($range[0][1])? $range[0][1]:$range[0][0]); $octet1++) {
         for ($octet2=$range[1][0]; $octet2<=(isset($range[1][1])? $range[1][1]:$range[1][0]); $octet2++) {
             for ($octet3=$range[2][0]; $octet3<=(isset($range[2][1])? $range[2][1]:$range[2][0]); $octet3++) {
                 for ($octet4=$range[3][0]; $octet4<=(isset($range[3][1])? $range[3][1]:$range[3][0]); $octet4++) {
                     // assemble the IP address
-                    $ip = $octet1.".".$octet2.".".$octet3.".".$octet4;
-
-                    // initialise the URL
-
-                    if (getTasmotaScan($ip, $user, $password)) {
-                        if ($status=getTasmotaStatus($ip, $user, $password)) {
-                            $name=$status['Status']['FriendlyName'][0];
-                            echo "<tr valign='middle'><td><center><input type='checkbox' name='ip[]' value='" . $ip . "'></center></td>".
-                     "<td>" . $name . "</td>".
-                     "<td><center><a href='http://" . $ip . "'>" . $ip . "</a></center></td></tr>";
-                        }
-                    }
+                    array_push($iprange,$octet1.".".$octet2.".".$octet3.".".$octet4);
 
                 }
+            }
+        }
+    }
+    // initialise the URL
+
+    if ($ipresult=getTasmotaScanRange($iprange, $user, $password)) {
+        for($i=0;$i<count($ipresult);$i++) {
+            $ip=$ipresult[$i];
+            if ($status=getTasmotaStatus($ip, $user, $password)) {
+                $name=$status['Status']['FriendlyName'][0];
+                echo "<tr valign='middle'><td><center><input type='checkbox' name='ip[]' value='" . $ip . "'></center></td>".
+                     "<td>" . $name . "</td>".
+                     "<td><center><a href='http://" . $ip . "'>" . $ip . "</a></center></td></tr>";
             }
         }
     }

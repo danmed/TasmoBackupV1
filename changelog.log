@@ -1,5 +1,8 @@
 ##v1.03.07
 * fix datatables length and sort
+* add select-all to add page
+* fixup headers and back links
+* add upgrade.php script instead of running on every load
 
 ##v1.03.06
 * Add restore button.

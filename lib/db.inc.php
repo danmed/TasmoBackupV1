@@ -18,65 +18,6 @@ if ($DBType=='sqlite') {
 if (!$db_handle) {
 }
 
-if ($DBType=='mysql') {
-    $db_handle->exec("CREATE TABLE IF NOT EXISTS devices (
-    id int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
-    name varchar(128) NOT NULL,
-    ip varchar(64) NOT NULL,
-    version varchar(128) NOT NULL,
-    lastbackup datetime DEFAULT NULL,
-    noofbackups int(11) DEFAULT NULL,
-    password varchar(128) DEFAULT NULL )
-    ");
-
-    $db_handle->exec("CREATE TABLE IF NOT EXISTS backups (
-    id bigint(20) AUTO_INCREMENT PRIMARY KEY NOT NULL,
-    deviceid int(11) NOT NULL,
-    name varchar(128) NOT NULL,
-    version varchar(128) NOT NULL,
-    date datetime DEFAULT NULL,
-    filename varchar(1080),
-    data text,
-    INDEX (deviceid,date) )
-    ");
-
-    $db_handle->exec("CREATE TABLE IF NOT EXISTS settings (
-    name varchar(128) PRIMARY KEY NOT NULL,
-    value varchar(255) NOT NULL )
-    ");
-}
-
-if ($DBType=='sqlite') {
-    $db_handle->exec("CREATE TABLE IF NOT EXISTS devices (
-    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    name varchar(128) NOT NULL,
-    ip varchar(64) NOT NULL,
-    version varchar(128) NOT NULL,
-    lastbackup datetime DEFAULT NULL,
-    noofbackups INTEGER DEFAULT NULL,
-    password varchar(128) DEFAULT NULL )
-    ");
-
-    $db_handle->exec("CREATE TABLE IF NOT EXISTS backups (
-    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    deviceid INTEGER NOT NULL,
-    name varchar(128) NOT NULL,
-    version varchar(128) NOT NULL,
-    date datetime DEFAULT NULL,
-    filename varchar(1080),
-    data text )
-    ");
-
-    $db_handle->exec("CREATE INDEX IF NOT EXISTS backupsdeviceid
-    ON backups(deviceid, date)
-    ");
-
-    $db_handle->exec("CREATE TABLE IF NOT EXISTS settings (
-    name varchar(128) PRIMARY KEY NOT NULL,
-    value varchar(255) NOT NULL )
-    ");
-}
-
 $stm = $db_handle->prepare("select name,value from settings");
 if($stm->execute()) {
     while($result=$stm->fetch(PDO::FETCH_ASSOC)) {
@@ -337,4 +278,69 @@ function dbNewBackup($id, $name, $version, $date, $noofbackups, $filename)
         return false;
     }
     return dbDeviceBackups($id,$date,$version,$name);
+}
+
+
+function dbUpgrade()
+{
+    global $db_handle;
+
+if ($DBType=='mysql') {
+    $db_handle->exec("CREATE TABLE IF NOT EXISTS devices (
+    id int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    name varchar(128) NOT NULL,
+    ip varchar(64) NOT NULL,
+    version varchar(128) NOT NULL,
+    lastbackup datetime DEFAULT NULL,
+    noofbackups int(11) DEFAULT NULL,
+    password varchar(128) DEFAULT NULL )
+    ");
+
+    $db_handle->exec("CREATE TABLE IF NOT EXISTS backups (
+    id bigint(20) AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    deviceid int(11) NOT NULL,
+    name varchar(128) NOT NULL,
+    version varchar(128) NOT NULL,
+    date datetime DEFAULT NULL,
+    filename varchar(1080),
+    data text,
+    INDEX (deviceid,date) )
+    ");
+
+    $db_handle->exec("CREATE TABLE IF NOT EXISTS settings (
+    name varchar(128) PRIMARY KEY NOT NULL,
+    value varchar(255) NOT NULL )
+    ");
+}
+
+if ($DBType=='sqlite') {
+    $db_handle->exec("CREATE TABLE IF NOT EXISTS devices (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    name varchar(128) NOT NULL,
+    ip varchar(64) NOT NULL,
+    version varchar(128) NOT NULL,
+    lastbackup datetime DEFAULT NULL,
+    noofbackups INTEGER DEFAULT NULL,
+    password varchar(128) DEFAULT NULL )
+    ");
+
+    $db_handle->exec("CREATE TABLE IF NOT EXISTS backups (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    deviceid INTEGER NOT NULL,
+    name varchar(128) NOT NULL,
+    version varchar(128) NOT NULL,
+    date datetime DEFAULT NULL,
+    filename varchar(1080),
+    data text )
+    ");
+
+    $db_handle->exec("CREATE INDEX IF NOT EXISTS backupsdeviceid
+    ON backups(deviceid, date)
+    ");
+
+    $db_handle->exec("CREATE TABLE IF NOT EXISTS settings (
+    name varchar(128) PRIMARY KEY NOT NULL,
+    value varchar(255) NOT NULL )
+    ");
+}
 }

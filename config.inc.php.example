@@ -1,8 +1,8 @@
 <?PHP
 /* MYSQL Configuration */
 /* Change DBType to either 'sqlite' or 'mysql' if not using docker. */
-$DBType         =       'dbtype';
+$DBType         =       'sqlite';
 $DBServer       =       'mysqlserver';
 $DBUser         =       'mysqlusername';
 $DBPassword     =       'mysqlpassword';
-$DBName         =       'dbname';
+$DBName         =       'data/tasmobackup';

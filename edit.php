@@ -21,7 +21,7 @@ $(document).ready(function() {
     <div class="container">
     <table class="table table-striped table-bordered" id="status">
     <thead>
-      <tr><th colspan="4"><center><b><a href="index.php">TasmoBackup</a></th></tr>
+      <tr><th colspan="4"><center><b><a href="index.php">TasmoBackup</a> - Edit</b></center></th></tr>
         <tr><th><b>NAME</th><th>IP</th><th>AUTH</th><th>SUBMIT</th></tr>
     </thead>
     <tbody>

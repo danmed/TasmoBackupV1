@@ -75,7 +75,7 @@ $(document).ready(function() {
     <form method='POST' action='settings.php'>
     <table class="table table-striped table-bordered" id="status">
     <thead>
-    <tr><th colspan="2"><center><b><a href="index.php">TasmoBackup</a></th></tr>
+    <tr><th colspan="2"><center><b><a href="index.php">TasmoBackup</a> - Settings</b></center></th></tr>
         <tr><th><b>Setting</b></th><th><b>Value</b></th></tr>
     </thead>
     <tbody>

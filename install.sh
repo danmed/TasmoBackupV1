@@ -37,12 +37,14 @@ fi
 sed -i "s|mysqlserver|$MYSQL_SERVER|g" /var/www/html/data/config.inc.php
 sed -i "s|mysqlusername|$MYSQL_USERNAME|g" /var/www/html/data/config.inc.php
 sed -i "s|mysqlpassword|$MYSQL_PASSWORD|g" /var/www/html/data/config.inc.php
-sed -i "s|dbtype|$DBTYPE|g" /var/www/html/data/config.inc.php
-sed -i "s|dbname|$DBNAME|g" /var/www/html/data/config.inc.php
+sed -i "s|sqlite|$DBTYPE|g" /var/www/html/data/config.inc.php
+sed -i "s|data/tasmobackup|$DBNAME|g" /var/www/html/data/config.inc.php
 
 #if [ "$DBTYPE" == "mysql" ]; then
 #  docker-php-ext-install mysqli pdo_mysql
 #fi
+
+/usr/bin/php /var/www/html/upgrade.php
 
 #su nobody -s /bin/sh -c "$@"
 exec "$@"

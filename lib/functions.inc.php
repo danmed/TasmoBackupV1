@@ -1,7 +1,7 @@
 <?php
-require ('db.inc.php');
+require (__DIR__.'/db.inc.php');
 
-$strJsonFileContents = file_get_contents(__DIR__.'../HA_addon/config.json');
+$strJsonFileContents = file_get_contents(__DIR__.'/../HA_addon/config.json');
 $array = json_decode($strJsonFileContents, true);
 $GLOBALS['VERSION']=$array['version'];
 

@@ -1,13 +1,10 @@
-# IF YOU ARE COMING HERE FROM THE OLD VERSION - YOU WILL NEED TO START AGAIN DUE TO BREAKING CHANGES. ALL DEVICES WILL NEED TO BE ADDED AGAIN.
-
 # TasmoBackupV1
 Backup the configs of all your Tasmota devices
 
 # Latest Changes
-* Confirmation before deleting a device - 13.02.2020
-* Delete individual backups - 11.02.2020
-* Delete backups when device deleted - 11.02.2020
-* MQTT search for devices by topic
+* fix datatables length and sort
+* add select-all to add page
+* fixup headers and back links
 
 # Features
 * Add single devices
@@ -54,6 +51,23 @@ MYSQL:
 docker run -d -p 8259:80 -v ./data:/var/www/html/data -e DBTYPE=mysql -e MYSQL_SERVER=192.168.2.10 -e MYSQL_USERNAME=root MYSQL_PASSWORD=password -e DBNAME=tasmobackup --name TasmoBackup danmed/tasmobackupv1
 ```
 
+# Raw PHP Install
+```
+git clone https://github.com/danmed/TasmoBackupV1
+cd TasmoBackupV1
+mkdir data
+chown www-data data
+cp config.inc.php.example data/config.inc.php
+```
+
+Edit data/config.inc.php if you wish to change to using mysql database
+instead of sqlite.
+Make sure the data directory is owned by the user php runs as, or it will
+not be able to save your backups or create/update the sqlite file
+
+Run the upgrade.php script to initialize your new database, or to upgrade
+your existing one when changing versions.
+
 # Scheduled Backups
 * backupall.php exists to do literally that.. Schedule this with your chosen means (nodered, curl, scheduled tasks etc)
 
@@ -67,5 +81,6 @@ docker run -d -p 8259:80 -v ./data:/var/www/html/data -e DBTYPE=mysql -e MYSQL_S
 
 
 # To-Do
-
-
+* Background scanning
+* Handle device changes ip address
+* Parse backup configs

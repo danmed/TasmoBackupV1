@@ -4,41 +4,27 @@ require 'lib/mqtt.inc.php';
 
 global $settings;
 
-?><html lang="en">
-<head>
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-116906-4"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-116906-4');
-</script>
-
-<title>TasmoBackup</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="resources/bootstrap.min.css">
-  <script src="resources/jquery.min.js"></script>
-  <script src="resources/bootstrap.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="resources/datatables.min.css"/>
-  <script type="text/javascript" src="resources/datatables.min.js"></script>
-<script type="text/javascript" class="init">
+TBHeader('Scan',true,'
 $(document).ready(function() {
-        $('#status').DataTable({
+        $(\'#status\').DataTable({
         "order": [[1, "asc" ]],
-        "pageLength": <?php echo isset($settings['amount'])?$settings['amount']:100; ?>,
+        "pageLength": '. (isset($settings['amount'])?$settings['amount']:100) .',
         "statesave": true,
         "autoWidth": true
 } );
 } );
+',true);
 
-        </script>
-</head>
-
-  <body><font size="2">
-
+?>
+  <body>
+<script language="Javascript">
+function toggle(source) {
+  checkboxes = document.getElementsByName('ip[]');
+  for(var i=0, n=checkboxes.length;i<n;i++) {
+    checkboxes[i].checked = source.checked;
+  }
+}
+</script>
     <div class="container">
 	    <form action="index.php" method="POST">
                 <input type="hidden" name="task" value="discoverall">
@@ -46,7 +32,7 @@ $(document).ready(function() {
                 <?php if(isset($_POST['password'])) { echo '<input type="hidden" name="password" value="'.$_POST['password'].'">'; } ?>
     <table class="table table-striped table-bordered" id="status">
     <thead>
-    <tr><th colspan="3"><center><b>TasmoBackup</b></th></tr>
+    <tr><th colspan="3"><center><b><a href="index.php">TasmoBackup</a> - Scan Results</b></center></th></tr>
     <tr><th><b>ADD</b></th><th><b>NAME</b></th><th><b>IP</b></th></tr>
     </thead>
     <tbody>
@@ -117,7 +103,13 @@ if ($_POST["task"]=="mqtt") {
 }
 ?>
 </tbody>
-	    <tr><td colspan="3"><center><input type=submit class='btn-xs btn-success' value='Add Devices'></center></td></tr>
+    <tr><td><center><input type='checkbox' name="select-all" id="select-all" onClick="toggle(this)"></center></td><td>Select All</td><td>&nbsp;</td></tr>
+    <tr><td colspan="3"><center><input type=submit class='btn-xs btn-success' value='Add Devices'></center></td></tr>
     </table>
     </form>
     </div>
+<?php
+TBFooter();
+?>
+</body>
+</html>

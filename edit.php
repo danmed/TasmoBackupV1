@@ -6,46 +6,22 @@ if (isset($_POST['ip'])) {
     $ip = $_POST['ip'];
 }
 
-?>
-<html lang="en">
-<head>
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-116906-4"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-116906-4');
-</script>
-
-<title>TasmoBackup - Edit Device</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="resources/bootstrap.min.css">
-  <script src="resources/jquery.min.js"></script>
-  <script src="resources/bootstrap.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="resources/datatables.min.css"/>
-  <script type="text/javascript" src="resources/datatables.min.js"></script>
-<script type="text/javascript" class="init">
+TBHeader('Edit Device',true,'
 $(document).ready(function() {
-        $('#status').DataTable({
+        $(\'#status\').DataTable({
         "order": [[0, "asc" ]],
-        "pageLength": 25,
+        "pageLength": '. (isset($settings['amount'])?$settings['amount']:100) .',
         "statesave": true,
         "autoWidth": true
 } );
 } );
-
-        </script>
-</head>
-
-  <body><font size="2">
-
+',true);
+?>
+  <body>
     <div class="container">
     <table class="table table-striped table-bordered" id="status">
     <thead>
-      <tr><th colspan="4"><center><b><a href="index.php">TasmoBackup</a></th></tr>
+      <tr><th colspan="4"><center><b><a href="index.php">TasmoBackup</a> - Edit</b></center></th></tr>
         <tr><th><b>NAME</th><th>IP</th><th>AUTH</th><th>SUBMIT</th></tr>
     </thead>
     <tbody>
@@ -59,11 +35,18 @@ $relcount = 1;
         $name = $db_field['name'];
         $ip = $db_field['ip'];
         $password = $db_field['password']; ?>
-
-
-
+?>
+<tr valign='middle'>
+<form method='POST' action='index.php'>
+<input type='hidden' name='task' value='edit'>
+<input type='hidden' name='oldip' value='<?php echo $ip; ?>'>
+  <td><center><input type='text' name='name' value='<?php echo $name; ?>'></center></td>
+  <td><center><input type='text' name='ip' value='<?php echo $ip; ?>'></center></td>
+  <td><center><input type='password' name='password' value='<?php echo $password; ?>'></center></td>
+  <td><center><input type='submit' value='Submit' class='btn-xs btn-success'></center></td>
+</form>
+</tr>
 <?php
-        print "<tr valign='middle'><td><form method='POST' action='index.php'><input type='hidden' name='name' value='" . $name . "'><input type='hidden' name='task' value='edit'><input type='hidden' name='oldip' value='" . $ip . "'><input type='hidden' name='oldip' value='" . $ip . "'>" . $name . "</td><td><center><input type='text' name='ip' value='" . $ip . "'></td><td><center><center><input type='password' name='password' value='" . $password . "'></td><td><center><input type='submit' value='Submit' class='btn-xs btn-success'></form></td></tr>";
         $relcount ++;
     }
 
@@ -71,5 +54,5 @@ $relcount = 1;
            </tbody>
     </table>
     </div>
-<br><br>
-<div style='text-align:right;font-size:11px;'><hr/><a href='https://github.com/danmed/TasmoBackupV1' target='_blank' style='color:#aaa;'>TasmoBackup 1.01 by Dan Medhurst</a></div>
+<?php
+TBFooter();

@@ -3,7 +3,7 @@
   "version": "1.03.07",
   "slug": "tasmobackup",
   "description": "Tasmota Backup TEST",
-  "url": "https://github.com/patrickdk77/TasmoBackupV1",
+  "url": "https://github.com/patrickdk77/TasmoBackupV1/",
   "image": "patrickdk/tasmobackupv1",
   "arch": ["amd64","i386","aarch64","armv7"],
   "homeassistant_api": false,

@@ -1,6 +1,6 @@
 <?php
 
-require('lib/phpMQTT.php');
+require(__DIR__.'/phpMQTT.php');
 
 
 GLOBAL $mqtt_found;
@@ -17,7 +17,7 @@ function setupMQTT($server, $port=1883, $user, $password)
 
 function getTasmotaMQTTScan($mqtt,$topic)
 {
-    GLOBAL $mqtt_found;
+    GLOBAL $mqtt_found,$settings;
 
     $topics['+/stat/STATUS'] = array('qos' => 0, 'function' => 'collectMQTTStatus');
     $topics['+/stat/STATUS2'] = array('qos' => 0, 'function' => 'collectMQTTStatus2');
@@ -25,6 +25,13 @@ function getTasmotaMQTTScan($mqtt,$topic)
     $topics['stat/+/STATUS'] = array('qos' => 0, 'function' => 'collectMQTTStatus');
     $topics['stat/+/STATUS2'] = array('qos' => 0, 'function' => 'collectMQTTStatus2');
     $topics['stat/+/STATUS5'] = array('qos' => 0, 'function' => 'collectMQTTStatus5');
+
+    if(isset($settings['mqtt_topic_format'])) {
+        $custom_topic=str_replace(array('%prefix%','%topic%'),array('stat','+'),$settings['mqtt_topic_format']);
+        $topics[$custom_topic.'/STATUS'] = array('qos' => 0, 'function' => 'collectMQTTStatus');
+        $topics[$custom_topic.'/STATUS2'] = array('qos' => 0, 'function' => 'collectMQTTStatus2');
+        $topics[$custom_topic.'/STATUS5'] = array('qos' => 0, 'function' => 'collectMQTTStatus5');
+    }
     $mqtt->subscribe($topics);
 
     for($i=0; $i<1000; $i++) {
@@ -32,15 +39,25 @@ function getTasmotaMQTTScan($mqtt,$topic)
             // HomeAssistant swapped
             $mqtt->publish($topic.'/cmnd/STATUS','0');
         }
-        if($i==110) {
-            $mqtt->publish($topic.'/cmnd/STATUS','5');
+        if($i==60) {
+            if(isset($settings['mqtt_topic_format'])) {
+                $mqtt->publish(str_replace(array('%prefix%','%topic%'),array('stat','+'),$settings['mqtt_topic_format']).'/STATUS','0');
+            }
         }
-
-        if($i==220) {
-            // Default
+        if($i==110) {
             $mqtt->publish('cmnd/'.$topic.'/STATUS','0');
         }
-        if($i==330) {
+
+        if($i==210) {
+            // Default
+            $mqtt->publish($topic.'cmnd/STATUS','5');
+        }
+        if($i==260) {
+            if(isset($settings['mqtt_topic_format'])) {
+                $mqtt->publish(str_replace(array('%prefix%','%topic%'),array('stat','+'),$settings['mqtt_topic_format']).'/STATUS','5');
+            }
+        }
+        if($i==320) {
             $mqtt->publish('cmnd/'.$topic.'/STATUS','5');
         }
         while($mqtt->proc(false)) {};

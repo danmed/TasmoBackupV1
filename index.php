@@ -24,164 +24,114 @@ if (isset($_POST["name"])) {
     $name = $_POST["name"];
 }
 
-if ($task == "discover") {
-    $show_modal = true;
-    $output = '<center>'.addTasmotaDevice($ip, $user, $password).'<br></center>';
-}
-
-if ($task == "discoverall") {
-    $show_modal = true;
-    $output = '<center>';
-    if (!is_array($ip)) {
-        $output .= "You didn't select any devices.<br>";
-    } else {
-        foreach($ip as $i) {
-            $output .= addTasmotaDevice($i, $user, $password).'<br>';
-        }
-    }
-    $output .= '</center>';
-}
-
-
-if ($task == "edit") {
-    if (isset($_POST['oldip'])) {
-        $old_ip = $_POST['oldip'];
-    }
-    if (isset($_POST['oldname'])) {
-        $old_name = $_POST['oldname'];
-    }
-
-    if (isset($old_ip) && isset($ip)) {
-        if (dbDeviceRename($old_ip, $name, $ip, $password)) {
-            $show_modal = true;
-            $output = "<center><b>" . $name . " updated up successfully</b><br></center>";
+switch(strtolower($task)) {
+    case 'discover':
+        $show_modal = true;
+        $output = '<center>'.addTasmotaDevice($ip, $user, $password).'<br></center>';
+        break;
+    case 'discoverall':
+        $show_modal = true;
+        $output = '<center>';
+        if (!is_array($ip)) {
+            $output .= "You didn't select any devices.<br>";
         } else {
-            $show_modal = true;
-            echo "<center><b>Error updating record for ".$old_ip." ".$name." <br>";
-        }
-    }
-}
-
-// SINGLE BACKUP ROUTINE
-if ($task == "singlebackup") {
-    $show_modal = true;
-    $output = "<center><b>Device not found: ".$ip."</b></center>";
-
-    $devices = dbDeviceIp($ip);
-    if ($devices!==false) {
-        foreach ($devices as $db_field) {
-            if (backupSingle($db_field['id'], $db_field['name'], $db_field['ip'], 'admin', $db_field['password'])) {
-                $show_modal = true;
-                $output = "<center><b>Backup failed</b></center>";
-            } else {
-                $show_model = true;
-                $output = "Backup completed successfully!";
+            foreach($ip as $i) {
+                $output .= addTasmotaDevice($i, $user, $password).'<br>';
             }
         }
-    }
-}
-
-if ($task == "backupall") {
-    $errorcount = backupAll();
-
-    $show_modal = true;
-    if ($errorcount < 1) {
-        $output = "All backups completed successfully!";
-    } else {
-        $output = "<font color='red'><b>Not all backups completed successfully!</b></font>";
-    }
-}
-
-if ($task == "delete") {
-    $show_modal = true;
-    try {
-        if (dbDeviceDel($ip)) {
-            $output = $name . " deleted successfully from the database.";
-            } else {
-            $output = "Error deleting  " . $ip;
+        $output .= '</center>';
+        break;
+    case 'edit':
+        if (isset($_POST['oldip'])) {
+            $old_ip = $_POST['oldip'];
         }
-    } catch (PDOException $e) {
-        $output = "Error deleting  " . $ip . " : " . $e->getMessage();
-    }
+        if (isset($_POST['oldname'])) {
+            $old_name = $_POST['oldname'];
+        }
+        if (isset($old_ip) && isset($ip)) {
+            if (dbDeviceRename($old_ip, $name, $ip, $password)) {
+                $show_modal = true;
+                $output = "<center><b>" . $name . " updated up successfully</b><br></center>";
+            } else {
+                $show_modal = true;
+                echo "<center><b>Error updating record for ".$old_ip." ".$name." <br>";
+            }
+        }
+        break;
+    case 'singlebackup':
+        $show_modal = true;
+        $output = "<center><b>Device not found: ".$ip."</b></center>";
+
+        $devices = dbDeviceIp($ip);
+        if ($devices!==false) {
+            foreach ($devices as $db_field) {
+                if (backupSingle($db_field['id'], $db_field['name'], $db_field['ip'], 'admin', $db_field['password'])) {
+                    $show_modal = true;
+                    $output = "<center><b>Backup failed</b></center>";
+                } else {
+                    $show_model = true;
+                    $output = "Backup completed successfully!";
+                }
+            }
+        }
+        break;
+    case 'backupall':
+        $errorcount = backupAll();
+
+        $show_modal = true;
+        if ($errorcount < 1) {
+            $output = "All backups completed successfully!";
+        } else {
+            $output = "<font color='red'><b>Not all backups completed successfully!</b></font>";
+        }
+        break;
+    case 'delete':
+        $show_modal = true;
+        try {
+            if (dbDeviceDel($ip)) {
+                $output = $name . " deleted successfully from the database.";
+            } else {
+                $output = "Error deleting  " . $ip;
+            }
+        } catch (PDOException $e) {
+            $output = "Error deleting  " . $ip . " : " . $e->getMessage();
+        }
+        break;
+    case 'noofbackups':
+        $findname = preg_replace('/\s+/', '_', $name);
+        $findname = preg_replace('/[^A-Za-z0-9\-]/', '', $findname);
+        $directory = $settings['backup_folder'] . $findname;
+        $scanned_directory = array_diff(scandir($directory), array('..','.'));
+        $out = array();
+        foreach ($scanned_directory as $value) {
+            $link = strtolower(implode("-", explode(" ", $value)));
+            $out[] = '<a href="' . $settings['backup_folder'] . $findname . '/' . $link . '">' . $link . '</a>';
+        }
+        $output = implode("<br>", $out);
+
+        $show_modal = true;
+        break;
+    default:
+        break;
 }
 
-if ($task == "noofbackups") {
-    $findname = preg_replace('/\s+/', '_', $name);
-    $findname = preg_replace('/[^A-Za-z0-9\-]/', '', $findname);
-    $directory = $settings['backup_folder'] . $findname;
-    $scanned_directory = array_diff(scandir($directory), array(
-        '..',
-        '.'
-    ));
-
-    $out = array();
-    foreach ($scanned_directory as $value) {
-        $link = strtolower(implode("-", explode(" ", $value)));
-        $out[] = '<a href="' . $settings['backup_folder'] . $findname . '/' . $link . '">' . $link . '</a>';
-    }
-    $output = implode("<br>", $out);
-
-    $show_modal = true;
-}
-
-?>
-<html lang="en">
-<head>
-<link rel="shortcut icon" href="favicon.ico">
-<link rel="icon" sizes="16x16 32x32 64x64" href="favicon.ico">
-<link rel="icon" type="image/png" sizes="196x196" href="favicon/192.png">
-<link rel="icon" type="image/png" sizes="160x160" href="favicon/160.png">
-<link rel="icon" type="image/png" sizes="96x96" href="favicon/96.png">
-<link rel="icon" type="image/png" sizes="64x64" href="favicon/64.png">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon/32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="favicon/16.png">
-<link rel="apple-touch-icon" href="favicon/57.png">
-<link rel="apple-touch-icon" sizes="114x114" href="favicon/114.png">
-<link rel="apple-touch-icon" sizes="72x72" href="favicon/72.png">
-<link rel="apple-touch-icon" sizes="144x144" href="favicon/144.png">
-<link rel="apple-touch-icon" sizes="60x60" href="favicon/60.png">
-<link rel="apple-touch-icon" sizes="120x120" href="favicon/120.png">
-<link rel="apple-touch-icon" sizes="76x76" href="favicon/76.png">
-<link rel="apple-touch-icon" sizes="152x152" href="favicon/152.png">
-<link rel="apple-touch-icon" sizes="180x180" href="favicon/180.png">
-
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-116906-4"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-116906-4');
-</script>
-
-<title>TasmoBackup</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="resources/bootstrap.min.css">
-  <script src="resources/jquery.min.js"></script>
-  <script src="resources/bootstrap.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="resources/datatables.min.css"/>
-  <script type="text/javascript" src="resources/datatables.min.js"></script>
-<script type="text/javascript" class="init">
+TBHeader(false,true,'
 $(document).ready(function() {
-        $('#status').DataTable({
-        "order": [[<?php echo isset($settings['sort'])?$settings['sort']:0; ?>, "asc" ]],
-        "pageLength": <?php echo isset($settings['amount'])?$settings['amount']:100; ?>,
+        $(\'#status\').DataTable({
+        "order": [['. (isset($settings['sort'])?$settings['sort']:0) .', "asc" ]],
+        "pageLength": '. (isset($settings['amount'])?$settings['amount']:100) .',
         "statesave": true,
         "autoWidth": true
 } );
 } );
-        </script>
-</head>
-
-  <body><font size="2">
-
+',true);
+?>
+  <body>
     <div class="container">
     <table class="table table-striped table-bordered" id="status">
     <thead>
-	    <tr><th colspan="9"><center><b>TasmoBackup <a href="settings.php"><img src="settings.png"></a></th></tr>
-        <tr><th><b>NAME</th><th>IP</th><th>AUTH</th><th><b>VERSION</th><th>LAST BACKUP</th><th><b>FILES</th><th><b>BACKUP</b></th><th>EDIT</th><th><b>DELETE</b></th></tr>
+      <tr><th colspan="9"><center><b>TasmoBackup <a href="settings.php"><img src="settings.png"></a></th></tr>
+      <tr><th><b>NAME</th><th>IP</th><th>AUTH</th><th><b>VERSION</th><th>LAST BACKUP</th><th><b>FILES</th><th><b>BACKUP</b></th><th>EDIT</th><th><b>DELETE</b></th></tr>
     </thead>
     <tbody>
 <?php
@@ -202,16 +152,15 @@ $(document).ready(function() {
 ?>
            </tbody>
     </table>
-    </div>
 
 <center><form method='POST' action='index.php'><input type='hidden' value='backupall' name='task'><input type='submit' value='Backup All' class='btn-xs btn-success'></form><br>
-  <form method='POST' action='index.php'><input type='hidden' value='discover' name='task'><input type="text" name="ip" placeholder="ip address"><input type="password" name="password" placeholder="password"><input type='submit' value='Add' class='btn-xs btn-danger'></form>
-<form method="POST" action="scan.php"><input type=text name=range placeholder="192.168.1.1-255"><input type="password" name="password" placeholder="password"><input type=hidden name=task value=scan><input type=submit value=Discover class='btn-xs btn-danger'></form>
-<form method="POST" action="scan.php"><input type=text name=mqtt_topic value='<?php echo isset($settings['mqtt_topic'])?$settings['mqtt_topic']:'tasmotas'; ?>'><input type="password" name="password" placeholder="password"><input type=hidden name=task value=mqtt><input type=submit value="MQTT Discover" class='btn-xs btn-danger'></form>
-<br><br>
-<div style='text-align:right;font-size:11px;'><hr/><a href='https://github.com/danmed/TasmoBackupV1' target='_blank' style='color:#aaa;'>TasmoBackup <?php echo $GLOBAL['VERSION']; ?> by Dan Medhurst</a></div>
+<form method='POST' action='index.php'><input type='hidden' value='discover' name='task'><input type="text" name="ip" placeholder="ip address"><input type="password" name="password" placeholder="password" <?php if(isset($settings['tasmota_password'])) { echo 'value="'.$settings['tasmota_password'].'" '; } ?>><input type='submit' value='Add' class='btn-xs btn-danger'></form>
+<form method="POST" action="scan.php"><input type=text name=range placeholder="192.168.1.1-255"><input type="password" name="password" placeholder="password" <?php if(isset($settings['tasmota_password'])) { echo 'value="'.$settings['tasmota_password'].'" '; } ?>><input type=hidden name=task value=scan><input type=submit value=Discover class='btn-xs btn-danger'></form>
+<form method="POST" action="scan.php"><input type=text name=mqtt_topic value='<?php echo isset($settings['mqtt_topic'])?$settings['mqtt_topic']:'tasmotas'; ?>'><input type="password" name="password" placeholder="password" <?php if(isset($settings['tasmota_password'])) { echo 'value="'.$settings['tasmota_password'].'" '; } ?>><input type=hidden name=task value=mqtt><input type=submit value="MQTT Discover" class='btn-xs btn-danger'></form>
+<?php
+TBFooter();
+echo '</div>';
 
-    <?php
 if (isset($show_modal) && $show_modal):
 ?>
    <script type='text/javascript'>

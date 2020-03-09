@@ -44,7 +44,7 @@ sed -i "s|data/tasmobackup|$DBNAME|g" /var/www/html/data/config.inc.php
 #  docker-php-ext-install mysqli pdo_mysql
 #fi
 
-/usr/bin/php /var/www/html/upgrade.php 1>/dev/null
+su -l -p www-data -s /usr/bin/php /var/www/html/upgrade.php 1>/dev/null
 
 #su nobody -s /bin/sh -c "$@"
 exec "$@"

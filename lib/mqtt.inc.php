@@ -1,6 +1,6 @@
 <?php
 
-require('lib/phpMQTT.php');
+require(__DIR__.'/phpMQTT.php');
 
 
 GLOBAL $mqtt_found;

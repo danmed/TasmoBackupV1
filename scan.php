@@ -106,6 +106,7 @@ if ($_POST["task"]=="mqtt") {
 }
 ?>
 </tbody>
+    <tr><td colspan="3">&nbsp;</td></tr>
     <tr><td><center><input type='checkbox' name="select-all" id="select-all" onClick="toggle(this)"></center></td><td>Select All</td><td>&nbsp;</td></tr>
     <tr><td colspan="3"><center><input type=submit class='btn-xs btn-success' value='Add Devices'></center></td></tr>
     </table>

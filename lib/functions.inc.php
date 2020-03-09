@@ -235,7 +235,7 @@ function addTasmotaDevice($ip, $user, $password)
 }
 
 
-function TBHeader($name=false,$favicon=true,$init=false,$track=true)
+function TBHeader($name=false,$favicon=true,$init=false,$track=true,$redirect=false)
 {
     global $settings;
 //if(isset($settings['theme']) && $settings['theme']=='dark')
@@ -244,7 +244,11 @@ function TBHeader($name=false,$favicon=true,$init=false,$track=true)
     echo '<html lang="en">';
 ?>
 <head>
-<?php if($favicon) {
+<?php 
+if($redirect>0) {
+    echo '<meta http-equiv="refresh" content="'.$redirect.';url=index.php" />';
+}
+if($favicon) {
 ?>
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="icon" sizes="16x16 32x32 64x64" href="favicon.ico">

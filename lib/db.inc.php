@@ -1,6 +1,6 @@
 <?php
 
-require_once(__DIR__.'../data/config.inc.php');
+require_once(__DIR__.'/../data/config.inc.php');
 
 global $db_handle;
 global $settings;

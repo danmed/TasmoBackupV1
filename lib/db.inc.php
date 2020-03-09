@@ -13,6 +13,9 @@ if ($DBType=='sqlite') {
     if (!isset($DBName)) {
         $DBName = 'data/tasmobackupdb';
     }
+    if (substr_compare($DBName,'data/',0,5)==0) {
+        $DBName = __DIR__.'/'.$DBName;
+    }
     $db_handle = new \PDO('sqlite:'.$DBName.'.sqlite3');
     $GLOBALS['DBType']='sqlite';
 }

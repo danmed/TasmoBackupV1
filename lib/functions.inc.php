@@ -33,7 +33,7 @@ function getTasmotaScan($ip, $user, $password)
         return false;
     }
     if (strpos($data, 'Tasmota') !== false) {
-        if (isset($settings['autoadd_scan']) && $settings['autoadd_scan']) {
+        if (isset($settings['autoadd_scan']) && $settings['autoadd_scan']=='Y') {
             addTasmotaDevice($ip, $user, $password);
         } else {
             return true;
@@ -75,7 +75,7 @@ function getTasmotaScanRange($iprange, $user, $password)
             $data = curl_multi_getcontent($done['handle']);
             if ($statusCode == 200) {
                 if (strpos($data, 'Tasmota') !== false) {
-                    if (isset($settings['autoadd_scan']) && $settings['autoadd_scan']) {
+                    if (isset($settings['autoadd_scan']) && $settings['autoadd_scan']=='Y') {
                         addTasmotaDevice($url['host'], $user, $password);
                     } else {
                         array_push($result,$url['host']);

@@ -4,6 +4,7 @@
 * fixup headers and back links
 * add upgrade.php script instead of running on every load
 * multithreaded ip scanning
+* Only show mqtt scan if mqtt settings are enabled.
 
 ##v1.03.06
 * Add restore button.

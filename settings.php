@@ -52,6 +52,12 @@ if (isset($_POST['autoupdate_name'])) {
     else
         dbSettingsUpdate('autoupdate_name','N');
 }
+if (isset($_POST['autoadd_scan'])) {
+    if (in_array(strtolower($_POST['autoadd_scan']),array('y','yes','true','t')))
+        dbSettingsUpdate('autoadd_scan','Y');
+    else
+        dbSettingsUpdate('autoadd_scan','N');
+}
 if (isset($_POST['theme'])) {
     if (in_array(strtolower($_POST['theme']),array('light','dark')))
         dbSettingsUpdate('theme',strtolower($_POST['theme']));
@@ -83,17 +89,18 @@ $(document).ready(function() {
 <tr valign='middle'><td>Sort Column</td><td><center><select name ="sortoption"><option value="0" <?php if($settings['sort']==1) { echo 'selected="selected"'; } ?>>Name</option><option value="1">IP</option><option value="2" <?php if($settings['sort']==2) { echo 'selected="selected"'; } ?>>Auth</option><option value="3" <?php if($settings['sort']==3) { echo 'selected="selected"'; } ?>>Version</option><option value="4" <?php if($settings['sort']==4) { echo 'selected="selected"'; } ?>>Last Backup</option></select></td></tr>
 <tr valign='middle'><td>Amount of Rows</td><td><center><input type='text' name='amountoption' value='<?php echo isset($settings['amount'])?$settings['amount']:100; ?>'></td></tr>
 <tr valign='middle'><td>Theme (light or dark)</td><td><center><input type="text" name='theme' value='<?php echo isset($settings['theme'])?$settings['theme']:'light'; ?>'></td></tr>
-<tr valign='middle'><td>Tasmota Default Password</td><td><center><input type="password" name='tasmota_password' value='<?php if(isset($settings['tasmota_password'])) echo $settings['tasmota_password']; ?>'></td></tr>
+<tr valign='middle'><td>Tasmota Default Password for web login on devices</td><td><center><input type="password" name='tasmota_password' value='<?php if(isset($settings['tasmota_password'])) echo $settings['tasmota_password']; ?>'></td></tr>
 <tr valign='middle'><td>Update Device Name when doing Backups (Y or N)</td><td><center><input type="text" name='autoupdate_name' value='<?php echo isset($settings['autoupdate_name'])?$settings['autoupdate_name']:'Y'; ?>'></td></tr>
+<tr valign='middle'><td>Automatically Add New Devices (Y or N)</td><td><center><input type="text" name='autoadd_scan' value='<?php echo isset($settings['autoadd_scan'])?$settings['autoadd_scan']:'N'; ?>'></td></tr>
 <tr valign='middle'><td>MQTT Host</td><td><center><input type="text" name='mqtt_host' value='<?php if(isset($settings['mqtt_host'])) echo $settings['mqtt_host']; ?>'></td></tr>
 <tr valign='middle'><td>MQTT Port</td><td><center><input type="text" name='mqtt_port' value='<?php echo isset($settings['mqtt_port'])?$settings['mqtt_port']:1883; ?>'></td></tr>
 <tr valign='middle'><td>MQTT Username</td><td><center><input type="text" name='mqtt_user' value='<?php if(isset($settings['mqtt_user'])) echo $settings['mqtt_user']; ?>'></td></tr>
 <tr valign='middle'><td>MQTT Password</td><td><center><input type="password" name='mqtt_password' value='<?php if(isset($settings['mqtt_password'])) echo $settings['mqtt_password']; ?>'></td></tr>
 <tr valign='middle'><td>MQTT Topic</td><td><center><input type="text" name='mqtt_topic' value='<?php echo isset($settings['mqtt_topic'])?$settings['mqtt_topic']:'tasmotas'; ?>'></td></tr>
 <tr valign='middle'><td>MQTT Topic Format</td><td><center><input type="text" name='mqtt_topic_format' value='<?php echo isset($settings['mqtt_topic_format'])?$settings['mqtt_topic_format']:'%prefix%/%topic%'; ?>'></td></tr>
-<tr valign='middle'><td>Backup All Min Hours</td><td><center><input type="text" name='backup_minhours' value='<?php echo isset($settings['backup_minhours'])?$settings['backup_minhours']:'23'; ?>'></td></tr>
-<tr valign='middle'><td>Backup Max Days Old</td><td><center><input type="text" name='backup_maxdays' value='<?php echo isset($settings['backup_maxdays'])?$settings['backup_maxdays']:''; ?>'></td></tr>
-<tr valign='middle'><td>Backup Max Count</td><td><center><input type="text" name='backup_maxcount' value='<?php echo isset($settings['backup_maxcount'])?$settings['backup_maxcount']:''; ?>'></td></tr>
+<tr valign='middle'><td>Backup-All Min Hours between backups</td><td><center><input type="text" name='backup_minhours' value='<?php echo isset($settings['backup_minhours'])?$settings['backup_minhours']:'23'; ?>'></td></tr>
+<tr valign='middle'><td>Backup Max Days Old to keep</td><td><center><input type="text" name='backup_maxdays' value='<?php echo isset($settings['backup_maxdays'])?$settings['backup_maxdays']:''; ?>'></td></tr>
+<tr valign='middle'><td>Backup Max Count to keep</td><td><center><input type="text" name='backup_maxcount' value='<?php echo isset($settings['backup_maxcount'])?$settings['backup_maxcount']:''; ?>'></td></tr>
 <tr valign='middle'><td>Backup Data Directory</td><td><center><input type="text" name='backup_folder' value='<?php echo $settings['backup_folder']; ?>'></td></tr>
 
 </tbody>

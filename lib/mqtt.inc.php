@@ -15,7 +15,7 @@ function setupMQTT($server, $port=1883, $user, $password)
     return $mqtt;
 }
 
-function getTasmotaMQTTScan($mqtt,$topic)
+function getTasmotaMQTTScan($mqtt,$topic,$user=false,$password=false)
 {
     GLOBAL $mqtt_found,$settings;
 
@@ -75,7 +75,11 @@ function getTasmotaMQTTScan($mqtt,$topic)
                 $status=json_decode($found['status'],true);
                 $tmp['name']=$status['Status']['FriendlyName'][0];
             }
-            $results[]=$tmp;
+            if (isset($settings['autoadd_scan']) && $settings['autoadd_scan']) {
+                addTasmotaDevice($tmp['ip'], $user, $password);
+            } else {
+                $results[]=$tmp;
+            }
         }
     }
     return $results;

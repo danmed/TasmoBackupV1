@@ -33,13 +33,19 @@ function getTasmotaScan($ip, $user, $password)
         return false;
     }
     if (strpos($data, 'Tasmota') !== false) {
-        return true;
+        if (isset($settings['autoadd_scan']) && $settings['autoadd_scan']) {
+            addTasmotaDevice($ip, $user, $password);
+        } else {
+            return true;
+        }
     }
     return false;
 }
 
 function getTasmotaScanRange($iprange, $user, $password)
 {
+    global $settings;
+
     $result=array();
     $options = array(
         CURLOPT_FOLLOWLOCATION => false,
@@ -69,7 +75,11 @@ function getTasmotaScanRange($iprange, $user, $password)
             $data = curl_multi_getcontent($done['handle']);
             if ($statusCode == 200) {
                 if (strpos($data, 'Tasmota') !== false) {
-                    array_push($result,$url['host']);
+                    if (isset($settings['autoadd_scan']) && $settings['autoadd_scan']) {
+                        addTasmotaDevice($url['host'], $user, $password);
+                    } else {
+                        array_push($result,$url['host']);
+                    }
                 }
             }
             unset($data);
@@ -175,7 +185,6 @@ function getTasmotaBackup($ip, $user, $password, $filename)
 
 function backupCleanup($id)
 {
-    global $db_handle;
     global $settings;
 
     $backupfolder = $settings['backup_folder'];
@@ -193,7 +202,6 @@ function backupCleanup($id)
 
 function backupSingle($id, $name, $ip, $user, $password)
 {
-    global $db_handle;
     global $settings;
 
     $backupfolder = $settings['backup_folder'];
@@ -301,7 +309,7 @@ function TBHeader($name=false,$favicon=true,$init=false,$track=true,$redirect=fa
 ?>
 <head>
 <?php 
-if($redirect>0) {
+if($redirect!==false && $redirect>0) {
     echo '<meta http-equiv="refresh" content="'.$redirect.';url=index.php" />';
 }
 if($favicon) {

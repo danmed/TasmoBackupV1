@@ -1,3 +1,7 @@
+##v1.03.08
+* add cron for backupall in docker
+* add auto add for scanned devices
+
 ##v1.03.07
 * fix datatables length and sort
 * add select-all to add page

@@ -6,6 +6,8 @@ Backup the configs of all your Tasmota devices
 * fix datatables length and sort
 * add select-all to add page
 * fixup headers and back links
+* auto add when doing scans
+* cron to run backup-all in docker for HA
 
 # Features
 * Add single devices
@@ -16,7 +18,16 @@ Backup the configs of all your Tasmota devices
 * Download individual backups
 * No duplicates (based on IP)
 
-# Docker-compose
+# Install via Hass.io aka HomeAssistant Supervisor
+Go into home assisant, then the supervisor
+Click on the Add-On Store
+paste in http://github.com/danmed/TasmoBackupV1 into the Add new repository
+via url box, and click add
+Scroll down near the bottom and locate TasmoBackup
+
+More info at: https://www.home-assistant.io/hassio/installing_third_party_addons/
+
+# Install via Docker-compose
 ```yaml
 version: '2'
 services:
@@ -52,7 +63,7 @@ MYSQL:
 docker run -d -p 8259:80 -v ./data:/var/www/html/data -e DBTYPE=mysql -e MYSQL_SERVER=192.168.2.10 -e MYSQL_USERNAME=root MYSQL_PASSWORD=password -e DBNAME=tasmobackup --name TasmoBackup danmed/tasmobackupv1
 ```
 
-# Raw PHP Install
+# Install via Raw PHP
 ```
 git clone https://github.com/danmed/TasmoBackupV1
 cd TasmoBackupV1

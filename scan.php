@@ -13,7 +13,7 @@ $(document).ready(function() {
         "autoWidth": true
 } );
 } );
-',true,((isset($settings['autoadd_scan']) && $settings['autoadd_scan'])?1:false));
+',true,((isset($settings['autoadd_scan']) && $settings['autoadd_scan']=='Y')?1:false));
 
 ?>
   <body>

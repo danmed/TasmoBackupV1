@@ -38,27 +38,39 @@ function getTasmotaMQTTScan($mqtt,$topic,$user=false,$password=false)
         if($i==10) {
             // HomeAssistant swapped
             $mqtt->publish($topic.'/cmnd/STATUS','0');
+            if($topic=='tasmotas')
+                $mqtt->publish('sonoffs/cmnd/STATUS','0');
         }
         if($i==60) {
             if(isset($settings['mqtt_topic_format'])) {
-                $mqtt->publish(str_replace(array('%prefix%','%topic%'),array('stat','+'),$settings['mqtt_topic_format']).'/STATUS','0');
+                $mqtt->publish(str_replace(array('%prefix%','%topic%'),array('stat',$topic),$settings['mqtt_topic_format']).'/STATUS','0');
+                if($topic=='tasmotas')
+                    $mqtt->publish(str_replace(array('%prefix%','%topic%'),array('stat','sonoffs'),$settings['mqtt_topic_format']).'/STATUS','0'); 
             }
         }
         if($i==110) {
             $mqtt->publish('cmnd/'.$topic.'/STATUS','0');
+            if($topic=='tasmotas')
+                $mqtt->publish('cmnd/sonoffs/STATUS','0');
         }
 
         if($i==210) {
             // Default
             $mqtt->publish($topic.'cmnd/STATUS','5');
+            if($topic=='tasmotas')
+                $mqtt->publish('sonoffs/cmnd/STATUS','5');
         }
         if($i==260) {
             if(isset($settings['mqtt_topic_format'])) {
-                $mqtt->publish(str_replace(array('%prefix%','%topic%'),array('stat','+'),$settings['mqtt_topic_format']).'/STATUS','5');
+                $mqtt->publish(str_replace(array('%prefix%','%topic%'),array('stat',$topic),$settings['mqtt_topic_format']).'/STATUS','5');
+                if($topic=='tasmotas')
+                    $mqtt->publish(str_replace(array('%prefix%','%topic%'),array('stat','sonoffs'),$settings['mqtt_topic_format']).'/STATUS','5');
             }
         }
         if($i==320) {
             $mqtt->publish('cmnd/'.$topic.'/STATUS','5');
+            if($topic=='tasmotas')
+                $mqtt->publish('cmnd/sonoffs/STATUS','5');
         }
         while($mqtt->proc(false)) {};
         usleep(10000);
@@ -66,13 +78,13 @@ function getTasmotaMQTTScan($mqtt,$topic,$user=false,$password=false)
     $results=[];
     foreach($mqtt_found as $found) {
         if(isset($found['status5'])) {
-            $status=json_decode($found['status5'],true);
+            $status=jsonTasmotaDecode($found['status5']);
             if(isset($status['StatusNET']['IP']))		// < 5.12.0
                 $tmp['ip']=$status['StatusNET']['IP'];
             if(isset($status['StatusNET']['IPAddress']))	// >= 5.12.0
                 $tmp['ip']=$status['StatusNET']['IPAddress'];
             if(isset($found['status'])) {
-                $status=json_decode($found['status'],true);
+                $status=jsonTasmotaDecode($found['status']);
                 $tmp['name']=$status['Status']['FriendlyName'][0];
             }
             if (isset($settings['autoadd_scan']) && $settings['autoadd_scan']=='Y') {

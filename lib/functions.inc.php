@@ -15,6 +15,43 @@ function getBetween($content, $start, $end)
     return '';
 }
 
+function jsonTasmotaDecode($json)
+{
+    $data=json_decode($json,true);
+    if(json_last_error() == JSON_ERROR_CTRL_CHAR) {
+        $data=json_decode(preg_replace('/[[:cntrl:]]/','',$json),true);
+    }
+    if(json_last_error() !== JSON_ERROR_NONE) {
+	$string = substr( $json, strpos( $json, "STATUS = " ) );
+        if( strpos( $string, "POWER = " ) !== FALSE ) {
+            $string = substr( $string, strpos( $string, "{" ) );
+            $string = substr( $string, 0, strrpos( $string, "}" )+1 );
+        }
+        if( strpos( $string, "ERGEBNIS = " ) !== FALSE ) {
+            $string = substr( $string, strpos( $string, "{" ) );
+            $string = substr( $string, 0, strrpos( $string, "}" )+1 );
+        }
+        if( strpos( $string, "RESULT = " ) !== FALSE ) {
+            $string = substr( $string, strpos( $string, "{" ) );
+            $string = substr( $string, 0, strrpos( $string, "}" )+1 );
+        }
+        $remove  = [ PHP_EOL, "\n", "STATUS = ", "}STATUS1 = {", "}STATUS2 = {",
+            "}STATUS3 = {", "}STATUS4 = {", "}STATUS5 = {", "}STATUS6 = {",
+            "}STATUS7 = {", "}in = {", "}STATUS8 = {", "}STATUS9 = {", "}STATUS10 = {",
+            "}STATUS11 = {", "STATUS2 = ", ":nan,", ":nan}", ];
+        $replace = [ "", "", "", ",", ",", ",", ",", ",", ",", ",", ",", ",",
+            ",", ",", ",", "", ":\"NaN\",", ":\"NaN\"}", ];
+        $string = str_replace( $remove, $replace, $string );
+        //remove everything befor ethe first {
+        $string = strstr( $string, '{' );
+        $data=json_decode($string,true);
+        if(json_last_error() !== JSON_ERROR_NONE) {
+            $data=array();
+        }
+    }
+    return $data;
+}
+
 function getTasmotaScan($ip, $user, $password)
 {
     $url = 'http://'.$user.':'.$password.'@'. $ip . '/';
@@ -114,7 +151,7 @@ function getTasmotaStatus($ip, $user, $password)
     if ($err || $statusCode != 200) {
         return false;
     }
-    return json_decode($data, true);
+    return jsonTasmotaDecode($data);
 }
 
 function getTasmotaStatus2($ip, $user, $password)
@@ -132,7 +169,7 @@ function getTasmotaStatus2($ip, $user, $password)
     if ($err || $statusCode != 200) {
         return false;
     }
-    return json_decode($data, true);
+    return jsonTasmotaDecode($data);
 }
 
 function restoreTasmotaBackup($ip, $user, $password, $filename)

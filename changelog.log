@@ -1,3 +1,10 @@
+##v1.03.11
+* add better json error decoding
+* add sonoff mqtt search if searching for tasmotas (old group topic)
+
+##v1.03.10
+* Fix disable autoadd for scans
+
 ##v1.03.08
 * add cron for backupall in docker
 * add auto add for scanned devices

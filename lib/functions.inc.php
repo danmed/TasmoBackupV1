@@ -244,7 +244,7 @@ function backupSingle($id, $name, $ip, $user, $password)
     return false;
 }
 
-function backupAll()
+function backupAll($docker=false)
 {
     global $db_handle;
     global $settings;
@@ -252,6 +252,8 @@ function backupAll()
     $hours=0;
     if(isset($settings['backup_minhours']))
         $hours=intval($settings['backup_minhours']);
+    if($docker && $hours==0)
+        return false;
     $stm = $db_handle->prepare("select * from devices where lastbackup < :date or lastbackup is NULL ");
     $stm->execute(array(":date" => date('Y-m-d H:i:s',time()-(3600*$hours))));
     $errorcount = 0;

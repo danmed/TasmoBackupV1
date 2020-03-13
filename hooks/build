@@ -22,7 +22,7 @@ for arch in ${verified_build_architectures[@]}; do
     --build-arg BUILD_ARCH=${arch} \
     --build-arg QEMU_ARCH=${QEMU_ARCH} \
     --build-arg BUILD_DATE=${BUILD_DATE} \
-    --build-arg BUILD_REF=${VCS_REF} \
+    --build-arg BUILD_REF=${BUILD_REF} \
     --build-arg BUILD_VERSION=${BUILD_VERSION} \
     --file $DOCKERFILE_PATH \
     --tag "${IMAGE_NAME}-${arch}"  \

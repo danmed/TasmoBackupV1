@@ -1,3 +1,6 @@
+##v1.03.12
+* fixing remove old addon docker images correctly with hassio bugs
+
 ##v1.03.11
 * add better json error decoding
 * add sonoff mqtt search if searching for tasmotas (old group topic)

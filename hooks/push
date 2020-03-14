@@ -5,13 +5,13 @@ echo "🔵 push"
 source hooks/.config
 
 # 1. push all images
-IMAGE_NAME="${IMAGE_NAME//index.docker.io\/}"
+BUILD_NAME="${IMAGE_NAME//index.docker.io\/}"
 
 for arch in ${verified_build_architectures[@]}; do
-  echo "✅ Pushing ${IMAGE_NAME}-${arch}"
+  echo "✅ Pushing ${BUILD_NAME}-${arch}"
   echo "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
   echo
-  docker push ${IMAGE_NAME}-${arch}
+  docker push ${BUILD_NAME}-${arch}
 done
 
 docker image ls
@@ -21,12 +21,12 @@ docker image ls
 manifests=""
 
 for arch in ${verified_build_architectures[@]}; do
-  manifests="${manifests} ${IMAGE_NAME}-${arch}"
+  manifests="${manifests} ${BUILD_NAME}-${arch}"
 done
 
-echo "✅ Creating manifest ${IMAGE_NAME}"
+echo "✅ Creating manifest ${BUILD_NAME}"
 echo "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
-docker manifest create ${IMAGE_NAME} \
+docker manifest create ${BUILD_NAME} \
                             $manifests
 echo
 
@@ -34,27 +34,27 @@ echo "✅ Annotating manifest"
 echo "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
 for arch in ${verified_build_architectures[@]}; do
     if [ -n "${docker_to_variant_map[${arch}]}" ]; then
-      docker manifest annotate ${IMAGE_NAME} \
-        ${IMAGE_NAME}-${arch} \
+      docker manifest annotate ${BUILD_NAME} \
+        ${BUILD_NAME}-${arch} \
         --os linux \
         --arch ${docker_to_manifest_map[${arch}]} \
         --variant ${docker_to_variant_map[${arch}]}
     else
-      docker manifest annotate ${IMAGE_NAME} \
-        ${IMAGE_NAME}-${arch} \
+      docker manifest annotate ${BUILD_NAME} \
+        ${BUILD_NAME}-${arch} \
         --os linux \
         --arch ${docker_to_manifest_map[${arch}]}
     fi
 done
 
-echo "✅ Inspecting manifest ${IMAGE_NAME}-${arch}"
+echo "✅ Inspecting manifest ${BUILD_NAME}-${arch}"
 echo "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
-docker manifest inspect ${IMAGE_NAME}-${arch}
+docker manifest inspect ${BUILD_NAME}-${arch}
 echo
 
-echo "✅ Pushing manifest ${IMAGE_NAME}"
+echo "✅ Pushing manifest ${BUILD_NAME}"
 echo "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
-docker manifest push --purge "${IMAGE_NAME}"
+docker manifest push --purge "${BUILD_NAME}"
 echo
 
 echo

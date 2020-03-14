@@ -23,6 +23,8 @@ ARG BUILD_REF
 ARG BUILD_VERSION
 
 LABEL maintainer="Dan Medhurst (danmed@gmail.com)" \
+  Description: "Manage Tasmota scheduled backups and restores." \
+  ForkedFrom: "" \
   io.hass.name="TasmoBackup" \
   io.hass.description="Manage Tasmota scheduled backups and restores." \
   io.hass.arch="${BUILD_ARCH}" \

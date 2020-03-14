@@ -1,5 +1,6 @@
 ##v1.03.12
-* fixing remove old addon docker images correctly with hassio bugs
+* fixing remove old addon docker images correctly with hassio dependency on labels
+* speed up backups on offline devices
 
 ##v1.03.11
 * add better json error decoding

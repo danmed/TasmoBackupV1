@@ -1,7 +1,7 @@
 <?php
-require ('db.inc.php');
+require (__DIR__.'/db.inc.php');
 
-$strJsonFileContents = file_get_contents(__DIR__.'../HA_addon/config.json');
+$strJsonFileContents = file_get_contents(__DIR__.'/../HA_addon/config.json');
 $array = json_decode($strJsonFileContents, true);
 $GLOBALS['VERSION']=$array['version'];
 
@@ -15,13 +15,53 @@ function getBetween($content, $start, $end)
     return '';
 }
 
+function jsonTasmotaDecode($json)
+{
+    $data=json_decode($json,true);
+    if(json_last_error() == JSON_ERROR_CTRL_CHAR) {
+        $data=json_decode(preg_replace('/[[:cntrl:]]/','',$json),true);
+    }
+    if(json_last_error() !== JSON_ERROR_NONE) {
+	$string = substr( $json, strpos( $json, "STATUS = " ) );
+        if( strpos( $string, "POWER = " ) !== FALSE ) {
+            $string = substr( $string, strpos( $string, "{" ) );
+            $string = substr( $string, 0, strrpos( $string, "}" )+1 );
+        }
+        if( strpos( $string, "ERGEBNIS = " ) !== FALSE ) {
+            $string = substr( $string, strpos( $string, "{" ) );
+            $string = substr( $string, 0, strrpos( $string, "}" )+1 );
+        }
+        if( strpos( $string, "RESULT = " ) !== FALSE ) {
+            $string = substr( $string, strpos( $string, "{" ) );
+            $string = substr( $string, 0, strrpos( $string, "}" )+1 );
+        }
+        $remove  = [ PHP_EOL, "\n", "STATUS = ", "}STATUS1 = {", "}STATUS2 = {",
+            "}STATUS3 = {", "}STATUS4 = {", "}STATUS5 = {", "}STATUS6 = {",
+            "}STATUS7 = {", "}in = {", "}STATUS8 = {", "}STATUS9 = {", "}STATUS10 = {",
+            "}STATUS11 = {", "STATUS2 = ", ":nan,", ":nan}", ];
+        $replace = [ "", "", "", ",", ",", ",", ",", ",", ",", ",", ",", ",",
+            ",", ",", ",", "", ":\"NaN\",", ":\"NaN\"}", ];
+        $string = str_replace( $remove, $replace, $string );
+        //remove everything befor ethe first {
+        $string = strstr( $string, '{' );
+        $data=json_decode($string,true);
+        if(json_last_error() !== JSON_ERROR_NONE) {
+            $data=array();
+        }
+    }
+    return $data;
+}
+
 function getTasmotaScan($ip, $user, $password)
 {
     $url = 'http://'.$user.':'.$password.'@'. $ip . '/';
     $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt_array($ch, array(
+        CURLOPT_FOLLOWLOCATION => false,
+        CURLOPT_TIMEOUT => 15,
+        CURLOPT_CONNECTTIMEOUT => 3,
+        CURLOPT_RETURNTRANSFER => true,
+    ));
     $data = curl_exec($ch);
     $err = curl_errno($ch);
     $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -30,9 +70,70 @@ function getTasmotaScan($ip, $user, $password)
         return false;
     }
     if (strpos($data, 'Tasmota') !== false) {
-        return true;
+        if (isset($settings['autoadd_scan']) && $settings['autoadd_scan']=='Y') {
+            addTasmotaDevice($ip, $user, $password);
+        } else {
+            return true;
+        }
     }
     return false;
+}
+
+function getTasmotaScanRange($iprange, $user, $password)
+{
+    global $settings;
+
+    $result=array();
+    $options = array(
+        CURLOPT_FOLLOWLOCATION => false,
+        CURLOPT_TIMEOUT => 15,
+        CURLOPT_CONNECTTIMEOUT => 3,
+        CURLOPT_RETURNTRANSFER => true,
+    );
+    $range=15;
+    if($range > count($iprange)) $range=count($iprange);
+    $master = curl_multi_init();
+    for($i=0;$i<$range;$i++) {
+        $url = 'http://'.$user.':'.$password.'@'. $iprange[$i] . '/';
+        $ch = curl_init($url);
+        curl_setopt_array($ch, $options);
+        curl_multi_add_handle($master, $ch);
+    }
+    $i--;
+
+    do {
+        while(($execrun = curl_multi_exec($master, $run)) == CURLM_CALL_MULTI_PERFORM) { ; }
+        if($execrun != CURLM_OK) {
+            break;
+        }
+        while($done = curl_multi_info_read($master)) {
+            $statusCode = curl_getinfo($done['handle'], CURLINFO_HTTP_CODE);
+            $url = parse_url(curl_getinfo($done['handle'], CURLINFO_EFFECTIVE_URL));
+            $data = curl_multi_getcontent($done['handle']);
+            if ($statusCode == 200) {
+                if (strpos($data, 'Tasmota') !== false) {
+                    if (isset($settings['autoadd_scan']) && $settings['autoadd_scan']=='Y') {
+                        addTasmotaDevice($url['host'], $user, $password);
+                    } else {
+                        array_push($result,$url['host']);
+                    }
+                }
+            }
+            unset($data);
+            unset($url);
+            unset($statusCode);
+            if($i<count($iprange)) {
+                $url = 'http://'.$user.':'.$password.'@'. $iprange[$i++] . '/';
+                $ch = curl_init($url);
+                curl_setopt_array($ch, $options);
+                curl_multi_add_handle($master, $ch);
+            }
+            curl_multi_remove_handle($master, $done['handle']);
+            curl_close($done['handle']);
+        }
+    } while($run);
+    curl_multi_close($master);
+    return $result;
 }
 
 function getTasmotaStatus($ip, $user, $password)
@@ -50,7 +151,7 @@ function getTasmotaStatus($ip, $user, $password)
     if ($err || $statusCode != 200) {
         return false;
     }
-    return json_decode($data, true);
+    return jsonTasmotaDecode($data);
 }
 
 function getTasmotaStatus2($ip, $user, $password)
@@ -68,7 +169,7 @@ function getTasmotaStatus2($ip, $user, $password)
     if ($err || $statusCode != 200) {
         return false;
     }
-    return json_decode($data, true);
+    return jsonTasmotaDecode($data);
 }
 
 function restoreTasmotaBackup($ip, $user, $password, $filename)
@@ -121,7 +222,6 @@ function getTasmotaBackup($ip, $user, $password, $filename)
 
 function backupCleanup($id)
 {
-    global $db_handle;
     global $settings;
 
     $backupfolder = $settings['backup_folder'];
@@ -139,7 +239,6 @@ function backupCleanup($id)
 
 function backupSingle($id, $name, $ip, $user, $password)
 {
-    global $db_handle;
     global $settings;
 
     $backupfolder = $settings['backup_folder'];
@@ -190,7 +289,7 @@ function backupSingle($id, $name, $ip, $user, $password)
     return false;
 }
 
-function backupAll()
+function backupAll($docker=false)
 {
     global $db_handle;
     global $settings;
@@ -198,6 +297,8 @@ function backupAll()
     $hours=0;
     if(isset($settings['backup_minhours']))
         $hours=intval($settings['backup_minhours']);
+    if($docker && $hours==0)
+        return false;
     $stm = $db_handle->prepare("select * from devices where lastbackup < :date or lastbackup is NULL ");
     $stm->execute(array(":date" => date('Y-m-d H:i:s',time()-(3600*$hours))));
     $errorcount = 0;
@@ -245,7 +346,7 @@ function TBHeader($name=false,$favicon=true,$init=false,$track=true,$redirect=fa
 ?>
 <head>
 <?php 
-if($redirect>0) {
+if($redirect!==false && $redirect>0) {
     echo '<meta http-equiv="refresh" content="'.$redirect.';url=index.php" />';
 }
 if($favicon) {

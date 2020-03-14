@@ -5,7 +5,7 @@ echo "🔵 build"
 source hooks/.config
 
 BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%Sz')
-VCS_REF=`git rev-parse --short HEAD`
+BUILD_REF=`git rev-parse --short HEAD`
 BUILD_VERSION="${IMAGE_NAME%:*}"
 
 echo "✅ Will build the following architectures: $verified_build_architectures"
@@ -19,10 +19,10 @@ for arch in ${verified_build_architectures[@]}; do
   QEMU_ARCH="${docker_qemu_arch_map[${arch}]}"
   docker build \
     --build-arg BUILD_FROM_PREFIX=${BUILD_FROM_PREFIX} \
-    --build-arg ARCH=${arch} \
+    --build-arg BUILD_ARCH=${arch} \
     --build-arg QEMU_ARCH=${QEMU_ARCH} \
     --build-arg BUILD_DATE=${BUILD_DATE} \
-    --build-arg VCS_REF=${VCS_REF} \
+    --build-arg BUILD_REF=${BUILD_REF} \
     --build-arg BUILD_VERSION=${BUILD_VERSION} \
     --file $DOCKERFILE_PATH \
     --tag "${IMAGE_NAME}-${arch}"  \

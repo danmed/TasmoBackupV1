@@ -1,8 +1,24 @@
+##v1.03.12
+* fixing remove old addon docker images correctly with hassio bugs
+
+##v1.03.11
+* add better json error decoding
+* add sonoff mqtt search if searching for tasmotas (old group topic)
+
+##v1.03.10
+* Fix disable autoadd for scans
+
+##v1.03.08
+* add cron for backupall in docker
+* add auto add for scanned devices
+
 ##v1.03.07
 * fix datatables length and sort
 * add select-all to add page
 * fixup headers and back links
 * add upgrade.php script instead of running on every load
+* multithreaded ip scanning
+* Only show mqtt scan if mqtt settings are enabled.
 
 ##v1.03.06
 * Add restore button.

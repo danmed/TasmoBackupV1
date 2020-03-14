@@ -1,27 +1,31 @@
 <?php
 
-require_once(__DIR__.'../data/config.inc.php');
+require_once(__DIR__.'/../data/config.inc.php');
 
 global $db_handle;
 global $settings;
 
 if ($DBType=='mysql') {
     $db_handle = new \PDO('mysql:host='.$DBServer.';dbname='.$DBName, $DBUser, $DBPassword);
+    $GLOBALS['DBType']='mysql';
 }
 if ($DBType=='sqlite') {
     if (!isset($DBName)) {
         $DBName = 'data/tasmobackupdb';
     }
+    if (substr_compare($DBName,'data/',0,5)==0) {
+        $DBName = __DIR__.'/../'.$DBName;
+    }
     $db_handle = new \PDO('sqlite:'.$DBName.'.sqlite3');
+    $GLOBALS['DBType']='sqlite';
 }
 
-if (!$db_handle) {
-}
-
-$stm = $db_handle->prepare("select name,value from settings");
-if($stm->execute()) {
-    while($result=$stm->fetch(PDO::FETCH_ASSOC)) {
-        $settings[$result['name']]=$result['value'];
+if ($db_handle) {
+    $stm = $db_handle->prepare("select name,value from settings");
+    if($stm && $stm->execute()) {
+        while($result=$stm->fetch(PDO::FETCH_ASSOC)) {
+            $settings[$result['name']]=$result['value'];
+        }
     }
 }
 if(!isset($settings['backup_folder']))
@@ -285,7 +289,7 @@ function dbUpgrade()
 {
     global $db_handle;
 
-if ($DBType=='mysql') {
+if ($GLOBALS['DBType']=='mysql') {
     $db_handle->exec("CREATE TABLE IF NOT EXISTS devices (
     id int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
     name varchar(128) NOT NULL,
@@ -313,7 +317,7 @@ if ($DBType=='mysql') {
     ");
 }
 
-if ($DBType=='sqlite') {
+if ($GLOBALS['DBType']=='sqlite') {
     $db_handle->exec("CREATE TABLE IF NOT EXISTS devices (
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     name varchar(128) NOT NULL,
@@ -344,3 +348,4 @@ if ($DBType=='sqlite') {
     ");
 }
 }
+

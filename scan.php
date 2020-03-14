@@ -1,6 +1,6 @@
 <?php
-require 'lib/functions.inc.php';
-require 'lib/mqtt.inc.php';
+require(__DIR__.'/lib/functions.inc.php');
+require(__DIR__.'/lib/mqtt.inc.php');
 
 global $settings;
 
@@ -13,7 +13,7 @@ $(document).ready(function() {
         "autoWidth": true
 } );
 } );
-',true);
+',true,((isset($settings['autoadd_scan']) && $settings['autoadd_scan']=='Y')?1:false));
 
 ?>
   <body>
@@ -59,26 +59,29 @@ if ($_POST["task"]=="scan") {
         $range[$index] = array_map('intval', explode('-', $octet));
     }
 
+    $iprange=array();
     // 4 for loops to generate the ip address 4 octets
     for ($octet1=$range[0][0]; $octet1<=(isset($range[0][1])? $range[0][1]:$range[0][0]); $octet1++) {
         for ($octet2=$range[1][0]; $octet2<=(isset($range[1][1])? $range[1][1]:$range[1][0]); $octet2++) {
             for ($octet3=$range[2][0]; $octet3<=(isset($range[2][1])? $range[2][1]:$range[2][0]); $octet3++) {
                 for ($octet4=$range[3][0]; $octet4<=(isset($range[3][1])? $range[3][1]:$range[3][0]); $octet4++) {
                     // assemble the IP address
-                    $ip = $octet1.".".$octet2.".".$octet3.".".$octet4;
-
-                    // initialise the URL
-
-                    if (getTasmotaScan($ip, $user, $password)) {
-                        if ($status=getTasmotaStatus($ip, $user, $password)) {
-                            $name=$status['Status']['FriendlyName'][0];
-                            echo "<tr valign='middle'><td><center><input type='checkbox' name='ip[]' value='" . $ip . "'></center></td>".
-                     "<td>" . $name . "</td>".
-                     "<td><center><a href='http://" . $ip . "'>" . $ip . "</a></center></td></tr>";
-                        }
-                    }
+                    array_push($iprange,$octet1.".".$octet2.".".$octet3.".".$octet4);
 
                 }
+            }
+        }
+    }
+    // initialise the URL
+
+    if ($ipresult=getTasmotaScanRange($iprange, $user, $password)) {
+        for($i=0;$i<count($ipresult);$i++) {
+            $ip=$ipresult[$i];
+            if ($status=getTasmotaStatus($ip, $user, $password)) {
+                $name=$status['Status']['FriendlyName'][0];
+                echo "<tr valign='middle'><td><center><input type='checkbox' name='ip[]' value='" . $ip . "'></center></td>".
+                     "<td>" . $name . "</td>".
+                     "<td><center><a href='http://" . $ip . "'>" . $ip . "</a></center></td></tr>";
             }
         }
     }
@@ -88,7 +91,7 @@ if ($_POST["task"]=="mqtt") {
     if(isset($settings['mqtt_host']) && isset($settings['mqtt_port']) && strlen($settings['mqtt_host'])>4) {
         $mqtt=setupMQTT($settings['mqtt_host'], $settings['mqtt_port'], $settings['mqtt_user'], $settings['mqtt_password']);
         if(!isset($mqtt_topic)) $mqtt_topic=$settings['mqtt_topic'];
-        $results=getTasmotaMQTTScan($mqtt,$mqtt_topic);
+        $results=getTasmotaMQTTScan($mqtt,$mqtt_topic,$user,$password);
         if(count($results)>0) {
             foreach($results as $found) {
                 $ip=$found['ip'];
@@ -103,6 +106,7 @@ if ($_POST["task"]=="mqtt") {
 }
 ?>
 </tbody>
+    <tr><td colspan="3">&nbsp;</td></tr>
     <tr><td><center><input type='checkbox' name="select-all" id="select-all" onClick="toggle(this)"></center></td><td>Select All</td><td>&nbsp;</td></tr>
     <tr><td colspan="3"><center><input type=submit class='btn-xs btn-success' value='Add Devices'></center></td></tr>
     </table>

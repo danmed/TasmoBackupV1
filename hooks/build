@@ -6,7 +6,8 @@ source hooks/.config
 
 BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%Sz')
 BUILD_REF=`git rev-parse --short HEAD`
-BUILD_VERSION="${IMAGE_NAME%:*}"
+BUILD_VERSION="${DOCKER_TAG}"
+BUILD_REPO="${DOCKER_REPO//index.docker.io\/}"
 
 echo "✅ Will build the following architectures: $verified_build_architectures"
 echo "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
@@ -24,6 +25,7 @@ for arch in ${verified_build_architectures[@]}; do
     --build-arg BUILD_DATE=${BUILD_DATE} \
     --build-arg BUILD_REF=${BUILD_REF} \
     --build-arg BUILD_VERSION=${BUILD_VERSION} \
+    --build-arg BUILD_REPO=${BUILD_REPO} \
     --file $DOCKERFILE_PATH \
     --tag "${IMAGE_NAME}-${arch}"  \
     .

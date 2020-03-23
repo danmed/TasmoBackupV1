@@ -183,6 +183,7 @@ function restoreTasmotaBackup($ip, $user, $password, $filename)
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
     curl_setopt($ch, CURLOPT_TIMEOUT, 40);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER,array('Content-Type: multipart/form-data'));
     $result=curl_exec($ch);
@@ -207,7 +208,8 @@ function getTasmotaBackup($ip, $user, $password, $filename)
 
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_FILE, $fp);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 20);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 40);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
     curl_exec($ch);
     $err = curl_errno($ch);
     $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -243,16 +245,17 @@ function backupSingle($id, $name, $ip, $user, $password)
 
     $backupfolder = $settings['backup_folder'];
 
-    if (!isset($settings['autoupdate_name']) || (isset($settings['autoupdate_name']) && $settings['autoupdate_name']=='Y')) {
-        if ($status=getTasmotaStatus($ip, $user, $password)) {
-            $name=$status['Status']['FriendlyName'][0];
-        }
-    }
     if ($status2=getTasmotaStatus2($ip, $user, $password)) {
         $version = $status2['StatusFWR']['Version'];
     } else {
         // Device is offline
         return true;
+    }
+
+    if (!isset($settings['autoupdate_name']) || (isset($settings['autoupdate_name']) && $settings['autoupdate_name']=='Y')) {
+        if ($status=getTasmotaStatus($ip, $user, $password)) {
+            $name=$status['Status']['FriendlyName'][0];
+        }
     }
 
     $savename = preg_replace('/\s+/', '_', $name);

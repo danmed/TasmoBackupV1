@@ -96,3 +96,6 @@ your existing one when changing versions.
 * Background scanning
 * Handle device changes ip address
 * Parse backup configs
+
+# Support
+[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/E1E21J93T)

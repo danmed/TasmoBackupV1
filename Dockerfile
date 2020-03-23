@@ -2,8 +2,6 @@ ARG BUILD_FROM=patrickdk/docker-php-nginx:latest
 ARG BUILD_FROM_PREFIX
 FROM ${BUILD_FROM}${BUILD_FROM_PREFIX}
 
-MAINTAINER Dan Medhurst (danmed@gmail.com)
-
 ARG BUILD_ARCH
 ARG QEMU_ARCH
 WORKDIR /
@@ -23,6 +21,8 @@ ARG BUILD_REF
 ARG BUILD_VERSION
 
 LABEL maintainer="Dan Medhurst (danmed@gmail.com)" \
+  Description="Manage Tasmota scheduled backups and restores." \
+  ForkedFrom="" \
   io.hass.name="TasmoBackup" \
   io.hass.description="Manage Tasmota scheduled backups and restores." \
   io.hass.arch="${BUILD_ARCH}" \

@@ -1,5 +1,3 @@
-[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/E1E21J93T)
-
 # TasmoBackupV1
 Backup the configs of all your Tasmota devices
 
@@ -99,3 +97,5 @@ your existing one when changing versions.
 * Handle device changes ip address
 * Parse backup configs
 
+# Support
+[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/E1E21J93T)

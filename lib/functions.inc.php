@@ -54,7 +54,7 @@ function jsonTasmotaDecode($json)
 
 function getTasmotaScan($ip, $user, $password)
 {
-    $url = 'http://'.$user.':'.$password.'@'. $ip . '/';
+    $url = 'http://'.rawurlencode($user).':'.rawurlencode($password).'@'. $ip . '/';
     $ch = curl_init($url);
     curl_setopt_array($ch, array(
         CURLOPT_FOLLOWLOCATION => false,
@@ -94,7 +94,7 @@ function getTasmotaScanRange($iprange, $user, $password)
     if($range > count($iprange)) $range=count($iprange);
     $master = curl_multi_init();
     for($i=0;$i<$range;$i++) {
-        $url = 'http://'.$user.':'.$password.'@'. $iprange[$i] . '/';
+        $url = 'http://'.rawurlencode$user).':'.rawurlencode($password).'@'. $iprange[$i] . '/';
         $ch = curl_init($url);
         curl_setopt_array($ch, $options);
         curl_multi_add_handle($master, $ch);
@@ -123,7 +123,7 @@ function getTasmotaScanRange($iprange, $user, $password)
             unset($url);
             unset($statusCode);
             if($i<count($iprange)) {
-                $url = 'http://'.$user.':'.$password.'@'. $iprange[$i++] . '/';
+                $url = 'http://'.rawurlencode$user).':'.rawurlencode$password).'@'. $iprange[$i++] . '/';
                 $ch = curl_init($url);
                 curl_setopt_array($ch, $options);
                 curl_multi_add_handle($master, $ch);
@@ -139,7 +139,7 @@ function getTasmotaScanRange($iprange, $user, $password)
 function getTasmotaStatus($ip, $user, $password)
 {
     //Get Name
-    $url = 'http://' .$user.':'.$password.'@'. $ip . '/cm?cmnd=status&user='.$user.'&password=' . $password;
+    $url = 'http://' .rawurlencode($user).':'.rawurlencode($password).'@'. $ip . '/cm?cmnd=status&user='.rawurlencode($user).'&password=' . rawurlencode($password);
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_TIMEOUT, 15);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
@@ -157,7 +157,7 @@ function getTasmotaStatus($ip, $user, $password)
 function getTasmotaStatus2($ip, $user, $password)
 {
     //Get Version
-    $url = 'http://' . $user.':'.$password.'@'. $ip . '/cm?cmnd=status%202&user='.$user.'&password=' . $password;
+    $url = 'http://' . rawurlencode($user).':'.rawurlencode($password).'@'. $ip . '/cm?cmnd=status%202&user='.rawurlencode($user).'&password=' . rawurlencode($password);
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_TIMEOUT, 15);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
@@ -174,7 +174,7 @@ function getTasmotaStatus2($ip, $user, $password)
 
 function restoreTasmotaBackup($ip, $user, $password, $filename)
 {
-    $url = 'http://'.$user.':'.$password."@".$ip.'/u2';
+    $url = 'http://'.rawurlencode($user).':'.rawurlencode($password)."@".$ip.'/u2';
 
     $cfile = new CURLFile($filename,'application/octet-stream','config.dmp');
     $fields = array('u2' => $cfile);
@@ -199,7 +199,7 @@ function restoreTasmotaBackup($ip, $user, $password, $filename)
 function getTasmotaBackup($ip, $user, $password, $filename)
 {
     //Get Backup
-    $url = 'http://'.$user.':'.$password."@".$ip.'/dl';
+    $url = 'http://'.rawurlencode($user).':'.rawurlencode($password)."@".$ip.'/dl';
 
     $fp = fopen($filename, 'w+');
     if ($fp === false) {

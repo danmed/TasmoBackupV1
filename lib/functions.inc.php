@@ -94,7 +94,7 @@ function getTasmotaScanRange($iprange, $user, $password)
     if($range > count($iprange)) $range=count($iprange);
     $master = curl_multi_init();
     for($i=0;$i<$range;$i++) {
-        $url = 'http://'.rawurlencode$user).':'.rawurlencode($password).'@'. $iprange[$i] . '/';
+        $url = 'http://'.rawurlencode($user).':'.rawurlencode($password).'@'. $iprange[$i] . '/';
         $ch = curl_init($url);
         curl_setopt_array($ch, $options);
         curl_multi_add_handle($master, $ch);
@@ -123,7 +123,7 @@ function getTasmotaScanRange($iprange, $user, $password)
             unset($url);
             unset($statusCode);
             if($i<count($iprange)) {
-                $url = 'http://'.rawurlencode$user).':'.rawurlencode$password).'@'. $iprange[$i++] . '/';
+                $url = 'http://'.rawurlencode($user).':'.rawurlencode($password).'@'. $iprange[$i++] . '/';
                 $ch = curl_init($url);
                 curl_setopt_array($ch, $options);
                 curl_multi_add_handle($master, $ch);

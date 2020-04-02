@@ -36,6 +36,7 @@ fi
 
 if [ ! -z $TZ ]; then
     sed -i "s|UTC|${TZ}|" /etc/php7/conf.d/custom.ini
+fi
 
 sed -i "s|mysqlserver|$MYSQL_SERVER|g" /var/www/html/data/config.inc.php
 sed -i "s|mysqlusername|$MYSQL_USERNAME|g" /var/www/html/data/config.inc.php

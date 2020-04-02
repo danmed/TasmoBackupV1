@@ -3,12 +3,11 @@ Backup the configs of all your Tasmota devices
 
 
 # Latest Changes
+* fix special chars in username/password
+* use timezone for displayed times in docker/HA installs
+* cron to run backup-all in docker for HA
 * multi-threaded scanning
 * fix datatables length and sort
-* add select-all to add page
-* fixup headers and back links
-* auto add when doing scans
-* cron to run backup-all in docker for HA
 
 # Features
 * Add single devices

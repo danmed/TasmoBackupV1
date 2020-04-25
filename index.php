@@ -127,7 +127,7 @@ $(document).ready(function() {
 ',true);
 ?>
   <body>
-    <div class="container">
+    <div class="container-fluid">
     <table class="table table-striped table-bordered" id="status">
     <thead>
       <tr><th colspan="9"><center><b>TasmoBackup <a href="settings.php"><img src="settings.png"></a></th></tr>
@@ -146,7 +146,27 @@ $(document).ready(function() {
         $numberofbackups = $db_field['noofbackups'];
         $password = $db_field['password'];
 
-        echo "<tr valign='middle'><td>" . $name . "</td><td><center><a href='http://" . $ip . "' target='_blank'>" . $ip . "</a></td><td><center><img src='" . (strlen($password) > 0 ? 'lock.png' : 'lock-open-variant.png') . "'></td><td><center>" . $version . "</td><td><center>" . $lastbackup . "</td><Td><center><form method='POST' action='listbackups.php'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='" . $id . "' name='id'><input type='submit' value='" . $numberofbackups . "' class='btn-xs btn-info'></form></td><td><center><form method='POST' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='singlebackup' name='task'><input type='submit' value='Backup' class='btn-xs btn-success'></form></td><td><center><form method='POST' action='edit.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='edit' name='task'><input type='submit' value='Edit' class='btn-xs btn-warning'></form></td><td><center><form method='POST' id='deleteform' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='delete' name='task'><input type='submit' onclick='return window.confirm(\"Are you sure you want to delete " . $name . "\");' value='Delete' class='btn-xs btn-danger'></form></td></tr>\n";
+        echo "<tr valign='middle'><td>" . $name . "</td><td><center><a href='http://" . $ip . "' target='_blank'>" . $ip . "</a></td><td><center>";
+	if(isset($settings['theme']) && $settings['theme']=='dark') { // Enforce Dark mode
+	    echo "<img src='" . (strlen($password) > 0 ? 'lock-dark.png' : 'lock-open-variant-dark.png') . "'>";
+	} else if(isset($settings['theme']) && $settings['theme']=='light') { // Enforce Light mode
+	    echo "<img src='" . (strlen($password) > 0 ? 'lock.png' : 'lock-open-variant.png') . "'>";
+	} else { // auto mode
+	    if(strlen($password) >0) {
+		echo '<picture><source srcset="lock-dark.png" media="(prefers-color-scheme: dark">';
+		echo '<source srcset="lock.png" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)">';
+		echo '<img src="lock.png"></picture>';
+	    } else {
+		echo '<picture><source srcset="lock-open-variant-dark.png" media="(prefers-color-scheme: dark">';
+		echo '<source srcset="lock-open-variant.png" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)">';
+		echo '<img src="lock-open-variant.png"></picture>';
+	    }
+	}
+	echo "</center></td><td><center>" . $version . "</center></td><td><center>" . $lastbackup . "</center></td>";
+	echo "<td><center><form method='POST' action='listbackups.php'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='" . $id . "' name='id'><input type='submit' value='" . $numberofbackups . "' class='btn-xs btn-info'></form></center></td>";
+	echo "<td><center><form method='POST' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='singlebackup' name='task'><input type='submit' value='Backup' class='btn-xs btn-success'></form></center></td>";
+	echo "<td><center><form method='POST' action='edit.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='edit' name='task'><input type='submit' value='Edit' class='btn-xs btn-warning'></form></center></td>";
+	echo "<td><center><form method='POST' id='deleteform' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='delete' name='task'><input type='submit' onclick='return window.confirm(\"Are you sure you want to delete " . $name . "\");' value='Delete' class='btn-xs btn-danger'></form></center></td></tr>\n";
     }
 
 ?>

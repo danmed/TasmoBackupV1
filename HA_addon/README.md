@@ -3,6 +3,7 @@ Backup the configs of all your Tasmota devices
 
 
 # Latest Changes
+* add dark mode
 * fix special chars in username/password
 * use timezone for displayed times in docker/HA installs
 * cron to run backup-all in docker for HA

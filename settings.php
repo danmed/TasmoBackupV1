@@ -59,7 +59,7 @@ if (isset($_POST['autoadd_scan'])) {
         dbSettingsUpdate('autoadd_scan','N');
 }
 if (isset($_POST['theme'])) {
-    if (in_array(strtolower($_POST['theme']),array('light','dark')))
+    if (in_array(strtolower($_POST['theme']),array('light','dark','auto')))
         dbSettingsUpdate('theme',strtolower($_POST['theme']));
 }
 
@@ -77,7 +77,7 @@ $(document).ready(function() {
 ?>
   <body>
 
-    <div class="container">
+    <div class="container-fluid">
     <form method='POST' action='settings.php'>
     <table class="table table-striped table-bordered" id="status">
     <thead>
@@ -88,7 +88,7 @@ $(document).ready(function() {
 
 <tr valign='middle'><td>Sort Column</td><td><center><select name ="sortoption"><option value="0" <?php if(isset($settings['sort']) && $settings['sort']==1) { echo 'selected="selected"'; } ?>>Name</option><option value="1">IP</option><option value="2" <?php if(isset($settings['sort']) && $settings['sort']==2) { echo 'selected="selected"'; } ?>>Auth</option><option value="3" <?php if(isset($settings['sort']) && $settings['sort']==3) { echo 'selected="selected"'; } ?>>Version</option><option value="4" <?php if(isset($settings['sort']) && $settings['sort']==4) { echo 'selected="selected"'; } ?>>Last Backup</option></select></td></tr>
 <tr valign='middle'><td>Amount of Rows</td><td><center><input type='text' name='amountoption' value='<?php echo isset($settings['amount'])?$settings['amount']:100; ?>'></td></tr>
-<tr valign='middle'><td>Theme (light or dark)</td><td><center><input type="text" name='theme' value='<?php echo isset($settings['theme'])?$settings['theme']:'light'; ?>'></td></tr>
+<tr valign='middle'><td>Theme (light or dark or auto)</td><td><center><input type="text" name='theme' value='<?php echo isset($settings['theme'])?$settings['theme']:'auto'; ?>'></td></tr>
 <tr valign='middle'><td>Tasmota Default Password for web login on devices</td><td><center><input type="password" name='tasmota_password' value='<?php if(isset($settings['tasmota_password'])) echo $settings['tasmota_password']; ?>'></td></tr>
 <tr valign='middle'><td>Update Device Name when doing Backups (Y or N)</td><td><center><input type="text" name='autoupdate_name' value='<?php echo isset($settings['autoupdate_name'])?$settings['autoupdate_name']:'Y'; ?>'></td></tr>
 <tr valign='middle'><td>Automatically Add New Devices (Y or N)</td><td><center><input type="text" name='autoadd_scan' value='<?php echo isset($settings['autoadd_scan'])?$settings['autoadd_scan']:'N'; ?>'></td></tr>

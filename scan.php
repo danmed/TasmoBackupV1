@@ -25,7 +25,7 @@ function toggle(source) {
   }
 }
 </script>
-    <div class="container">
+    <div class="container-fluid">
 	    <form action="index.php" method="POST">
                 <input type="hidden" name="task" value="discoverall">
                 <?php if(isset($_POST['user'])) { echo '<input type="hidden" name="user" value="'.$_POST['user'].'">'; } ?>

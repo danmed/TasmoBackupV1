@@ -7,7 +7,7 @@ $errorcount=backupAll(isset($_REQUEST['docker']));
 TBHeader(false,false,false,false);
 ?>
   <body>
-    <div class="container">
+    <div class="container-fluid">
 <?php
         if ($errorcount < 1) {
             $output = "All backups completed successfully!";

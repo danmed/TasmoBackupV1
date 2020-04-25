@@ -9,7 +9,7 @@ TBHeader('Upgrade',true,false,true,10);
 
 ?>
   <body>
-    <div class="container">
+    <div class="container-fluid">
 Upgrade Complete
     </div>
 <?php

@@ -342,13 +342,7 @@ function addTasmotaDevice($ip, $user, $password)
 function TBHeader($name=false,$favicon=true,$init=false,$track=true,$redirect=false)
 {
     global $settings;
-//if(isset($settings['theme']) && $settings['theme']=='dark')
-//    echo '<html lang="en" class="theme-dark">';
-//else
-    echo '<html lang="en">';
-?>
-<head>
-<?php 
+    echo '<html lang="en"><head>';
 if($redirect!==false && $redirect>0) {
     echo '<meta http-equiv="refresh" content="'.$redirect.';url=index.php" />';
 }
@@ -372,51 +366,7 @@ if($favicon) {
 <link rel="apple-touch-icon" sizes="152x152" href="favicon/152.png">
 <link rel="apple-touch-icon" sizes="180x180" href="favicon/180.png">
 <?php }
-/*
-<style>
-:root {
-<?php if(isset($settings['theme']) && $settings['theme']=='dark') { ?>
-  --background-color: #111;
-  --page-background: #212121;
-  --text-color: #ededed;
-  --color-alpha: #50a8d8;
-<?php } else { ?>
-  --background-color: #ededed;
-  --page-background: #fff;
-  --text-color: #212121;
-  --color-alpha: #c3423f;
-<?php } ?>
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background-color: #111;
-    --page-background: #212121;
-    --text-color: #ededed;
-    --color-alpha: #50a8d8;
-  }
-}
-@media (prefers-color-scheme: light) {
-  :root {
-    --background-color: #ededed;
-    --page-background: #fff;
-    --text-color: #212121;
-    --color-alpha: #c3423f;
-  }
-}
-body {
-  background-color: var(--background-color);
-  color: var(--text-color);
-}
-.container {
-  background-color: var(--page-background);
-}
-.text--alpha {
-  color: var(--color-alpha);
-}
-</style>
 
-<?php 
-*/
 if($track) { ?>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-116906-4"></script>
@@ -431,12 +381,32 @@ if($track) { ?>
 <title>TasmoBackup<?php if($name!==false) { echo ': '.$name; } ?></title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+<?php if(isset($settings['theme']) && $settings['theme']=='dark') { // Enforce Dark mode
+?>
+  <link rel="stylesheet" href="resources/bootstrap.dark.min.css">
+<?php } else if(isset($settings['theme']) && $settings['theme']=='light') { // Enforce Light mode
+?>
   <link rel="stylesheet" href="resources/bootstrap.min.css">
+<?php } else { // AutoDetect
+?>
+<script>
+  // If `prefers-color-scheme` is not supported, fall back to light mode.
+  if (window.matchMedia('(prefers-color-scheme: dark)').media === 'not all') {
+    document.documentElement.style.display = 'none';
+    document.head.insertAdjacentHTML(
+        'beforeend',
+        '<link rel="stylesheet" href="resources/bootstrap.min.css" onload="document.documentElement.style.display = \'\'">'
+    );
+  }
+</script>
+  <link rel="stylesheet" href="resources/bootstrap.min.css" media="(prefers-color-scheme: no-reference), (prefers-color-scheme: light)">
+  <link rel="stylesheet" href="resources/bootstrap.dark.min.css" media="(prefers-color-scheme: dark)">
+<?php } ?>
   <script src="resources/jquery.min.js"></script>
   <script src="resources/bootstrap.min.js"></script>
 <?php if($init!==false) { ?>
-  <link rel="stylesheet" type="text/css" href="resources/datatables.min.css"/>
   <script type="text/javascript" src="resources/datatables.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="resources/datatables.min.css"/>
 <script type="text/javascript" class="init">
 <?php echo $init; ?>
 </script>

@@ -18,7 +18,7 @@ $(document).ready(function() {
 ',true);
 ?>
   <body>
-    <div class="container">
+    <div class="container-fluid">
     <table class="table table-striped table-bordered" id="status">
     <thead>
       <tr><th colspan="4"><center><b><a href="index.php">TasmoBackup</a> - Edit</b></center></th></tr>

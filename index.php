@@ -130,7 +130,17 @@ $(document).ready(function() {
     <div class="container-fluid">
     <table class="table table-striped table-bordered" id="status">
     <thead>
-      <tr><th colspan="9"><center><b>TasmoBackup <a href="settings.php"><img src="settings.png"></a></th></tr>
+      <tr><th colspan="9"><center><b>TasmoBackup <a href="settings.php"><?php
+	if(isset($settings['theme']) && $settings['theme']=='dark') { // Enforce Dark mode
+	    echo '<img src="images/settings-dark.png">';
+	} else if(isset($settings['theme']) && $settings['theme']=='light') { // Enforce Light mode
+	    echo '<img src="images/settings.png">';
+	} else { // auto mode
+	    echo '<picture><source srcset="images/settings-dark.png" media="(prefers-color-scheme: dark">';
+	    echo '<source srcset="images/settings.png" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)">';
+	    echo '<img src="images/settings.png"></picture>';
+	}
+?></a></th></tr>
       <tr><th><b>NAME</th><th>IP</th><th>AUTH</th><th><b>VERSION</th><th>LAST BACKUP</th><th><b>FILES</th><th><b>BACKUP</b></th><th>EDIT</th><th><b>DELETE</b></th></tr>
     </thead>
     <tbody>
@@ -148,18 +158,18 @@ $(document).ready(function() {
 
         echo "<tr valign='middle'><td>" . $name . "</td><td><center><a href='http://" . $ip . "' target='_blank'>" . $ip . "</a></td><td><center>";
 	if(isset($settings['theme']) && $settings['theme']=='dark') { // Enforce Dark mode
-	    echo "<img src='" . (strlen($password) > 0 ? 'lock-dark.png' : 'lock-open-variant-dark.png') . "'>";
+	    echo "<img src='" . (strlen($password) > 0 ? 'images/lock-dark.png' : 'images/lock-open-variant-dark.png') . "'>";
 	} else if(isset($settings['theme']) && $settings['theme']=='light') { // Enforce Light mode
-	    echo "<img src='" . (strlen($password) > 0 ? 'lock.png' : 'lock-open-variant.png') . "'>";
+	    echo "<img src='" . (strlen($password) > 0 ? 'images/lock.png' : 'images/lock-open-variant.png') . "'>";
 	} else { // auto mode
 	    if(strlen($password) >0) {
-		echo '<picture><source srcset="lock-dark.png" media="(prefers-color-scheme: dark">';
-		echo '<source srcset="lock.png" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)">';
-		echo '<img src="lock.png"></picture>';
+		echo '<picture><source srcset="images/lock-dark.png" media="(prefers-color-scheme: dark">';
+		echo '<source srcset="images/lock.png" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)">';
+		echo '<img src="images/lock.png"></picture>';
 	    } else {
-		echo '<picture><source srcset="lock-open-variant-dark.png" media="(prefers-color-scheme: dark">';
-		echo '<source srcset="lock-open-variant.png" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)">';
-		echo '<img src="lock-open-variant.png"></picture>';
+		echo '<picture><source srcset="images/lock-open-variant-dark.png" media="(prefers-color-scheme: dark">';
+		echo '<source srcset="images/lock-open-variant.png" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)">';
+		echo '<img src="images/lock-open-variant.png"></picture>';
 	    }
 	}
 	echo "</center></td><td><center>" . $version . "</center></td><td><center>" . $lastbackup . "</center></td>";

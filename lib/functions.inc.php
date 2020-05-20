@@ -254,7 +254,10 @@ function backupSingle($id, $name, $ip, $user, $password)
 
     if (!isset($settings['autoupdate_name']) || (isset($settings['autoupdate_name']) && $settings['autoupdate_name']=='Y')) {
         if ($status=getTasmotaStatus($ip, $user, $password)) {
-            $name=$status['Status']['FriendlyName'][0];
+            if ($status['Status']['DeviceName'])
+                $name=$status['Status']['DeviceName'];
+            else if ($status['Status']['FriendlyName'][0])
+                $name=$status['Status']['FriendlyName'][0];
         }
     }
 
@@ -323,7 +326,10 @@ function addTasmotaDevice($ip, $user, $password)
         } else {
             if ($status=getTasmotaStatus($ip, $user, $password)) {
                 if ($status2=getTasmotaStatus2($ip, $user, $password)) {
-                    $name=$status['Status']['FriendlyName'][0];
+                    if ($status['Status']['DeviceName'])
+                        $name=$status['Status']['DeviceName'];
+                    else if ($status['Status']['FriendlyName'][0])
+                        $name=$status['Status']['FriendlyName'][0];
                     $version=$status2['StatusFWR']['Version'];
                     if (dbDeviceAdd($name, $ip, $version, $password)) {
                         return $ip. ': ' . $name . ' Added Successfully!';

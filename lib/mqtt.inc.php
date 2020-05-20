@@ -85,7 +85,10 @@ function getTasmotaMQTTScan($mqtt,$topic,$user=false,$password=false)
                 $tmp['ip']=$status['StatusNET']['IPAddress'];
             if(isset($found['status'])) {
                 $status=jsonTasmotaDecode($found['status']);
-                $tmp['name']=$status['Status']['FriendlyName'][0];
+                if ($status['Status']['DeviceName'])
+                    $tmp['name']=$status['Status']['DeviceName'];
+                else if ($status['Status']['FriendlyName'][0])
+                    $tmp['name']=$status['Status']['FriendlyName'][0];
             }
             if (isset($settings['autoadd_scan']) && $settings['autoadd_scan']=='Y') {
                 addTasmotaDevice($tmp['ip'], $user, $password);

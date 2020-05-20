@@ -3,6 +3,7 @@ Backup the configs of all your Tasmota devices
 
 
 # Latest Changes
+* tasmota 8.3 devicename support
 * add dark mode
 * fix special chars in username/password
 * use timezone for displayed times in docker/HA installs

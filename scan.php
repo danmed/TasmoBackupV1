@@ -78,7 +78,10 @@ if ($_POST["task"]=="scan") {
         for($i=0;$i<count($ipresult);$i++) {
             $ip=$ipresult[$i];
             if ($status=getTasmotaStatus($ip, $user, $password)) {
-                $name=$status['Status']['FriendlyName'][0];
+                if ($status['Status']['DeviceName'])
+                    $name=$status['Status']['DeviceName'];
+                else if ($status['Status']['FriendlyName'][0])
+                    $name=$status['Status']['FriendlyName'][0];
                 echo "<tr valign='middle'><td><center><input type='checkbox' name='ip[]' value='" . $ip . "'></center></td>".
                      "<td>" . $name . "</td>".
                      "<td><center><a href='http://" . $ip . "'>" . $ip . "</a></center></td></tr>";

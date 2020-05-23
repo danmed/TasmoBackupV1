@@ -85,7 +85,7 @@ function getTasmotaMQTTScan($mqtt,$topic,$user=false,$password=false)
                 $tmp['ip']=$status['StatusNET']['IPAddress'];
             if(isset($found['status'])) {
                 $status=jsonTasmotaDecode($found['status']);
-                if ($status['Status']['DeviceName'])
+                if ($status['Status']['DeviceName'] && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
                     $tmp['name']=$status['Status']['DeviceName'];
                 else if ($status['Status']['FriendlyName'][0])
                     $tmp['name']=$status['Status']['FriendlyName'][0];

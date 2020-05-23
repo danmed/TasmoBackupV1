@@ -78,7 +78,7 @@ if ($_POST["task"]=="scan") {
         for($i=0;$i<count($ipresult);$i++) {
             $ip=$ipresult[$i];
             if ($status=getTasmotaStatus($ip, $user, $password)) {
-                if ($status['Status']['DeviceName'])
+                if ($status['Status']['DeviceName'] && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
                     $name=$status['Status']['DeviceName'];
                 else if ($status['Status']['FriendlyName'][0])
                     $name=$status['Status']['FriendlyName'][0];

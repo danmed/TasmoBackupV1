@@ -254,7 +254,7 @@ function backupSingle($id, $name, $ip, $user, $password)
 
     if (!isset($settings['autoupdate_name']) || (isset($settings['autoupdate_name']) && $settings['autoupdate_name']=='Y')) {
         if ($status=getTasmotaStatus($ip, $user, $password)) {
-            if ($status['Status']['DeviceName'])
+            if ($status['Status']['DeviceName'] && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
                 $name=$status['Status']['DeviceName'];
             else if ($status['Status']['FriendlyName'][0])
                 $name=$status['Status']['FriendlyName'][0];
@@ -326,7 +326,7 @@ function addTasmotaDevice($ip, $user, $password)
         } else {
             if ($status=getTasmotaStatus($ip, $user, $password)) {
                 if ($status2=getTasmotaStatus2($ip, $user, $password)) {
-                    if ($status['Status']['DeviceName'])
+                    if ($status['Status']['DeviceName'] && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
                         $name=$status['Status']['DeviceName'];
                     else if ($status['Status']['FriendlyName'][0])
                         $name=$status['Status']['FriendlyName'][0];

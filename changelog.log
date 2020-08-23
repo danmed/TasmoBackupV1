@@ -1,3 +1,8 @@
+##v1.03.20
+* remove localhost usage
+* add delays between web calls for scans and backups
+* dont reverify when adding after verified from the scan
+
 ##v1.03.18
 * Add tasmota 8.3 naming adjustment
 * fixes tiny dark mode adjustments

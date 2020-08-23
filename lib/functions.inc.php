@@ -71,7 +71,7 @@ function getTasmotaScan($ip, $user, $password)
     }
     if (strpos($data, 'Tasmota') !== false) {
         if (isset($settings['autoadd_scan']) && $settings['autoadd_scan']=='Y') {
-            addTasmotaDevice($ip, $user, $password);
+            addTasmotaDevice($ip, $user, $password, true);
         } else {
             return true;
         }
@@ -113,7 +113,7 @@ function getTasmotaScanRange($iprange, $user, $password)
             if ($statusCode == 200) {
                 if (strpos($data, 'Tasmota') !== false) {
                     if (isset($settings['autoadd_scan']) && $settings['autoadd_scan']=='Y') {
-                        addTasmotaDevice($url['host'], $user, $password);
+                        addTasmotaDevice($url['host'], $user, $password, true);
                     } else {
                         array_push($result,$url['host']);
                     }
@@ -253,6 +253,7 @@ function backupSingle($id, $name, $ip, $user, $password)
     }
 
     if (!isset($settings['autoupdate_name']) || (isset($settings['autoupdate_name']) && $settings['autoupdate_name']=='Y')) {
+        sleep(1);
         if ($status=getTasmotaStatus($ip, $user, $password)) {
             if ($status['Status']['DeviceName'] && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
                 $name=$status['Status']['DeviceName'];
@@ -274,6 +275,7 @@ function backupSingle($id, $name, $ip, $user, $password)
 
     $saveto = $backupfolder . $savename . "/" . $savedate . ".dmp";
 
+    sleep(1);
     if (getTasmotaBackup($ip, $user, $password, $saveto)) {
         $directory = $backupfolder . $savename . "/";
 /*
@@ -318,30 +320,34 @@ function backupAll($docker=false)
     return $errorcount;
 }
 
-function addTasmotaDevice($ip, $user, $password)
+function addTasmotaDevice($ip, $user, $password, $verified=false)
 {
-    if (getTasmotaScan($ip, $user, $password)) {
-        if (dbDeviceExist($ip)) {
-            return $ip.': This device already exists in the database!';
-        } else {
-            if ($status=getTasmotaStatus($ip, $user, $password)) {
-                if ($status2=getTasmotaStatus2($ip, $user, $password)) {
-                    if ($status['Status']['DeviceName'] && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
-                        $name=$status['Status']['DeviceName'];
-                    else if ($status['Status']['FriendlyName'][0])
-                        $name=$status['Status']['FriendlyName'][0];
-                    $version=$status2['StatusFWR']['Version'];
-                    if (dbDeviceAdd($name, $ip, $version, $password)) {
-                        return $ip. ': ' . $name . ' Added Successfully!';
-                    }
-                    return $ip.': '. $name . ' Error adding device to database.';
-                }
-                return $ip.': Device not responding to status2 request.';
-            }
-            return $ip.': Device not responding to status request.';
+    if(!$verified) {
+        if (!getTasmotaScan($ip, $user, $password)) {
+            return $ip.': Device not found.';
         }
     }
-    return $ip.': Device not found.';
+    if (dbDeviceExist($ip)) {
+        return $ip.': This device already exists in the database!';
+    } else {
+        sleep(1);
+        if ($status=getTasmotaStatus($ip, $user, $password)) {
+            sleep(1);
+            if ($status2=getTasmotaStatus2($ip, $user, $password)) {
+                if ($status['Status']['DeviceName'] && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
+                    $name=$status['Status']['DeviceName'];
+                else if ($status['Status']['FriendlyName'][0])
+                    $name=$status['Status']['FriendlyName'][0];
+                $version=$status2['StatusFWR']['Version'];
+                if (dbDeviceAdd($name, $ip, $version, $password)) {
+                    return $ip. ': ' . $name . ' Added Successfully!';
+                }
+                return $ip.': '. $name . ' Error adding device to database.';
+            }
+            return $ip.': Device not responding to status2 request.';
+        }
+        return $ip.': Device not responding to status request.';
+    }
 }
 
 

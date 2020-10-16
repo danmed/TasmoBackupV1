@@ -139,6 +139,32 @@ function getTasmotaScanRange($iprange, $user, $password)
 function getTasmotaStatus($ip, $user, $password)
 {
     //Get Name
+    $url = 'http://' .rawurlencode($user).':'.rawurlencode($password).'@'. $ip . '/cm?cmnd=status%200&user='.rawurlencode($user).'&password=' . rawurlencode($password);
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $data = curl_exec($ch);
+    $err = curl_errno($ch);
+    $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    if ($err || $statusCode != 200) {
+        return false;
+    }
+    $json=jsonTasmotaDecode($data);
+    if(isset($json["Status"]))
+        return $json;
+    sleep(1);
+    $data=getTasmotaOldStatus($ip, $user, $password);
+    if(isset($data['Status'])) {
+        $json["Status"]=$data["Status"];
+    }
+    return $json;
+}
+
+function getTasmotaOldStatus($ip, $user, $password)
+{
+    //Get Name
     $url = 'http://' .rawurlencode($user).':'.rawurlencode($password).'@'. $ip . '/cm?cmnd=status&user='.rawurlencode($user).'&password=' . rawurlencode($password);
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_TIMEOUT, 15);
@@ -158,6 +184,24 @@ function getTasmotaStatus2($ip, $user, $password)
 {
     //Get Version
     $url = 'http://' . rawurlencode($user).':'.rawurlencode($password).'@'. $ip . '/cm?cmnd=status%202&user='.rawurlencode($user).'&password=' . rawurlencode($password);
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $data = curl_exec($ch);
+    $err = curl_errno($ch);
+    $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    if ($err || $statusCode != 200) {
+        return false;
+    }
+    return jsonTasmotaDecode($data);
+}
+
+function getTasmotaStatus5($ip, $user, $password)
+{
+    //Get Mac
+    $url = 'http://' . rawurlencode($user).':'.rawurlencode($password).'@'. $ip . '/cm?cmnd=status%205&user='.rawurlencode($user).'&password=' . rawurlencode($password);
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_TIMEOUT, 15);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
@@ -245,25 +289,38 @@ function backupSingle($id, $name, $ip, $user, $password)
 
     $backupfolder = $settings['backup_folder'];
 
-    if ($status2=getTasmotaStatus2($ip, $user, $password)) {
-        $version = $status2['StatusFWR']['Version'];
+    if ($status=getTasmotaStatus($ip, $user, $password)) {
+	if (!isset($status['StatusFWR'])) {
+            sleep(1);
+            if ($status2=getTasmotaStatus2($ip, $user, $password)) {
+                $status['StatusFWR']=$status2['StatusFWR'];
+            } else
+                return true; // Device Offline
+        }
+	if (!isset($status['StatusNET'])) {
+            sleep(1);
+            if ($status5=getTasmotaStatus5($ip, $user, $password)) {
+                $status['StatusNET']=$status5['StatusNET'];
+            } else
+                return true; // Device Offline
+        }
     } else {
-        // Device is offline
-        return true;
+        return true; // Device Offline
     }
 
+    $version = $status['StatusFWR']['Version'];
+    $mac = strtoupper($status['StatusNET']['Mac']);
+
     if (!isset($settings['autoupdate_name']) || (isset($settings['autoupdate_name']) && $settings['autoupdate_name']=='Y')) {
-        sleep(1);
-        if ($status=getTasmotaStatus($ip, $user, $password)) {
-            if ($status['Status']['DeviceName'] && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
-                $name=$status['Status']['DeviceName'];
-            else if ($status['Status']['FriendlyName'][0])
-                $name=$status['Status']['FriendlyName'][0];
-        }
+        if ($status['Status']['DeviceName'] && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
+            $name=$status['Status']['DeviceName'];
+        else if ($status['Status']['FriendlyName'][0])
+            $name=$status['Status']['FriendlyName'][0];
     }
 
     $savename = preg_replace('/\s+/', '_', $name);
     $savename = preg_replace('/[^A-Za-z0-9_\-]/', '', $savename);
+    $savemac = preg_replace('/[^A-Za-z0-9_\-]/','', $mac);
     if (!file_exists($backupfolder . $savename)) {
         $oldmask = umask(0);
         mkdir($backupfolder . $savename, 0777, true);
@@ -273,7 +330,7 @@ function backupSingle($id, $name, $ip, $user, $password)
     $savedate = preg_replace('/(\s+|:)/', '_', $date);
     $savedate = preg_replace('/[^A-Za-z0-9_\-]/', '', $savedate);
 
-    $saveto = $backupfolder . $savename . "/" . $savedate . ".dmp";
+    $saveto = $backupfolder . $savename . "/" . $savemac . "-" . $savedate . ".dmp";
 
     sleep(1);
     if (getTasmotaBackup($ip, $user, $password, $saveto)) {
@@ -289,7 +346,7 @@ function backupSingle($id, $name, $ip, $user, $password)
             #echo $noofbackups;
         }
 */
-        if (!dbNewBackup($id, $name, $version, $date, 1, $saveto)) {
+        if (!dbNewBackup($id, $name, $version, $date, 1, $saveto, $mac)) {
             return true;
         }
         return false;
@@ -327,27 +384,44 @@ function addTasmotaDevice($ip, $user, $password, $verified=false)
             return $ip.': Device not found.';
         }
     }
-    if (dbDeviceExist($ip)) {
-        return $ip.': This device already exists in the database!';
-    } else {
-        sleep(1);
-        if ($status=getTasmotaStatus($ip, $user, $password)) {
+    sleep(1);
+    if ($status=getTasmotaStatus($ip, $user, $password)) {
+        if(!isset($status['StatusNET'])) {
             sleep(1);
-            if ($status2=getTasmotaStatus2($ip, $user, $password)) {
-                if ($status['Status']['DeviceName'] && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
-                    $name=$status['Status']['DeviceName'];
-                else if ($status['Status']['FriendlyName'][0])
-                    $name=$status['Status']['FriendlyName'][0];
-                $version=$status2['StatusFWR']['Version'];
-                if (dbDeviceAdd($name, $ip, $version, $password)) {
-                    return $ip. ': ' . $name . ' Added Successfully!';
-                }
-                return $ip.': '. $name . ' Error adding device to database.';
-            }
-            return $ip.': Device not responding to status2 request.';
+            if ($status5=getTasmotaStatus5($ip, $user, $password))
+                $status['StatusNET']=$status5['StatusNET'];
+            else 
+                return $ip.': Device not responding to status5 request.';
         }
-        return $ip.': Device not responding to status request.';
+        if(!isset($status['StatusFWR'])) {
+            sleep(1);
+            if ($status2=getTasmotaStatus2($ip, $user, $password))
+                $status['StatusFWR']=$status2['StatusFWR'];
+            else
+                return $ip.': Device not responding to status2 request.';
+        }
+
+        if (isset($status['Status']['DeviceName']) && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
+            $name=$status['Status']['DeviceName'];
+        else if ($status['Status']['FriendlyName'][0])
+            $name=$status['Status']['FriendlyName'][0];
+        if (isset($status['StatusFWR']['Version']))
+            $version=$status['StatusFWR']['Version'];
+        if (isset($status['StatusNET']['Mac']))
+            $mac=strtoupper($status['StatusNET']['Mac']);
+        if (($id=dbDeviceFind($ip,$mac))>0) {
+            if(dbDeviceUpdate($id,$name,$ip,$version,$password,$mac))
+                return $ip.': This device infomation has been updated!';
+            else
+                return $ip.': This device already exists in the database!';
+        } else {
+            if (dbDeviceAdd($name, $ip, $version, $password, $mac)) {
+                return $ip. ': ' . $name . ' Added Successfully!';
+            }
+        }
+        return $ip.': '. $name . ' Error adding device to database.';
     }
+    return $ip.': Device not responding to status request.';
 }
 
 

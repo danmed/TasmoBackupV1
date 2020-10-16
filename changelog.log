@@ -1,3 +1,7 @@
+##v1.04.00
+* Add mac address to devices
+* Add support for tasmota 9.0.0.2 status changes
+
 ##v1.03.21
 * rebuild with updated base without ipv6 hardcoded for nginx
 

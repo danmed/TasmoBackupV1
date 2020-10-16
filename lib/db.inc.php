@@ -43,19 +43,50 @@ function dbSettingsUpdate($name,$value)
     return true;
 }
 
-function dbDeviceExist($ip)
+function dbDeviceExist($ip=NULL,$mac=NULL)
 {
     global $db_handle;
-    $stm = $db_handle->prepare("select count(*) from devices where ip = :ip");
-    $stm->bindValue(':ip', $ip, PDO::PARAM_STR);
-    if (!$stm->execute()) {
-        return false;
+    if(isset($mac)){
+	$stm = $db_handle->prepare("select count(*) from devices where mac = :mac");
+        $stm->bindValue(':mac', $mac, PDO::PARAM_STR);
+        if ($stm->execute()) {
+            if ($stm->fetchColumn() > 0 )
+	        return true;
+        }
     }
-    if ($stm->fetchColumn() < 1) {
-        return false;
-    } else {
-        return true;
+
+    if(isset($ip)) {
+	$stm = $db_handle->prepare("select count(*) from devices where ip = :ip");
+        $stm->bindValue(':ip', $ip, PDO::PARAM_STR);
     }
+    if ($stm->execute()) {
+        if ($stm->fetchColumn() > 0)
+            return true;
+    }
+    return false;
+}
+
+function dbDeviceFind($ip=NULL,$mac=NULL)
+{
+    global $db_handle;
+    if(isset($mac)){
+	$stm = $db_handle->prepare("select id from devices where mac = :mac");
+        $stm->bindValue(':mac', $mac, PDO::PARAM_STR);
+        if ($stm->execute()) {
+            if (($data=$stm->fetchColumn()) > 0 )
+	        return $data;
+        }
+    }
+
+    if(isset($ip)) {
+	$stm = $db_handle->prepare("select id from devices where ip = :ip");
+        $stm->bindValue(':ip', $ip, PDO::PARAM_STR);
+    }
+    if ($stm->execute()) {
+        if (($data=$stm->fetchColumn()) > 0)
+            return $data;
+    }
+    return false;
 }
 
 function dbDeviceIp($ip)
@@ -63,6 +94,17 @@ function dbDeviceIp($ip)
     global $db_handle;
     $stm = $db_handle->prepare("select * from devices where ip = :ip");
     $stm->bindValue(':ip', $ip, PDO::PARAM_STR);
+    if (!$stm->execute()) {
+        return false;
+    }
+    return $stm->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function dbDeviceMac($mac)
+{
+    global $db_handle;
+    $stm = $db_handle->prepare("select * from devices where mac = :mac");
+    $stm->bindValue(':mac', $mac, PDO::PARAM_STR);
     if (!$stm->execute()) {
         return false;
     }
@@ -201,19 +243,20 @@ function dbDevicesSort()
     return $stm->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function dbDeviceAdd($name, $ip, $version, $password)
+function dbDeviceAdd($name, $ip, $version, $password, $mac)
 {
     global $db_handle;
-    $stm = $db_handle->prepare("INSERT INTO devices (name,ip,version,password) VALUES (:name, :ip, :version, :password)");
+    $stm = $db_handle->prepare("INSERT INTO devices (name,ip,mac,version,password) VALUES (:name, :ip, :mac, :version, :password)");
     $stm->bindValue(':name', $name, PDO::PARAM_STR);
     $stm->bindValue(':ip', $ip, PDO::PARAM_STR);
+    $stm->bindValue(':mac', $mac, PDO::PARAM_STR);
     $stm->bindValue(':version', $version, PDO::PARAM_STR);
     $stm->bindValue(':password', $password, PDO::PARAM_STR);
 
     return $stm->execute();
 }
 
-function dbDeviceRename($oldip, $name, $ip, $password)
+function dbDeviceRename($oldip, $name, $ip, $password, $mac=NULL)
 {
     global $db_handle;
     $stm = $db_handle->prepare("UPDATE devices SET name = :name, ip = :ip, password = :password WHERE ip = :oldip");
@@ -241,7 +284,53 @@ function dbDeviceDel($ip)
     return $stm->execute();
 }
 
-function dbDeviceBackups($id,$date=null,$version=null,$name=null)
+function dbDeviceUpdate($id=NULL,$name=NULL,$ip=NULL,$version=NULL,$password=NULL,$mac=NULL)
+{
+    global $db_handle;
+
+    $versioncond='';
+    if(isset($version))
+        $versioncond='version = :version, ';
+    $maccond='';
+    if(isset($mac))
+        $maccond='mac = :mac, ';
+    $namecond='';
+    if(isset($name))
+        $namecond='name = :name, ';
+    $ipcond='';
+    if(isset($ip))
+        $ipcond='ip = :ip, ';
+    $passwordcond='';
+    if(isset($password))
+        $passwordcond='password = :password ';
+    if(isset($id)) {
+        $stm = $db_handle->prepare('UPDATE devices SET '.$versioncond.$ipcond.$namecond.$maccond.$passwordcond.' WHERE id = :id');
+echo "\r\n<!-- Doing id update \r\n".'UPDATE devices SET '.$versioncond.$maccond.$namecond.$passwordcond." WHERE id = $id  -->\r\n";
+    } else if(isset($mac) && isset($ip)) {
+        $stm = $db_handle->prepare('UPDATE devices SET '.$versioncond.$ipcond.$namecond.$maccond,$passwordcond.' WHERE (mac = :mac ) or (ip = :ip and mac="")');
+#    } else if(isset($ip)) {
+#        $stm = $db_handle->prepare('UPDATE devices SET '.$versioncond.$maccond.$namecond.$passwordcond.' WHERE ip = :ip AND mac=""');
+echo "\r\n<!-- Doing mac update \r\n".'UPDATE devices SET '.$versioncond.$maccond.$namecond.$passwordcond." WHERE ip = $ip AND mac=$mac -->\r\n";
+    }
+    if(isset($stm)) {
+        if(isset($version))
+            $stm->bindValue(':version', $version, PDO::PARAM_STR);
+        if(isset($password))
+            $stm->bindValue(':password', $password, PDO::PARAM_STR);
+        if(isset($mac))
+            $stm->bindValue(':mac', $mac, PDO::PARAM_STR);
+        if(isset($name))
+            $stm->bindValue(':name', $name, PDO::PARAM_STR);
+        if(isset($ip))
+            $stm->bindValue(':ip', $ip, PDO::PARAM_STR);
+        if(isset($id))
+            $stm->bindValue(':id', $id, PDO::PARAM_INT);
+        return $stm->execute();
+    }
+    return false;
+}
+
+function dbDeviceBackups($id,$date=NULL,$version=NULL,$name=NULL,$mac=NULL)
 {
     global $db_handle;
 
@@ -249,15 +338,20 @@ function dbDeviceBackups($id,$date=null,$version=null,$name=null)
     $versioncond='';
     if(isset($version))
         $versioncond='version = :version, ';
+    $maccond='';
+    if(isset($mac))
+        $maccond='mac = :mac, ';
     $namecond='';
     if(isset($name))
         $namecond='name = :name, ';
     $datecond='';
     if(isset($date))
         $datecond='lastbackup = :date, ';
-    $stm = $db_handle->prepare("UPDATE devices SET ".$versioncond.$datecond.$namecond.' noofbackups = :noofbackups WHERE id = :id');
+    $stm = $db_handle->prepare("UPDATE devices SET ".$versioncond.$datecond.$namecond.$maccond.' noofbackups = :noofbackups WHERE id = :id');
     if(isset($version))
         $stm->bindValue(':version', $version, PDO::PARAM_STR);
+    if(isset($mac))
+        $stm->bindValue(':mac', $mac, PDO::PARAM_STR);
     if(isset($name))
         $stm->bindValue(':name', $name, PDO::PARAM_STR);
     if(isset($date))
@@ -267,7 +361,7 @@ function dbDeviceBackups($id,$date=null,$version=null,$name=null)
     return $stm->execute();
 }
 
-function dbNewBackup($id, $name, $version, $date, $noofbackups, $filename)
+function dbNewBackup($id, $name, $version, $date, $noofbackups, $filename, $mac=NULL)
 {
     global $db_handle;
     if(!isset($version) || strlen($version)<2) { $version='Unknown'; }
@@ -281,7 +375,7 @@ function dbNewBackup($id, $name, $version, $date, $noofbackups, $filename)
         trigger_error("insert error: ".$stm->errorInfo()[2], E_USER_NOTICE);
         return false;
     }
-    return dbDeviceBackups($id,$date,$version,$name);
+    return dbDeviceBackups($id,$date,$version,$name,$mac);
 }
 
 
@@ -294,6 +388,7 @@ if ($GLOBALS['DBType']=='mysql') {
     id int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
     name varchar(128) NOT NULL,
     ip varchar(64) NOT NULL,
+    mac varchar(32) NOT NULL,
     version varchar(128) NOT NULL,
     lastbackup datetime DEFAULT NULL,
     noofbackups int(11) DEFAULT NULL,
@@ -315,6 +410,14 @@ if ($GLOBALS['DBType']=='mysql') {
     name varchar(128) PRIMARY KEY NOT NULL,
     value varchar(255) NOT NULL )
     ");
+
+    $stm=$db_handle->prepare("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='".$GLOBALS['DBName']."' AND TABLE_NAME='devices' AND COLUMN_NAME='mac';");
+    $stm->execute();
+    $cnt=intval($stm->fetchColumn());
+    if($cnt<1) {
+        $db_handle->exec("ALTER TABLE devices ADD COLUMN mac varchar(32) NOT NULL DEFAULT '' AFTER ip;");
+    }
+
 }
 
 if ($GLOBALS['DBType']=='sqlite') {
@@ -322,6 +425,7 @@ if ($GLOBALS['DBType']=='sqlite') {
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     name varchar(128) NOT NULL,
     ip varchar(64) NOT NULL,
+    mac varchar(32) NOT NULL,
     version varchar(128) NOT NULL,
     lastbackup datetime DEFAULT NULL,
     noofbackups INTEGER DEFAULT NULL,
@@ -346,6 +450,8 @@ if ($GLOBALS['DBType']=='sqlite') {
     name varchar(128) PRIMARY KEY NOT NULL,
     value varchar(255) NOT NULL )
     ");
+
+    @$db_handle->exec("ALTER TABLE devices ADD COLUMN mac varchar(32) NOT NULL DEFAULT '' AFTER ip");
 }
 }
 

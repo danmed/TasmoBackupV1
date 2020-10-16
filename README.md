@@ -2,13 +2,13 @@
 Backup the configs of all your Tasmota devices
 
 # Latest Changes
+* tasmota 9.0 status change
+* recording mac addresses
 * tasmota 8.3 devicename support
 * add dark mode
 * fix special chars in username/password
 * use timezone for displayed times in docker/HA installs
 * cron to run backup-all in docker for HA
-* multi-threaded scanning
-* fix datatables length and sort
 
 # Features
 * Add single devices

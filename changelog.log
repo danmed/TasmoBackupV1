@@ -1,3 +1,6 @@
+##v1.04.02
+* honor autoupdate name setting when updating device info on scans
+
 ##v1.04.00
 * Add mac address to devices
 * Add support for tasmota 9.0.0.2 status changes

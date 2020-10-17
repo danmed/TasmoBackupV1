@@ -384,44 +384,48 @@ function addTasmotaDevice($ip, $user, $password, $verified=false)
             return $ip.': Device not found.';
         }
     }
-    sleep(1);
-    if ($status=getTasmotaStatus($ip, $user, $password)) {
-        if(!isset($status['StatusNET'])) {
-            sleep(1);
-            if ($status5=getTasmotaStatus5($ip, $user, $password))
-                $status['StatusNET']=$status5['StatusNET'];
-            else 
-                return $ip.': Device not responding to status5 request.';
-        }
-        if(!isset($status['StatusFWR'])) {
-            sleep(1);
-            if ($status2=getTasmotaStatus2($ip, $user, $password))
-                $status['StatusFWR']=$status2['StatusFWR'];
-            else
-                return $ip.': Device not responding to status2 request.';
-        }
-
-        if (isset($status['Status']['DeviceName']) && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
-            $name=$status['Status']['DeviceName'];
-        else if ($status['Status']['FriendlyName'][0])
-            $name=$status['Status']['FriendlyName'][0];
-        if (isset($status['StatusFWR']['Version']))
-            $version=$status['StatusFWR']['Version'];
-        if (isset($status['StatusNET']['Mac']))
-            $mac=strtoupper($status['StatusNET']['Mac']);
-        if (($id=dbDeviceFind($ip,$mac))>0) {
-            if(dbDeviceUpdate($id,$name,$ip,$version,$password,$mac))
-                return $ip.': This device infomation has been updated!';
-            else
-                return $ip.': This device already exists in the database!';
-        } else {
-            if (dbDeviceAdd($name, $ip, $version, $password, $mac)) {
-                return $ip. ': ' . $name . ' Added Successfully!';
+    if (!dbDeviceExist($ip)) {
+        if ($status=getTasmotaStatus($ip, $user, $password)) {
+            if(!isset($status['StatusNET'])) {
+                sleep(1);
+                if ($status5=getTasmotaStatus5($ip, $user, $password))
+                    $status['StatusNET']=$status5['StatusNET'];
+                else 
+                    return $ip.': Device not responding to status5 request.';
             }
+            if(!isset($status['StatusFWR'])) {
+                sleep(1);
+                if ($status2=getTasmotaStatus2($ip, $user, $password))
+                    $status['StatusFWR']=$status2['StatusFWR'];
+                else
+                    return $ip.': Device not responding to status2 request.';
+            }
+
+            if (isset($status['Status']['DeviceName']) && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
+                $name=$status['Status']['DeviceName'];
+            else if ($status['Status']['FriendlyName'][0])
+                $name=$status['Status']['FriendlyName'][0];
+            if (isset($status['StatusFWR']['Version']))
+                $version=$status['StatusFWR']['Version'];
+            if (isset($status['StatusNET']['Mac']))
+                $mac=strtoupper($status['StatusNET']['Mac']);
+            if (($id=dbDeviceFind($ip,$mac))>0) {
+                if (!isset($settings['autoupdate_name']) || (isset($settings['autoupdate_name']) && $settings['autoupdate_name']=='Y'))
+                    $newname=$name;
+                if(dbDeviceUpdate($id,$newname,$ip,$version,$password,$mac))
+                    return $ip.': ' . $name . ' infomation has been updated!';
+                else
+                    return $ip.': ' . $name . ' already exists in the database!';
+            } else {
+                if (dbDeviceAdd($name, $ip, $version, $password, $mac)) {
+                    return $ip.': ' . $name . ' Added Successfully!';
+                }
+            }
+            return $ip.': '. $name . ' Error adding device to database.';
         }
-        return $ip.': '. $name . ' Error adding device to database.';
+        return $ip.': Device not responding to status request.';
     }
-    return $ip.': Device not responding to status request.';
+    return $ip.': This device already exists in the database!';
 }
 
 

@@ -451,7 +451,7 @@ if ($GLOBALS['DBType']=='sqlite') {
     value varchar(255) NOT NULL )
     ");
 
-    @$db_handle->exec("ALTER TABLE devices ADD COLUMN mac varchar(32) NOT NULL DEFAULT '' AFTER ip");
+    @$db_handle->exec("ALTER TABLE devices ADD COLUMN mac varchar(32) NOT NULL DEFAULT ''");
 }
 }
 

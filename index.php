@@ -8,6 +8,7 @@ global $settings;
 $task='';
 $password='';
 $user='admin';
+if(isset($settings['tasmota_username'])) $user=$settings['tasmota_username'];
 if (isset($_POST["task"])) {
     $task = $_POST["task"];
 }

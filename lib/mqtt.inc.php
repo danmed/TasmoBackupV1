@@ -15,7 +15,7 @@ function setupMQTT($server, $port=1883, $user, $password)
     return $mqtt;
 }
 
-function getTasmotaMQTTScan($mqtt,$topic,$user=false,$password=false)
+function getTasmotaMQTTScan($mqtt,$topic,$user=false,$password=false,$slim=false)
 {
     GLOBAL $mqtt_found,$settings;
 
@@ -35,20 +35,20 @@ function getTasmotaMQTTScan($mqtt,$topic,$user=false,$password=false)
     $mqtt->subscribe($topics);
 
     for($i=0; $i<1000; $i++) {
-        if($i==10) {
+        if($i==10 && !$slim) {
             // HomeAssistant swapped
             $mqtt->publish($topic.'/cmnd/STATUS','0');
             if($topic=='tasmotas')
                 $mqtt->publish('sonoffs/cmnd/STATUS','0');
         }
-        if($i==60) {
+        if($i==60 && !$slim) {
             if(isset($settings['mqtt_topic_format'])) {
                 $mqtt->publish(str_replace(array('%prefix%','%topic%'),array('stat',$topic),$settings['mqtt_topic_format']).'/STATUS','0');
                 if($topic=='tasmotas')
                     $mqtt->publish(str_replace(array('%prefix%','%topic%'),array('stat','sonoffs'),$settings['mqtt_topic_format']).'/STATUS','0'); 
             }
         }
-        if($i==110) {
+        if($i==110 && !$slim) {
             $mqtt->publish('cmnd/'.$topic.'/STATUS','0');
             if($topic=='tasmotas')
                 $mqtt->publish('cmnd/sonoffs/STATUS','0');
@@ -73,7 +73,7 @@ function getTasmotaMQTTScan($mqtt,$topic,$user=false,$password=false)
                 $mqtt->publish('cmnd/sonoffs/STATUS','5');
         }
         while($mqtt->proc(false)) {};
-        usleep(10000);
+        usleep(30000);
     }
     $results=[];
     foreach($mqtt_found as $found) {

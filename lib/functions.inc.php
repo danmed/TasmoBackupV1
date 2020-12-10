@@ -58,8 +58,8 @@ function getTasmotaScan($ip, $user, $password)
     $ch = curl_init($url);
     curl_setopt_array($ch, array(
         CURLOPT_FOLLOWLOCATION => false,
-        CURLOPT_TIMEOUT => 15,
-        CURLOPT_CONNECTTIMEOUT => 3,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_CONNECTTIMEOUT => 12,
         CURLOPT_RETURNTRANSFER => true,
     ));
     $data = curl_exec($ch);
@@ -86,8 +86,8 @@ function getTasmotaScanRange($iprange, $user, $password)
     $result=array();
     $options = array(
         CURLOPT_FOLLOWLOCATION => false,
-        CURLOPT_TIMEOUT => 15,
-        CURLOPT_CONNECTTIMEOUT => 3,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_CONNECTTIMEOUT => 12,
         CURLOPT_RETURNTRANSFER => true,
     );
     $range=15;
@@ -141,8 +141,8 @@ function getTasmotaStatus($ip, $user, $password)
     //Get Name
     $url = 'http://' .rawurlencode($user).':'.rawurlencode($password).'@'. $ip . '/cm?cmnd=status%200&user='.rawurlencode($user).'&password=' . rawurlencode($password);
     $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 12);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $data = curl_exec($ch);
     $err = curl_errno($ch);
@@ -167,8 +167,8 @@ function getTasmotaOldStatus($ip, $user, $password)
     //Get Name
     $url = 'http://' .rawurlencode($user).':'.rawurlencode($password).'@'. $ip . '/cm?cmnd=status&user='.rawurlencode($user).'&password=' . rawurlencode($password);
     $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 12);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $data = curl_exec($ch);
     $err = curl_errno($ch);
@@ -185,8 +185,8 @@ function getTasmotaStatus2($ip, $user, $password)
     //Get Version
     $url = 'http://' . rawurlencode($user).':'.rawurlencode($password).'@'. $ip . '/cm?cmnd=status%202&user='.rawurlencode($user).'&password=' . rawurlencode($password);
     $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 12);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $data = curl_exec($ch);
     $err = curl_errno($ch);
@@ -203,8 +203,8 @@ function getTasmotaStatus5($ip, $user, $password)
     //Get Mac
     $url = 'http://' . rawurlencode($user).':'.rawurlencode($password).'@'. $ip . '/cm?cmnd=status%205&user='.rawurlencode($user).'&password=' . rawurlencode($password);
     $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 12);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $data = curl_exec($ch);
     $err = curl_errno($ch);
@@ -226,8 +226,8 @@ function restoreTasmotaBackup($ip, $user, $password, $filename)
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 40);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 12);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER,array('Content-Type: multipart/form-data'));
     $result=curl_exec($ch);
@@ -252,8 +252,8 @@ function getTasmotaBackup($ip, $user, $password, $filename)
 
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_FILE, $fp);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 40);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 12);
     curl_exec($ch);
     $err = curl_errno($ch);
     $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -364,6 +364,16 @@ function backupAll($docker=false)
         $hours=intval($settings['backup_minhours']);
     if($docker && $hours==0)
         return false;
+    if ($docker && isset($settings['autoadd_scan']) && $settings['autoadd_scan']=='Y') { // auto scan on schedule
+        if(isset($settings['mqtt_host']) && isset($settings['mqtt_port']) && strlen($settings['mqtt_host'])>4) {
+            $mqtt=setupMQTT($settings['mqtt_host'], $settings['mqtt_port'], $settings['mqtt_user'], $settings['mqtt_password']);
+            $username='admin';
+            if(isset($settings['tasmota_username'])) $username=$settings['tasmota_username'];
+            $password='';
+            if(isset($settings['tasmota_password'])) $password=$settings['tasmota_password'];
+            if($mqtt) getTasmotaMQTTScan($mqtt,$settings['mqtt_topic'],$username,$password,true);
+        }
+    }
     $stm = $db_handle->prepare("select * from devices where lastbackup < :date or lastbackup is NULL ");
     $stm->execute(array(":date" => date('Y-m-d H:i:s',time()-(3600*$hours))));
     $errorcount = 0;

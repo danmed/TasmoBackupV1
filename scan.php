@@ -40,6 +40,7 @@ function toggle(source) {
 
 $password='';
 $user='admin';
+if(isset($settings['tasmota_username'])) $user=$settings['tasmota_username'];
 if (isset($_POST['user'])) {
     $user=$_POST['user'];
 }
@@ -94,7 +95,7 @@ if ($_POST["task"]=="mqtt") {
     if(isset($settings['mqtt_host']) && isset($settings['mqtt_port']) && strlen($settings['mqtt_host'])>4) {
         $mqtt=setupMQTT($settings['mqtt_host'], $settings['mqtt_port'], $settings['mqtt_user'], $settings['mqtt_password']);
         if(!isset($mqtt_topic)) $mqtt_topic=$settings['mqtt_topic'];
-        $results=getTasmotaMQTTScan($mqtt,$mqtt_topic,$user,$password);
+        $results=getTasmotaMQTTScan($mqtt,$mqtt_topic,$user,$password,false);
         if(count($results)>0) {
             foreach($results as $found) {
                 $ip=$found['ip'];

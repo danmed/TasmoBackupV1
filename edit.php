@@ -34,7 +34,7 @@ $relcount = 1;
         $id = $relcount;
         $name = $db_field['name'];
         $ip = $db_field['ip'];
-        $password = $db_field['password']; ?>
+        $password = $db_field['password'];
 ?>
 <tr valign='middle'>
 <form method='POST' action='index.php'>

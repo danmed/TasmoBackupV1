@@ -262,7 +262,7 @@ function dbDeviceRename($oldip, $name, $ip, $password, $mac=NULL)
     $stm = $db_handle->prepare("UPDATE devices SET name = :name, ip = :ip, password = :password WHERE ip = :oldip");
     $stm->bindValue(':name', $name, PDO::PARAM_STR);
     $stm->bindValue(':ip', $ip, PDO::PARAM_STR);
-    $stm->bindValue(':pasword', $password, PDO::PARAM_STR);
+    $stm->bindValue(':password', $password, PDO::PARAM_STR);
     $stm->bindValue(':oldip', $oldip, PDO::PARAM_STR);
 
     return $stm->execute();

@@ -1,6 +1,6 @@
 <?PHP
 
-require(__DIR__.'/lib/functions.inc.php');
+require_once(__DIR__.'/lib/functions.inc.php');
 
 $errorcount=backupAll(isset($_REQUEST['docker']));
 

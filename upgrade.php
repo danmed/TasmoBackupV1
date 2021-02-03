@@ -1,5 +1,5 @@
 <?php
-require(__DIR__.'/lib/functions.inc.php');
+require_once(__DIR__.'/lib/functions.inc.php');
 
 global $settings;
 

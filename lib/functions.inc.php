@@ -1,5 +1,5 @@
 <?php
-require (__DIR__.'/db.inc.php');
+require_once (__DIR__.'/db.inc.php');
 
 $strJsonFileContents = file_get_contents(__DIR__.'/../HA_addon/config.json');
 $array = json_decode($strJsonFileContents, true);
@@ -366,6 +366,7 @@ function backupAll($docker=false)
         return false;
     if ($docker && isset($settings['autoadd_scan']) && $settings['autoadd_scan']=='Y') { // auto scan on schedule
         if(isset($settings['mqtt_host']) && isset($settings['mqtt_port']) && strlen($settings['mqtt_host'])>4) {
+            require_once(__DIR__.'/mqtt.inc.php');
             $mqtt=setupMQTT($settings['mqtt_host'], $settings['mqtt_port'], $settings['mqtt_user'], $settings['mqtt_password']);
             $username='admin';
             if(isset($settings['tasmota_username'])) $username=$settings['tasmota_username'];

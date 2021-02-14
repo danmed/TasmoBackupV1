@@ -2,6 +2,7 @@
 Backup the configs of all your Tasmota devices
 
 # Latest Changes
+* fix bug when doing mqtt scanning
 * tasmota 9.0 status change
 * recording mac addresses
 * tasmota 8.3 devicename support

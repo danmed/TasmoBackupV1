@@ -56,7 +56,7 @@ function getTasmotaMQTTScan($mqtt,$topic,$user=false,$password=false,$slim=false
 
         if($i==210) {
             // Default
-            $mqtt->publish($topic.'cmnd/STATUS','5');
+            $mqtt->publish($topic.'/cmnd/STATUS','5');
             if($topic=='tasmotas')
                 $mqtt->publish('sonoffs/cmnd/STATUS','5');
         }

@@ -121,6 +121,10 @@ $(document).ready(function() {
         $(\'#status\').DataTable({
         "order": [['. (isset($settings['sort'])?$settings['sort']:0) .', "asc" ]],
         "pageLength": '. (isset($settings['amount'])?$settings['amount']:100) .',
+        "columnDefs": [
+            { "type": "ip-address", "targets": [1] },
+            { "type": "version", "targets": [3] }
+            ],
         "statesave": true,
         "autoWidth": true
 } );
@@ -142,22 +146,45 @@ $(document).ready(function() {
 	    echo '<img src="images/settings.png"></picture>';
 	}
 ?></a></th></tr>
-      <tr><th><b>NAME</th><th>IP</th><th>AUTH</th><th><b>VERSION</th><th>LAST BACKUP</th><th><b>FILES</th><th><b>BACKUP</b></th><th>EDIT</th><th><b>DELETE</b></th></tr>
+      <tr><th><b>NAME</th><th><center>IP</center></th><th><center>AUTH</center></th><th><center><b>VERSION</b></center></th><th><center>LAST BACKUP</center></th><th><center><b>FILES</b></center></th><th><center><b>BACKUP</b></center></th><th><center>EDIT</center></th><th><center><b>DELETE</b></center></th></tr>
     </thead>
     <tbody>
 <?php
-
+    $list_model='';
+    $now=time();
+    $lastbackup_green=0;
+    $lastbackup_red=0;
+    $lastbackup_yellow=0;
+    if($settings['backup_minhours']>0) {
+        $lastbackup_green=$now-(intval($settings['backup_minhours'])*3600*2.2);
+        $lastbackup_red=$now-(intval($settings['backup_minhours'])*3600*8);
+    }    
     $devices = dbDevicesSort();
     foreach ($devices as $db_field) {
         $id = $db_field['id'];
         $name = $db_field['name'];
         $ip = $db_field['ip'];
+        if(isset($db_field['mac']))
+            $mac = $db_field['mac'];
+        else
+            $mac = '';
         $version = $db_field['version'];
         $lastbackup = $db_field['lastbackup'];
         $numberofbackups = $db_field['noofbackups'];
         $password = $db_field['password'];
 
-        echo "<tr valign='middle'><td>" . $name . "</td><td><center><a href='http://" . $ip . "' target='_blank'>" . $ip . "</a></td><td><center>";
+	$color='';
+        if($lastbackup_green>0 && isset($lastbackup) && strlen($lastbackup)>10) {
+            $ts=strtotime($lastbackup);
+            if($ts<$lastbackup_red && $ts>0)
+                $color='bgcolor="red"';
+            if($ts>$lastbackup_red)
+                $color='bgcolor="yellow"';
+            if($ts>$lastbackup_green)
+                $color=''; //    $color='bgcolor="green"';
+	}
+	
+        echo "<tr valign='middle'><td onclick=\"deviceModal('#myModaldevice".$id."');\">" . $name . "</td><td><center><a href='http://" . $ip . "' target='_blank'>" . $ip . "</a></td><td><center>";
 	if(isset($settings['theme']) && $settings['theme']=='dark') { // Enforce Dark mode
 	    echo "<img src='" . (strlen($password) > 0 ? 'images/lock-dark.png' : 'images/lock-open-variant-dark.png') . "'>";
 	} else if(isset($settings['theme']) && $settings['theme']=='light') { // Enforce Light mode
@@ -173,11 +200,24 @@ $(document).ready(function() {
 		echo '<img src="images/lock-open-variant.png"></picture>';
 	    }
 	}
-	echo "</center></td><td><center>" . $version . "</center></td><td><center>" . $lastbackup . "</center></td>";
+        $ver=$version;
+        if(($pos=strpos($version,'('))>0) {
+            $ver=substr($version,0,$pos);
+            $tag=substr($version,$pos);
+            $version=$ver.' <small>'.$tag.'</small>';
+        }
+	echo "</center></td><td><center>" . $version . "</center></td><td $color><center>" . $lastbackup . "</center></td>";
 	echo "<td><center><form method='POST' action='listbackups.php'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='" . $id . "' name='id'><input type='submit' value='" . $numberofbackups . "' class='btn-xs btn-info'></form></center></td>";
 	echo "<td><center><form method='POST' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='singlebackup' name='task'><input type='submit' value='Backup' class='btn-xs btn-success'></form></center></td>";
 	echo "<td><center><form method='POST' action='edit.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='edit' name='task'><input type='submit' value='Edit' class='btn-xs btn-warning'></form></center></td>";
-	echo "<td><center><form method='POST' id='deleteform' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='delete' name='task'><input type='submit' onclick='return window.confirm(\"Are you sure you want to delete " . $name . "\");' value='Delete' class='btn-xs btn-danger'></form></center></td></tr>\n";
+	echo "<td><center><form method='POST' id='deleteform' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='delete' name='task'><input type='submit' onclick='return window.confirm(\"Are you sure you want to delete " . $name . "\");' value='Delete' class='btn-xs btn-danger'></form></center></td></tr>\r\n";
+
+        $list_model.='<div id="myModaldevice'.$id.'" class="modal fade" role="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h4 class="modal-title">'.$name.'</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div><div class="modal-body"><p><pre>'."\r\n";
+	$list_model.=sprintf("%14s: %s\r\n%14s: %s\r\n%14s: %s\r\n%14s: %s","Name",$name,"IP",$ip,"MAC",$mac,"Version",$ver);
+	if(isset($tag))
+            $list_model.=sprintf("\r\n%14s: %s","BuildTag".$tag);
+        $list_model.=sprintf("\r\n%14s: %s\r\n","Last Backup",$lastbackup);
+        $list_model.='</pre></p></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div></div></div></div>'."\r\n";
     }
 
 ?>
@@ -185,7 +225,6 @@ $(document).ready(function() {
     </table>
 
 <center><form method='POST' action='index.php'><input type='hidden' value='backupall' name='task'><input type='submit' value='Backup All' class='btn-xs btn-success'></form><br>
-<form method='POST' action='index.php'><input type='hidden' value='discover' name='task'><input type="text" name="ip" placeholder="ip address"><input type="password" name="password" placeholder="password" <?php if(isset($settings['tasmota_password'])) { echo 'value="'.$settings['tasmota_password'].'" '; } ?>><input type='submit' value='Add' class='btn-xs btn-danger'></form>
 <form method="POST" action="scan.php"><input type=text name=range placeholder="192.168.1.1-255"><input type="password" name="password" placeholder="password" <?php if(isset($settings['tasmota_password'])) { echo 'value="'.$settings['tasmota_password'].'" '; } ?>><input type=hidden name=task value=scan><input type=submit value=Discover class='btn-xs btn-danger'></form>
 <?php if(isset($settings['mqtt_host']) && isset($settings['mqtt_port']) && strlen($settings['mqtt_host'])>4) {
 ?>
@@ -195,6 +234,17 @@ $(document).ready(function() {
 
 TBFooter();
 echo '</div>';
+
+if(isset($list_model)) {
+    echo $list_model;
+?>
+<script type='text/javascript'>
+function deviceModal(modalId) {
+  $(modalId).modal('show');
+}
+</script>
+<?php
+}
 
 if (isset($show_modal) && $show_modal):
 ?>

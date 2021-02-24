@@ -3,13 +3,11 @@ Backup the configs of all your Tasmota devices
 
 
 # Latest Changes
+* added alert if device isn't getting backed up visually
+* fixed sorting on ip and version
 * fix bug when doing mqtt scanning
 * tasmota 9.0 status change
 * recording mac addresses
-* tasmota 8.3 devicename support
-* add dark mode
-* fix special chars in username/password
-* use timezone for displayed times in docker/HA installs
 
 # Features
 * Add single devices
@@ -18,11 +16,10 @@ Backup the configs of all your Tasmota devices
 * Backup all devices
 * Remove devices
 * Download individual backups
-* No duplicates (based on IP)
+* No duplicates (based on IP, and MAC)
 
 # To-Do
-* Background scanning
-* Handle device changes ip address
+* Handle device changes ip address (using mac code when mature for users)
 * Parse backup configs
 
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/E1E21J93T)

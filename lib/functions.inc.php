@@ -507,6 +507,7 @@ if($track) { ?>
   <script src="resources/bootstrap.min.js"></script>
 <?php if($init!==false) { ?>
   <script type="text/javascript" src="resources/datatables.min.js"></script>
+  <script type="text/javascript" src="resources/sorting.min.js"></script>
   <link rel="stylesheet" type="text/css" href="resources/datatables.min.css"/>
 <script type="text/javascript" class="init">
 <?php echo $init; ?>

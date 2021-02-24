@@ -2,14 +2,11 @@
 Backup the configs of all your Tasmota devices
 
 # Latest Changes
+* added alert if device isn't getting backed up visually
+* fixed sorting on ip and version
 * fix bug when doing mqtt scanning
 * tasmota 9.0 status change
 * recording mac addresses
-* tasmota 8.3 devicename support
-* add dark mode
-* fix special chars in username/password
-* use timezone for displayed times in docker/HA installs
-* cron to run backup-all in docker for HA
 
 # Features
 * Add single devices
@@ -18,7 +15,7 @@ Backup the configs of all your Tasmota devices
 * Backup all devices
 * Remove devices
 * Download individual backups
-* No duplicates (based on IP)
+* No duplicates (based on IP, and MAC)
 
 # Install via Hass.io aka HomeAssistant Supervisor
 Go into home assisant, then the supervisor
@@ -95,7 +92,6 @@ your existing one when changing versions.
 
 
 # To-Do
-* Background scanning
 * Handle device changes ip address
 * Parse backup configs
 

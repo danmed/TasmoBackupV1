@@ -30,6 +30,9 @@ $(document).ready(function() {
         $(\'#status\').DataTable({
         "order": [[0, "desc" ]],
         "pageLength": '. (isset($settings['amount'])?$settings['amount']:25) .',
+        "columnDefs": [
+            { "type": "version", "targets": [2] }
+            ],
         "statesave": true,
         "autoWidth": true
 } );
@@ -42,7 +45,7 @@ $(document).ready(function() {
     <table class="table table-striped table-bordered" id="status">
     <thead>
 	    <tr><th colspan="4"><center><b><a href="index.php">TasmoBackup</a> - Listing for <?php echo $name; ?></b></center></th></tr>
-		    <tr><th><b>DATE</b></th><th><b>NAME</b></th><th><b>VERSION</b></th><th><b>FILE</b></th><th><b>DELETE</b></th><th><b>RESTORE</b></th></tr>
+		    <tr><th><b>DATE</b></th><th><center><b>NAME</b></center></th><th><center><b>VERSION</b></center></th><th><b>FILE</b></th><th><center><b>DELETE</b><center></th><th><center><b>RESTORE</b></center></th></tr>
     </thead>
     <tbody>
 <?php
@@ -55,6 +58,11 @@ $(document).ready(function() {
         $date = $db_field['date'];
         $filename = $db_field['filename'];
 
+        if(($pos=strpos($version,'('))>0) {
+            $ver=substr($version,0,$pos);
+            $tag=substr($version,$pos);
+            $version=$ver.' <small>'.$tag.'</small>';
+        }
 ?>
 <tr valign='middle'>
   <td><?php echo $date; ?></td>

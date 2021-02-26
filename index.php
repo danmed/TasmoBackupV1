@@ -201,6 +201,7 @@ $(document).ready(function() {
 	    }
 	}
         $ver=$version;
+        $tag='';
         if(($pos=strpos($version,'('))>0) {
             $ver=substr($version,0,$pos);
             $tag=substr($version,$pos);

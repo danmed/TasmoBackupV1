@@ -118,7 +118,7 @@ jQuery.extend( jQuery.fn.dataTableExt.oSort, {
 		return ((a < b) ? 1 : ((a > b) ? -1 : 0));
 	},
    "version-pre": function ( d ) {
-       var a = d.split("."), res = "";
+       var a = d.split(/[ .]+/), res = "";
        for(var i = 0; i < a.length; i++) {
           res += ("0000000000" + a[i]).slice(-10);
        }   

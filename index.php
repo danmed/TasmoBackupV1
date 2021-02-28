@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <?php
 require_once(__DIR__.'/lib/functions.inc.php');
 
@@ -58,6 +57,11 @@ switch(strtolower($task)) {
                 echo "<center><b>Error updating record for ".$old_ip." ".$name." <br>";
             }
         }
+        break;
+    case 'download':
+        $device=dbDeviceId(intval($_POST["id"]));
+        $backup=dbBackupId(intval($_POST["backupid"]));
+        downloadTasmotaBackup($backup);
         break;
     case 'singlebackup':
         $show_modal = true;
@@ -216,7 +220,7 @@ $(document).ready(function() {
         $list_model.='<div id="myModaldevice'.$id.'" class="modal fade" role="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h4 class="modal-title">'.$name.'</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div><div class="modal-body"><p><pre>'."\r\n";
 	$list_model.=sprintf("%14s: %s\r\n%14s: %s\r\n%14s: %s\r\n%14s: %s","Name",$name,"IP",$ip,"MAC",$mac,"Version",$ver);
 	if(isset($tag))
-            $list_model.=sprintf("\r\n%14s: %s","BuildTag".$tag);
+            $list_model.=sprintf("\r\n%14s: %s","BuildTag",$tag);
         $list_model.=sprintf("\r\n%14s: %s\r\n","Last Backup",$lastbackup);
         $list_model.='</pre></p></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div></div></div></div>'."\r\n";
     }

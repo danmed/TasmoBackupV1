@@ -240,6 +240,24 @@ function restoreTasmotaBackup($ip, $user, $password, $filename)
     return false;
 }
 
+function downloadTasmotaBackup($backup)
+{
+    if(file_exists($backup['filename'])) {
+        $filename = $backup['name'] . '-' . $backup['version'] . '-' . $backup['date'];
+        $filename = preg_replace('/(\s+|:|\.|\()/', '_', $filename);
+        $filename = preg_replace('/[^A-Za-z0-9_\-]/', '', $filename);
+        header("Cache-Control: no-cache private",true);
+        header("Content-Description: Tasmota Backup ".$backup['name']);
+        header('Content-disposition: attachment; filename="'.$filename.'.dmp"',true);
+        header("Content-Type: application/octet-stream",true);
+        header("Content-Transfer-Encoding: binary",true);
+        header('Content-Length: '. filesize($backup['filename']),true);
+        readfile($backup['filename']);
+        exit(0);
+    }
+    return false;
+}
+
 function getTasmotaBackup($ip, $user, $password, $filename)
 {
     //Get Backup
@@ -443,7 +461,7 @@ function addTasmotaDevice($ip, $user, $password, $verified=false)
 function TBHeader($name=false,$favicon=true,$init=false,$track=true,$redirect=false)
 {
     global $settings;
-    echo '<html lang="en"><head>';
+    echo '<!DOCTYPE html><html lang="en"><head>';
 if($redirect!==false && $redirect>0) {
     echo '<meta http-equiv="refresh" content="'.$redirect.';url=index.php" />';
 }

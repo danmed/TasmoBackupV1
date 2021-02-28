@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <?php
 require_once(__DIR__.'/lib/functions.inc.php');
 
@@ -11,8 +10,8 @@ if (isset($_POST["name"])) {
 if (isset($_POST["id"])) {
     $id = intval($_POST["id"]);
 }
-if (isset($_POST["action"])) {
-    switch(strtolower($_POST["action"])) {
+if (isset($_POST["task"])) {
+    switch(strtolower($_POST["task"])) {
         case 'delbackup':
             dbBackupDel(intval($_POST["backupid"]));
             dbDeviceBackups($id);
@@ -44,8 +43,8 @@ $(document).ready(function() {
     <div class="container-fluid">
     <table class="table table-striped table-bordered" id="status">
     <thead>
-	    <tr><th colspan="4"><center><b><a href="index.php">TasmoBackup</a> - Listing for <?php echo $name; ?></b></center></th></tr>
-		    <tr><th><b>DATE</b></th><th><center><b>NAME</b></center></th><th><center><b>VERSION</b></center></th><th><b>FILE</b></th><th><center><b>DELETE</b><center></th><th><center><b>RESTORE</b></center></th></tr>
+	    <tr><th colspan="6"><center><b><a href="index.php">TasmoBackup</a> - Listing for <?php echo $name; ?></b></center></th></tr>
+		    <tr><th><b>DATE</b></th><th><center><b>NAME</b></center></th><th><center><b>VERSION</b></center></th><th><center><b>FILE</b></center></th><th><center><b>DELETE</b><center></th><th><center><b>RESTORE</b></center></th></tr>
     </thead>
     <tbody>
 <?php
@@ -68,25 +67,32 @@ $(document).ready(function() {
   <td><?php echo $date; ?></td>
   <td><center><?php echo $name; ?></center></td>
   <td><center><?php echo $version; ?></center></td>
-  <td><a href='<?php echo $filename; ?>'>DOWNLOAD</a></td>
+  <td><center>
+    <form action='index.php' method='POST'>
+    <input type='hidden' name='task' value='download'>
+    <input type='hidden' name='backupid' value='<?php echo $backupid; ?>'>
+    <input type='hidden' name='id' value='<?php echo $id; ?>'>
+    <input type='submit' value='Download' class='btn-xs btn-success'>
+    </form>
+  </center></td>
   <td><center>
     <form action='listbackups.php' method='POST'>
-    <input type='hidden' name='action' value='delbackup'>
+    <input type='hidden' name='task' value='delbackup'>
     <input type='hidden' name='backupid' value='<?php echo $backupid; ?>'>
     <input type='hidden' name='id' value='<?php echo $id; ?>'>
     <input type='hidden' name='name' value='<?php echo $name; ?>'>
     <input type='submit' value='Delete' onclick='return window.confirm("Are you sure you want to delete <?php echo $filename; ?>");' class='btn-xs btn-danger'>
     </form>
-  </td>
+  </center></td>
   <td><center>
     <form action='listbackups.php' method='POST'>
-    <input type='hidden' name='action' value='restorebackup'>
+    <input type='hidden' name='task' value='restorebackup'>
     <input type='hidden' name='backupid' value='<?php echo $backupid; ?>'>
     <input type='hidden' name='id' value='<?php echo $id; ?>'>
     <input type='hidden' name='name' value='<?php echo $name; ?>'>
     <input type='submit' value='Restore' onclick='return window.confirm("Are you sure you want to restore <?php echo $filename; ?> to this device");' class='btn-xs btn-danger'>
     </form>
-  </td>
+  </center></td>
 </tr>
 <?php
     }

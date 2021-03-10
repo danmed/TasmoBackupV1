@@ -16,5 +16,7 @@ services:
             # if using Mysql remove the data/ from the below line
             # if using Sqlite the data/ is required!
             - DBNAME=data/tasmobackup
+            # Optional timezone
+            #- TZ=America/New_York
         container_name: TasmoBackup
         image: 'danmed/tasmobackupv1'

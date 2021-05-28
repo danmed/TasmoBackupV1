@@ -1,6 +1,6 @@
 {
   "name": "TasmoBackup",
-  "version": "1.04.12",
+  "version": "1.04.13",
   "slug": "tasmobackup",
   "description": "Tasmota Backup TEST",
   "url": "https://github.com/patrickdk77/TasmoBackupV1/",
@@ -24,6 +24,7 @@
     "MYSQL_PASSWORD": "str?"
   },
   "panel_admin": true,
+  "panel_icon": "mdi:settings-backup-restore",
   "ports": {
     "80/tcp": null
   },

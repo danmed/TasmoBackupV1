@@ -19,6 +19,7 @@ ENV NGINX_SENDFILE=off \
 
 
 RUN echo "Start" \
+ && rm -f /etc/php7/conf.d/*brotli.ini \
  && rm -f /var/www/html/install.sh /var/www/html/qemu-*-static \
  && printf '        location ~* \.css$$ {\n\
             expires 1h;\n\

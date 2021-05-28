@@ -24,7 +24,7 @@
     "MYSQL_PASSWORD": "str?"
   },
   "panel_admin": true,
-  "panel_icon": "mdi:settings-backup-restore",
+  "panel_icon": "mdi:backup-restore",
   "ports": {
     "80/tcp": null
   },

@@ -15,11 +15,15 @@ ENV NGINX_SENDFILE=off \
     NGINX_KEEPALIVE_TIMEOUT=65 \
     NGINX_PROXY_TIMEOUT=2000 \
     NGINX_LOG_NOTFOUND=off \
-    NGINX_LOG_ACCESS=off
-
+    NGINX_LOG_ACCESS=off \
+    NGINX_GZIP_STATIC=on
 
 RUN echo "Start" \
  && rm -f /etc/php7/conf.d/*brotli.ini \
+ && cd /var/www/html/resources \
+ && gzip -k -9 *.js \
+ && gzip -k -9 *.css \
+ && chown www-data:www-data *.gz \
  && rm -f /var/www/html/install.sh /var/www/html/qemu-*-static \
  && printf '        location ~* \.css$$ {\n\
             expires 1h;\n\

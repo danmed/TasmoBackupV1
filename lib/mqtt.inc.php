@@ -41,20 +41,22 @@ function getTasmotaMQTTScan($mqtt, $topic, $user=false, $password=false, $slim=f
     }
     $mqtt->subscribe($topics, $qos = 0);
 
-	// HomeAssistant swapped
-	$mqtt->publish($topic.'/cmnd/STATUS','0');
-	if ($topic == 'tasmotas')
-		$mqtt->publish('sonoffs/cmnd/STATUS','0');
-	if (isset($settings['mqtt_topic_format'])) {
-		$topic_prefix = str_replace(array('%prefix%','%topic%'), array('cmnd', $topic), $settings['mqtt_topic_format']);
-		$mqtt->publish($topic_prefix . '/STATUS','0');
-		if($topic == 'tasmotas')
-			$topic_prefix = str_replace(array('%prefix%','%topic%'), array('cmnd','sonoffs'), $settings['mqtt_topic_format']);
-			$mqtt->publish($topic_prefix . '/STATUS','0'); 
+	if ( !$slim ) {
+		// HomeAssistant swapped
+		$mqtt->publish($topic.'/cmnd/STATUS','0');
+		if ($topic == 'tasmotas')
+			$mqtt->publish('sonoffs/cmnd/STATUS','0');
+		if (isset($settings['mqtt_topic_format'])) {
+			$topic_prefix = str_replace(array('%prefix%','%topic%'), array('cmnd', $topic), $settings['mqtt_topic_format']);
+			$mqtt->publish($topic_prefix . '/STATUS','0');
+			if($topic == 'tasmotas')
+				$topic_prefix = str_replace(array('%prefix%','%topic%'), array('cmnd','sonoffs'), $settings['mqtt_topic_format']);
+				$mqtt->publish($topic_prefix . '/STATUS','0'); 
+		}
+		$mqtt->publish('cmnd/'.$topic.'/STATUS','0');
+		if ($topic == 'tasmotas')
+			$mqtt->publish('cmnd/sonoffs/STATUS','0');
 	}
-	$mqtt->publish('cmnd/'.$topic.'/STATUS','0');
-	if ($topic == 'tasmotas')
-		$mqtt->publish('cmnd/sonoffs/STATUS','0');
 
 	// Default
 	$mqtt->publish($topic.'/cmnd/STATUS','5');

@@ -154,6 +154,8 @@ $(document).ready(function() {
     </thead>
     <tbody>
 <?php
+	$github_tasmota_release_data = getGithubTasmotaReleaseData();
+
     $list_model='';
     $now=time();
     $lastbackup_green=0;
@@ -210,8 +212,22 @@ $(document).ready(function() {
             $ver=substr($version,0,$pos);
             $tag=substr($version,$pos);
             $version=$ver.' <small>'.$tag.'</small>';
+
+			$release_html_url = "";
+			if ( $tag == "(tasmota)" ) {
+				$github_tag_name = 'v' . $ver;
+				foreach ( $github_tasmota_release_data as $release => $values ) {
+					$release_html_url = $values['html_url'];
+					if ( $values['tag_name'] == $github_tag_name ) {
+						break;
+					}
+				}
+			} else {
+				// default to the Tasmota documentation if a custom "version" is in use
+				$release_html_url = "https://tasmota.github.io/docs/";
+			}
         }
-	echo "</center></td><td><center>" . $version . "</center></td><td $color><center>" . $lastbackup . "</center></td>";
+	echo "</center></td><td><center><a href='" . $release_html_url . "'>" . $version . "</a></center></td><td $color><center>" . $lastbackup . "</center></td>";
 	echo "<td><center><form method='POST' action='listbackups.php'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='" . $id . "' name='id'><input type='submit' value='" . $numberofbackups . "' class='btn-xs btn-info'></form></center></td>";
 	echo "<td><center><form method='POST' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='singlebackup' name='task'><input type='submit' value='Backup' class='btn-xs btn-success'></form></center></td>";
 	echo "<td><center><form method='POST' action='edit.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='edit' name='task'><input type='submit' value='Edit' class='btn-xs btn-warning'></form></center></td>";

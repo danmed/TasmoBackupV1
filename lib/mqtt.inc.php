@@ -94,7 +94,7 @@ function getTasmotaMQTTScan($mqtt,$topic,$user=false,$password=false,$slim=false
                     if ($status['Status']['Topic'])
                         $tmp['name']=$status['Status']['Topic'];
                 }
-                if(!isset($settings['use_topic_as_name'] || !$settings['use_topic_as_name']) {
+                if(!isset($settings['use_topic_as_name']) || !$settings['use_topic_as_name']) {
                     if ($status['Status']['DeviceName'] && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
                         $tmp['name']=$status['Status']['DeviceName'];
                     else if ($status['Status']['FriendlyName'][0])

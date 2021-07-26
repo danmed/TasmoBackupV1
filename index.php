@@ -150,7 +150,7 @@ $(document).ready(function() {
 	    echo '<img src="images/settings.png"></picture>';
 	}
 ?></a></th></tr>
-      <tr><th><b>NAME</th><th><center>IP</center></th><th><center>MAC</center></th><th><center>AUTH</center></th><th><center><b>VERSION</b></center></th><th><center>LAST BACKUP</center></th><th><center><b>FILES</b></center></th><th><center><b>BACKUP</b></center></th><th><center>EDIT</center></th><th><center><b>DELETE</b></center></th></tr>
+      <tr><th><b>NAME</th><th><center>IP</center></th><?php if(isset($settings['hide_mac_column']) && $settings['hide_mac_column']=='Y') { echo ''; } else { echo '<th><center>MAC</center></th>'; } ?><th><center>AUTH</center></th><th><center><b>VERSION</b></center></th><th><center>LAST BACKUP</center></th><th><center><b>FILES</b></center></th><th><center><b>BACKUP</b></center></th><th><center>EDIT</center></th><th><center><b>DELETE</b></center></th></tr>
     </thead>
     <tbody>
 <?php
@@ -192,8 +192,11 @@ $(document).ready(function() {
             if($ts>$lastbackup_green)
                 $color=''; //    $color='bgcolor="green"';
 	}
-	
-        echo "<tr valign='middle'><td onclick=\"deviceModal('#myModaldevice".$id."');\">" . $name . "</td><td><center><a href='http://" . $ip . "' target='_blank'>" . $ip . "</a></td><td><center>" . $mac_display . "</center></td><td><center>";
+	$mac_display='<td><center>'.$mac_display.'</center></td>';
+        if(isset($settings['hide_mac_column']) && $settings['hide_mac_column']=='Y')
+            $mac_display='';
+
+        echo "<tr valign='middle'><td onclick=\"deviceModal('#myModaldevice".$id."');\">" . $name . "</td><td><center><a href='http://" . $ip . "' target='_blank'>" . $ip . "</a></td>" . $mac_display . "<td><center>";
 	if(isset($settings['theme']) && $settings['theme']=='dark') { // Enforce Dark mode
 	    echo "<img src='" . (strlen($password) > 0 ? 'images/lock-dark.png' : 'images/lock-open-variant-dark.png') . "'>";
 	} else if(isset($settings['theme']) && $settings['theme']=='light') { // Enforce Light mode

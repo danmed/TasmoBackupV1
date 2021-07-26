@@ -69,6 +69,12 @@ if (isset($_POST['use_topic_as_name'])) {
     else
         dbSettingsUpdate('use_topic_as_name','N');
 }
+if (isset($_POST['hide_mac_column'])) {
+    if (in_array(strtolower($_POST['hide_mac_column']),array('y','yes','true','t')))
+        dbSettingsUpdate('hide_mac_column','Y');
+    else
+        dbSettingsUpdate('hide_mac_column','N');
+}
 
 
 TBHeader('Settings',true,'
@@ -100,6 +106,7 @@ $(document).ready(function() {
 <tr valign='middle'><td>Update Device Name when doing Backups (Y or N)</td><td><center><input type="text" name='autoupdate_name' value='<?php echo isset($settings['autoupdate_name'])?$settings['autoupdate_name']:'Y'; ?>'></td></tr>
 <tr valign='middle'><td>Automatically Add New Devices (Y or N)</td><td><center><input type="text" name='autoadd_scan' value='<?php echo isset($settings['autoadd_scan'])?$settings['autoadd_scan']:'N'; ?>'></td></tr>
 <tr valign='middle'><td>Use MQTT Topic as Device Name (Y or N or F (Full))</td><td><center><input type="text" name='use_topic_as_name' value='<?php echo isset($settings['use_topic_as_name'])?$settings['use_topic_as_name']:'N'; ?>'></td></tr>
+<tr valign='middle'><td>Hide MAC Address column on index page (Y or N)</td><td><center><input type="text" name='hide_mac_column' value='<?php echo isset($settings['hide_mac_column'])?$settings['hide_mac_column']:'N'; ?>'></td></tr>
 <tr valign='middle'><td>MQTT Host</td><td><center><input type="text" name='mqtt_host' value='<?php if(isset($settings['mqtt_host'])) echo $settings['mqtt_host']; ?>'></td></tr>
 <tr valign='middle'><td>MQTT Port</td><td><center><input type="text" name='mqtt_port' value='<?php echo isset($settings['mqtt_port'])?$settings['mqtt_port']:1883; ?>'></td></tr>
 <tr valign='middle'><td>MQTT Username</td><td><center><input type="text" name='mqtt_user' value='<?php if(isset($settings['mqtt_user'])) echo $settings['mqtt_user']; ?>'></td></tr>

@@ -77,8 +77,9 @@ function getTasmotaMQTTScan($mqtt,$topic,$user=false,$password=false,$slim=false
     }
     $results=[];
     foreach($mqtt_found as $topic => $found) {
+        $status=array('Topic'=>$topic);
         if(isset($found['status5'])) {
-            $status=jsonTasmotaDecode($found['status5']);
+            $status=array_merge(jsonTasmotaDecode($found['status5']));
             if(isset($status['StatusNET']['IP']))		// < 5.12.0
                 $tmp['ip']=$status['StatusNET']['IP'];
             if(isset($status['StatusNET']['IPAddress']))	// >= 5.12.0
@@ -86,7 +87,7 @@ function getTasmotaMQTTScan($mqtt,$topic,$user=false,$password=false,$slim=false
             if(isset($status['StatusNET']['Mac']))
                 $tmp['mac']=$status['StatusNET']['Mac'];
             if(isset($found['status'])) {
-                $status=jsonTasmotaDecode($found['status']);
+                $status=array_merge($status,jsonTasmotaDecode($found['status']));
                 if(isset($settings['use_topic_as_name']) && $settings['use_topic_as_name']=='F')
                     $tmp['name']=trim(str_replace(array('/stat','stat/'),array('',''),$topic)," \t\r\n\v\0/");
                 else {
@@ -100,8 +101,11 @@ function getTasmotaMQTTScan($mqtt,$topic,$user=false,$password=false,$slim=false
                         $tmp['name']=$status['Status']['FriendlyName'][0];
                 }
             }
+            if(isset($found['status2'])) {
+                $status=array_merge($status,jsonTasmotaDecode($found['status2']));
+            }
             if (isset($settings['autoadd_scan']) && $settings['autoadd_scan']=='Y') {
-                addTasmotaDevice($tmp['ip'], $user, $password);
+                addTasmotaDevice($tmp['ip'], $user, $password,false,$status);
             } else {
                 $results[]=$tmp;
             }

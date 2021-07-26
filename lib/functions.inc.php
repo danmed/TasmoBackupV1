@@ -544,3 +544,43 @@ function TBFooter()
 <?php
 }
 
+function getGithubTasmotaReleaseData()
+{
+    global $settings;
+
+	// put the releases json in the backup_folder
+    $backupfolder = $settings['backup_folder'];
+	$get_new_version = false;
+
+	$github_tasmota_release_data_file = $backupfolder . "/github-tasmota-release-data.json";
+	// check if file exists
+	if ( file_exists($github_tasmota_release_data_file) === true ) {
+		$_mtime = filemtime($github_tasmota_release_data_file);
+		$yesterday = strtotime("-1 days");
+		if ( $_mtime <= $yesterday ) {
+			$get_new_version = true;
+		}
+	} else {
+		$get_new_version = true;
+	}
+
+	if ( $get_new_version ) {
+		// get Tasmota release data from github - but only if it is the next calendar day
+		$opts = [
+			'http' => [
+				'method' => 'GET',
+				'header' => [
+					'User-Agent: PHP'
+				]
+			]
+		];
+		$context = stream_context_create($opts);
+		$github_tasmota_version_release_details = file_get_contents("https://api.github.com/repos/arendst/Tasmota/releases", false, $context);
+		file_put_contents($github_tasmota_release_data_file, $github_tasmota_version_release_details);
+	} else {
+		$github_tasmota_version_release_details = file_get_contents($github_tasmota_release_data_file);
+	}
+	$github_tasmota_release_data = json_decode($github_tasmota_version_release_details, true);
+
+	return $github_tasmota_release_data;
+}

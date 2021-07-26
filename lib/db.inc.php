@@ -31,6 +31,8 @@ if ($db_handle) {
 if(!isset($settings['backup_folder']))
     $settings['backup_folder']='data/backups/';
 
+if(isset($settings['mqtt_topic_format']))
+    $settings['mqtt_topic_format']=trim($settings['mqtt_topic_format']," \t\n\r\0\v/");
 
 function dbSettingsUpdate($name,$value)
 {

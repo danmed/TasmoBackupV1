@@ -25,10 +25,10 @@ if (isset($_POST['mqtt_password'])) {
     dbSettingsUpdate('mqtt_password',$_POST['mqtt_password']);
 }
 if (isset($_POST['mqtt_topic'])) {
-    dbSettingsUpdate('mqtt_topic',$_POST['mqtt_topic']);
+    dbSettingsUpdate('mqtt_topic',trim($_POST['mqtt_topic']," \t\n\r\0\v/"));
 }
 if (isset($_POST['mqtt_topic_format'])) {
-    dbSettingsUpdate('mqtt_topic_format',$_POST['mqtt_topic_format']);
+    dbSettingsUpdate('mqtt_topic_format',trim($_POST['mqtt_topic_format']," \t\n\r\0\v/"));
 }
 if (isset($_POST['backup_minhours'])) {
     dbSettingsUpdate('backup_minhours',intval($_POST['backup_minhours']));

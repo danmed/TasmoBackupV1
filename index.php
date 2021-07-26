@@ -150,7 +150,7 @@ $(document).ready(function() {
 	    echo '<img src="images/settings.png"></picture>';
 	}
 ?></a></th></tr>
-      <tr><th><b>NAME</th><th><center>IP</center></th><th><center>AUTH</center></th><th><center><b>VERSION</b></center></th><th><center>LAST BACKUP</center></th><th><center><b>FILES</b></center></th><th><center><b>BACKUP</b></center></th><th><center>EDIT</center></th><th><center><b>DELETE</b></center></th></tr>
+      <tr><th><b>NAME</th><th><center>IP</center></th><th><center>MAC</center></th><th><center>AUTH</center></th><th><center><b>VERSION</b></center></th><th><center>LAST BACKUP</center></th><th><center><b>FILES</b></center></th><th><center><b>BACKUP</b></center></th><th><center>EDIT</center></th><th><center><b>DELETE</b></center></th></tr>
     </thead>
     <tbody>
 <?php
@@ -159,7 +159,7 @@ $(document).ready(function() {
     $lastbackup_green=0;
     $lastbackup_red=0;
     $lastbackup_yellow=0;
-    if($settings['backup_minhours']>0) {
+    if(isset($settings['backup_minhours']) && $settings['backup_minhours']>0) {
         $lastbackup_green=$now-(intval($settings['backup_minhours'])*3600*2.2);
         $lastbackup_red=$now-(intval($settings['backup_minhours'])*3600*8);
     }    
@@ -168,10 +168,13 @@ $(document).ready(function() {
         $id = $db_field['id'];
         $name = $db_field['name'];
         $ip = $db_field['ip'];
-        if(isset($db_field['mac']))
+        if(isset($db_field['mac'])) {
             $mac = $db_field['mac'];
-        else
+            $mac_display = $mac;
+        } else {
             $mac = '';
+            $mac_display = '&nbsp;';
+        }
         $version = $db_field['version'];
         $lastbackup = $db_field['lastbackup'];
         $numberofbackups = $db_field['noofbackups'];
@@ -188,7 +191,7 @@ $(document).ready(function() {
                 $color=''; //    $color='bgcolor="green"';
 	}
 	
-        echo "<tr valign='middle'><td onclick=\"deviceModal('#myModaldevice".$id."');\">" . $name . "</td><td><center><a href='http://" . $ip . "' target='_blank'>" . $ip . "</a></td><td><center>";
+        echo "<tr valign='middle'><td onclick=\"deviceModal('#myModaldevice".$id."');\">" . $name . "</td><td><center><a href='http://" . $ip . "' target='_blank'>" . $ip . "</a></td><td><center>" . $mac_display . "</center></td><td><center>";
 	if(isset($settings['theme']) && $settings['theme']=='dark') { // Enforce Dark mode
 	    echo "<img src='" . (strlen($password) > 0 ? 'images/lock-dark.png' : 'images/lock-open-variant-dark.png') . "'>";
 	} else if(isset($settings['theme']) && $settings['theme']=='light') { // Enforce Light mode

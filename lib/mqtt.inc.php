@@ -108,12 +108,9 @@ function collectMQTTStatus($topic, $msg)
     GLOBAL $mqtt_found;
 
     //Get Name
-    $topics=explode('/',$topic);
     $name=false;
-    if($topics[0]=='stat')
-        $name=$topics[1];
-    if($topics[1]=='stat')
-        $name=$topics[0];
+    if(isset($topic))
+        $name=substr($topic,0,strrpos($topic,'/'));
     if($name) {
         $mqtt_found[$name]['status']=$msg;
     }
@@ -125,12 +122,9 @@ function collectMQTTStatus2($topic, $msg)
     GLOBAL $mqtt_found;
 
     //Get Version
-    $topics=explode('/',$topic);
     $name=false;
-    if($topics[0]=='stat')
-        $name=$topics[1];
-    if($topics[1]=='stat')
-        $name=$topics[0];
+    if(isset($topic))
+        $name=substr($topic,0,strrpos($topic,'/'));
     if($name) {
         $mqtt_found[$name]['status2']=$msg;
     }
@@ -142,12 +136,9 @@ function collectMQTTStatus5($topic, $msg)
     GLOBAL $mqtt_found;
 
     //Get IP
-    $topics=explode('/',$topic);
     $name=false;
-    if($topics[0]=='stat')
-        $name=$topics[1];
-    if($topics[1]=='stat')
-        $name=$topics[0];
+    if(isset($topic))
+        $name=substr($topic,0,strrpos($topic,'/'));
     if($name) {
         $mqtt_found[$name]['status5']=$msg;
     }

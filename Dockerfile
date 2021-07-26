@@ -1,4 +1,4 @@
-ARG BUILD_FROM=patrickdk/docker-php-nginx:7.3
+ARG BUILD_FROM=docker.patrickdk.com/docker-php-nginx:7.3
 ARG BUILD_FROM_PREFIX
 FROM ${BUILD_FROM}${BUILD_FROM_PREFIX}
 

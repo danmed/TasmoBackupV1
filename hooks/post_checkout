@@ -11,45 +11,68 @@ echo "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯�
 apt-get update
 apt-get install -y curl qemu-user-static binfmt-support jq moreutils
 
-# Sadly docker itself uses Docker EE 17.06 on Dockerhub which does not support
-# manifests.
-echo "✅ Install a fresh docker cli binary"
-echo "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+if [[ $(docker -v | cut -d. -f 1 | cut -d' ' -f3) -lt 19 ]]; then
+  # Sadly docker itself uses Docker EE 17.06 on Dockerhub which does not support
+  # manifests.
+  echo "✅ Install a fresh docker cli binary"
+  echo "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
 
-curl https://download.docker.com/linux/static/stable/x86_64/docker-19.03.6.tgz | \
-  tar xvz docker/docker
+  curl https://download.docker.com/linux/static/stable/x86_64/docker-20.10.3.tgz | \
+    tar xvz docker/docker
+fi
 
-echo "✅ Build a usable config.json file"
-echo "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
-# Manifests are still experimental and enabled by a config file flag.
-# Interestingly, there is no config file and the credential parts to push
-# images is available in an environment variable. Let's create a config file to
-# combine the two things:
-#
-mkdir -p ~/.docker
-jq --null-input --argjson auths "$DOCKERCFG" '. + {auths: $auths}' | \
-jq --arg experimental enabled '. + {experimental: $experimental}' | \
-sponge ~/.docker/config.json
+NEED_EXPERIMENTAL=0
+if [ -e ~/.docker/config.json ]; then
+  if [ $(grep experimental.*enabled ~/.docker/config.json) ]; then
+    NEED_EXPERIMENTAL=1
+  fi
+else
+  NEED_EXPERIMENTAL=1
+fi
 
-echo "✅ Copy qemu binaries into docker build context"
-echo "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
-# The current setup copies the qemu binary into the image (see Dockerfile)
-# Pro:
-#      - it's easy to run non-amd64 images on amd64 systems for debugging
-# Contra:
-#      - it's dead weight in the "destination" architecture and consumes space
-# Alternative:
-#      - use a multistage Dockerfile (no RUN in the last stage possible of course)
-#      - wait for https://github.com/moby/moby/issues/14080
-#
-docker create --name=qemu multiarch/qemu-user-static
-docker export qemu | tar -vx --wildcards 'usr/bin/qemu*'
+if [ ${NEED_EXPERIMENTAL} -gt 0 ]; then
+  echo "✅ Build a usable config.json file"
+  echo "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+  # Manifests are still experimental and enabled by a config file flag.
+  # Interestingly, there is no config file and the credential parts to push
+  # images is available in an environment variable. Let's create a config file to
+  # combine the two things:
+  # 
+  mkdir -p ~/.docker
+  jq --null-input --argjson auths "$DOCKERCFG" '. + {auths: $auths}' | \
+  jq --arg experimental enabled '. + {experimental: $experimental}' | \
+  sponge ~/.docker/config.json
+fi
+
+NEED_QEMU=0
 for arch in ${build_architectures[@]}; do
   if [ "${native_arch}" != "${docker_to_manifest_map[${arch}]}" ]; then
-    cp usr/bin/qemu-${docker_qemu_arch_map[${arch}]}-static qemu-${docker_qemu_arch_map[${arch}]}-static
+    if [ ! -e qemu-${docker_qemu_arch_map[${arch}]}-static ]; then
+      NEED_QEMU=1
+    fi
   fi
 done
-rm -rf usr
-ls -la
 
-
+if [ ${NEED_QEMU} -gt 0 ]; then
+  echo "✅ Copy qemu binaries into docker build context"
+  echo "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+  # The current setup copies the qemu binary into the image (see Dockerfile)
+  # Pro:
+  #      - it's easy to run non-amd64 images on amd64 systems for debugging
+  # Contra:
+  #      - it's dead weight in the "destination" architecture and consumes space
+  # Alternative:
+  #      - use a multistage Dockerfile (no RUN in the last stage possible of course)
+  #      - wait for https://github.com/moby/moby/issues/14080
+  #
+  docker create --name=qemu multiarch/qemu-user-static
+  docker export qemu | tar -vx --wildcards 'usr/bin/qemu*'
+  for arch in ${build_architectures[@]}; do
+    if [ "${native_arch}" != "${docker_to_manifest_map[${arch}]}" ]; then
+      cp usr/bin/qemu-${docker_qemu_arch_map[${arch}]}-static qemu-${docker_qemu_arch_map[${arch}]}-static
+    fi
+  done
+  docker rm qemu
+  rm -rf usr
+  ls -la
+fi

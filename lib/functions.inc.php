@@ -330,10 +330,14 @@ function backupSingle($id, $name, $ip, $user, $password)
     $mac = strtoupper($status['StatusNET']['Mac']);
 
     if (!isset($settings['autoupdate_name']) || (isset($settings['autoupdate_name']) && $settings['autoupdate_name']=='Y')) {
-        if ($status['Status']['DeviceName'] && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
-            $name=$status['Status']['DeviceName'];
-        else if ($status['Status']['FriendlyName'][0])
-            $name=$status['Status']['FriendlyName'][0];
+        if ($status['Status']['Topic'])
+            $name=$status['Status']['Topic'];
+        if(!$settings['use_topic_as_name']) {
+            if ($status['Status']['DeviceName'] && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
+                $name=$status['Status']['DeviceName'];
+            else if ($status['Status']['FriendlyName'][0])
+                $name=$status['Status']['FriendlyName'][0];
+        }
     }
 
     $savename = preg_replace('/\s+/', '_', $name);
@@ -408,6 +412,8 @@ function backupAll($docker=false)
 
 function addTasmotaDevice($ip, $user, $password, $verified=false)
 {
+    global $settings;
+
     if(!$verified) {
         if (!getTasmotaScan($ip, $user, $password)) {
             return $ip.': Device not found.';
@@ -430,10 +436,14 @@ function addTasmotaDevice($ip, $user, $password, $verified=false)
                     return $ip.': Device not responding to status2 request.';
             }
 
-            if (isset($status['Status']['DeviceName']) && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
-                $name=$status['Status']['DeviceName'];
-            else if ($status['Status']['FriendlyName'][0])
-                $name=$status['Status']['FriendlyName'][0];
+            if ($status['Status']['Topic'])
+                $name=$status['Status']['Topic'];
+            if(!$settings['use_topic_as_name']) {
+                if (isset($status['Status']['DeviceName']) && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
+                    $name=$status['Status']['DeviceName'];
+                else if ($status['Status']['FriendlyName'][0])
+                    $name=$status['Status']['FriendlyName'][0];
+            }
             if (isset($status['StatusFWR']['Version']))
                 $version=$status['StatusFWR']['Version'];
             if (isset($status['StatusNET']['Mac']))

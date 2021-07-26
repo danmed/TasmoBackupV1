@@ -61,6 +61,14 @@ if (isset($_POST['theme'])) {
     if (in_array(strtolower($_POST['theme']),array('light','dark','auto')))
         dbSettingsUpdate('theme',strtolower($_POST['theme']));
 }
+if (isset($_POST['use_topic_as_name'])) {
+    if (in_array(strtolower($_POST['use_topic_as_name']),array('y','yes','true','t')))
+        dbSettingsUpdate('use_topic_as_name','Y');
+    if (in_array(strtolower($_POST['use_topic_as_name']),array('f','full')))
+        dbSettingsUpdate('use_topic_as_name','F');
+    else
+        dbSettingsUpdate('use_topic_as_name','N');
+}
 
 
 TBHeader('Settings',true,'
@@ -91,6 +99,7 @@ $(document).ready(function() {
 <tr valign='middle'><td>Tasmota Default Password for web login on devices</td><td><center><input type="password" name='tasmota_password' value='<?php if(isset($settings['tasmota_password'])) echo $settings['tasmota_password']; ?>'></td></tr>
 <tr valign='middle'><td>Update Device Name when doing Backups (Y or N)</td><td><center><input type="text" name='autoupdate_name' value='<?php echo isset($settings['autoupdate_name'])?$settings['autoupdate_name']:'Y'; ?>'></td></tr>
 <tr valign='middle'><td>Automatically Add New Devices (Y or N)</td><td><center><input type="text" name='autoadd_scan' value='<?php echo isset($settings['autoadd_scan'])?$settings['autoadd_scan']:'N'; ?>'></td></tr>
+<tr valign='middle'><td>Use MQTT Topic as Device Name (Y or N or F (Full))</td><td><center><input type="text" name='use_topic_as_name' value='<?php echo isset($settings['use_topic_as_name'])?$settings['use_topic_as_name']:'N'; ?>'></td></tr>
 <tr valign='middle'><td>MQTT Host</td><td><center><input type="text" name='mqtt_host' value='<?php if(isset($settings['mqtt_host'])) echo $settings['mqtt_host']; ?>'></td></tr>
 <tr valign='middle'><td>MQTT Port</td><td><center><input type="text" name='mqtt_port' value='<?php echo isset($settings['mqtt_port'])?$settings['mqtt_port']:1883; ?>'></td></tr>
 <tr valign='middle'><td>MQTT Username</td><td><center><input type="text" name='mqtt_user' value='<?php if(isset($settings['mqtt_user'])) echo $settings['mqtt_user']; ?>'></td></tr>

@@ -334,7 +334,7 @@ function backupSingle($id, $name, $ip, $user, $password)
         } else {
             if ($status['Status']['Topic'])
                 $name=$status['Status']['Topic'];
-            if(!$settings['use_topic_as_name']) {
+            if(!isset($settings['use_topic_as_name'] || !$settings['use_topic_as_name']) {
                 if ($status['Status']['DeviceName'] && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
                     $name=$status['Status']['DeviceName'];
                 else if ($status['Status']['FriendlyName'][0])
@@ -446,7 +446,7 @@ function addTasmotaDevice($ip, $user, $password, $verified=false, $status=false)
             } else {
                 if ($status['Status']['Topic'])
                     $name=$status['Status']['Topic'];
-                if(!$settings['use_topic_as_name']) {
+                if(!isset($settings['use_topic_as_name'] || !$settings['use_topic_as_name']) {
                     if (isset($status['Status']['DeviceName']) && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
                         $name=$status['Status']['DeviceName'];
                     else if ($status['Status']['FriendlyName'][0])
@@ -479,7 +479,7 @@ function addTasmotaDevice($ip, $user, $password, $verified=false, $status=false)
             } else {
                 if ($status['Status']['Topic'])
                     $name=$status['Status']['Topic'];
-                if(!$settings['use_topic_as_name']) {
+                if(!isset($settings['use_topic_as_name'] || !$settings['use_topic_as_name']) {
                     if (isset($status['Status']['DeviceName']) && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
                         $name=$status['Status']['DeviceName'];
                     else if ($status['Status']['FriendlyName'][0])

@@ -1,3 +1,9 @@
+##v1.04.17
+* don't make http requests for mqtt results if exists
+* display/hide MAC addresses in listings
+* fix mqtt custom topics handling (stripping)
+* always update metadata on mqtt scans
+
 ##v1.04.02
 * honor autoupdate name setting when updating device info on scans
 

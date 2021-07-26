@@ -9,3 +9,4 @@ multi-arch-manifest.yaml
 repository.json
 docker-compose.yml
 docker
+Makefile

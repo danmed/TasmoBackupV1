@@ -1,3 +1,7 @@
+##v1.04.18
+* update mqtt lib
+* fix topic names
+
 ##v1.04.17
 * don't make http requests for mqtt results if exists
 * display/hide MAC addresses in listings

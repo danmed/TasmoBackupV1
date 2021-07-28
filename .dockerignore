@@ -10,3 +10,4 @@ repository.json
 docker-compose.yml
 docker
 Makefile
+*~

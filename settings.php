@@ -64,7 +64,7 @@ if (isset($_POST['theme'])) {
 if (isset($_POST['use_topic_as_name'])) {
     if (in_array(strtolower($_POST['use_topic_as_name']),array('y','yes','true','t')))
         dbSettingsUpdate('use_topic_as_name','Y');
-    if (in_array(strtolower($_POST['use_topic_as_name']),array('f','full')))
+    else if (in_array(strtolower($_POST['use_topic_as_name']),array('f','full')))
         dbSettingsUpdate('use_topic_as_name','F');
     else
         dbSettingsUpdate('use_topic_as_name','N');

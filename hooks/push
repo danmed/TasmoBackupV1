@@ -68,5 +68,39 @@ for tag in "${tagparts[@]}"; do
   echo
 done
 
+if [[ ${!DOCKER_EXTRATAGS-x} == x ]]; then
+  for tag in ${DOCKER_EXTRATAGS}; do
+    BUILD_NAME="${BUILD_REPO}:${tag}"
+
+    echo "✅ Creating manifest ${BUILD_NAME}"
+    echo "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    docker manifest create ${BUILD_NAME} $manifests
+    echo
+
+    echo "✅ Annotating manifest"
+    echo "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    for arch in ${verified_build_architectures[@]}; do
+        if [ -n "${docker_to_variant_map[${arch}]}" ]; then
+          docker manifest annotate ${BUILD_NAME} \
+            ${BUILD_IMAGE}-${arch} \
+            --os linux \
+            --arch ${docker_to_manifest_map[${arch}]} \
+            --variant ${docker_to_variant_map[${arch}]}
+        else
+          docker manifest annotate ${BUILD_NAME} \
+            ${BUILD_IMAGE}-${arch} \
+            --os linux \
+            --arch ${docker_to_manifest_map[${arch}]}
+        fi
+    done
+
+    echo "✅ Pushing manifest ${BUILD_NAME}"
+    echo "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    docker manifest push --purge "${BUILD_NAME}"
+    echo
+  done
+fi
+
+
 echo
 echo "😊"

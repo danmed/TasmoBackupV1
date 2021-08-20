@@ -46,6 +46,7 @@ function getTasmotaMQTTScan($mqtt,$topic,$user=false,$password=false,$slim=false
                 $mqtt->publish('sonoffs/cmnd/STATUS','0');
         }
         if($step2 && $i>0.60 && !$slim) {
+            $step2=false;
             if(isset($settings['mqtt_topic_format'])) {
                 $mqtt->publish(str_replace(array('%prefix%','%topic%'),array('stat',$topic),$settings['mqtt_topic_format']).'/STATUS','0');
                 if($topic=='tasmotas')
@@ -53,18 +54,21 @@ function getTasmotaMQTTScan($mqtt,$topic,$user=false,$password=false,$slim=false
             }
         }
         if($step3 && $i>1.10 && !$slim) {
+            $step3=false;
             $mqtt->publish('cmnd/'.$topic.'/STATUS','0');
             if($topic=='tasmotas')
                 $mqtt->publish('cmnd/sonoffs/STATUS','0');
         }
 
         if($step4 && $i>2.10) {
+            $step4=false;
             // Default
             $mqtt->publish($topic.'/cmnd/STATUS','5');
             if($topic=='tasmotas')
                 $mqtt->publish('sonoffs/cmnd/STATUS','5');
         }
         if($step5 && $i>2.60) {
+            $step5=false;
             if(isset($settings['mqtt_topic_format'])) {
                 $mqtt->publish(str_replace(array('%prefix%','%topic%'),array('stat',$topic),$settings['mqtt_topic_format']).'/STATUS','5');
                 if($topic=='tasmotas')
@@ -72,6 +76,7 @@ function getTasmotaMQTTScan($mqtt,$topic,$user=false,$password=false,$slim=false
             }
         }
         if($step6 && $i>3.20) {
+            $step6=false;
             $mqtt->publish('cmnd/'.$topic.'/STATUS','5');
             if($topic=='tasmotas')
                 $mqtt->publish('cmnd/sonoffs/STATUS','5');

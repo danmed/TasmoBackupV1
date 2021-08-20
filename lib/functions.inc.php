@@ -61,6 +61,8 @@ function getTasmotaScan($ip, $user, $password)
         CURLOPT_TIMEOUT => 30,
         CURLOPT_CONNECTTIMEOUT => 12,
         CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_REFERER => 'http://'.$ip.'/',
+        CURLOPT_USERAGENT => 'TasmoBackup '.$GLOBALS['VERSION'],
     ));
     $data = curl_exec($ch);
     $err = curl_errno($ch);
@@ -89,6 +91,8 @@ function getTasmotaScanRange($iprange, $user, $password)
         CURLOPT_TIMEOUT => 30,
         CURLOPT_CONNECTTIMEOUT => 12,
         CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_REFERER => 'http://'.$ip.'/',
+        CURLOPT_USERAGENT => 'TasmoBackup '.$GLOBALS['VERSION'],
     );
     $range=15;
     if($range > count($iprange)) $range=count($iprange);
@@ -140,10 +144,16 @@ function getTasmotaStatus($ip, $user, $password)
 {
     //Get Name
     $url = 'http://' .rawurlencode($user).':'.rawurlencode($password).'@'. $ip . '/cm?cmnd=status%200&user='.rawurlencode($user).'&password=' . rawurlencode($password);
+    $options = array(
+        CURLOPT_FOLLOWLOCATION => false,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_CONNECTTIMEOUT => 12,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_REFERER => 'http://'.$ip.'/',
+        CURLOPT_USERAGENT => 'TasmoBackup '.$GLOBALS['VERSION'],
+    );
     $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 12);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt_array($ch, $options);
     $data = curl_exec($ch);
     $err = curl_errno($ch);
     $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -166,10 +176,16 @@ function getTasmotaOldStatus($ip, $user, $password)
 {
     //Get Name
     $url = 'http://' .rawurlencode($user).':'.rawurlencode($password).'@'. $ip . '/cm?cmnd=status&user='.rawurlencode($user).'&password=' . rawurlencode($password);
+    $options = array(
+        CURLOPT_FOLLOWLOCATION => false,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_CONNECTTIMEOUT => 12,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_REFERER => 'http://'.$ip.'/',
+        CURLOPT_USERAGENT => 'TasmoBackup '.$GLOBALS['VERSION'],
+    );
     $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 12);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt_array($ch, $options);
     $data = curl_exec($ch);
     $err = curl_errno($ch);
     $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -184,10 +200,16 @@ function getTasmotaStatus2($ip, $user, $password)
 {
     //Get Version
     $url = 'http://' . rawurlencode($user).':'.rawurlencode($password).'@'. $ip . '/cm?cmnd=status%202&user='.rawurlencode($user).'&password=' . rawurlencode($password);
+    $options = array(
+        CURLOPT_FOLLOWLOCATION => false,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_CONNECTTIMEOUT => 12,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_REFERER => 'http://'.$ip.'/',
+        CURLOPT_USERAGENT => 'TasmoBackup '.$GLOBALS['VERSION'],
+    );
     $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 12);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt_array($ch, $options);
     $data = curl_exec($ch);
     $err = curl_errno($ch);
     $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -202,10 +224,16 @@ function getTasmotaStatus5($ip, $user, $password)
 {
     //Get Mac
     $url = 'http://' . rawurlencode($user).':'.rawurlencode($password).'@'. $ip . '/cm?cmnd=status%205&user='.rawurlencode($user).'&password=' . rawurlencode($password);
+    $options = array(
+        CURLOPT_FOLLOWLOCATION => false,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_CONNECTTIMEOUT => 12,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_REFERER => 'http://'.$ip.'/',
+        CURLOPT_USERAGENT => 'TasmoBackup '.$GLOBALS['VERSION'],
+    );
     $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 12);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt_array($ch, $options);
     $data = curl_exec($ch);
     $err = curl_errno($ch);
     $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -223,13 +251,19 @@ function restoreTasmotaBackup($ip, $user, $password, $filename)
     $cfile = new CURLFile($filename,'application/octet-stream','config.dmp');
     $fields = array('u2' => $cfile);
 
+    $options = array(
+        CURLOPT_FOLLOWLOCATION => false,
+        CURLOPT_TIMEOUT => 60,
+        CURLOPT_CONNECTTIMEOUT => 12,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_REFERER => 'http://'.$ip.'/',
+        CURLOPT_USERAGENT => 'TasmoBackup '.$GLOBALS['VERSION'],
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => $fields,
+        CURLOPT_HTTPHEADER => array('Content-Type: multipart/form-data'),
+    );
     $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 60);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 12);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER,array('Content-Type: multipart/form-data'));
+    curl_setopt_array($ch, $options);
     $result=curl_exec($ch);
     $err = curl_errno($ch);
     $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -268,10 +302,17 @@ function getTasmotaBackup($ip, $user, $password, $filename)
         return false;
     }
 
+    $options = array(
+        CURLOPT_FOLLOWLOCATION => false,
+        CURLOPT_TIMEOUT => 60,
+        CURLOPT_CONNECTTIMEOUT => 12,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_REFERER => 'http://'.$ip.'/',
+        CURLOPT_USERAGENT => 'TasmoBackup '.$GLOBALS['VERSION'],
+        CURLOPT_FILE, $fp,
+    );
     $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_FILE, $fp);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 60);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 12);
+    curl_setopt_array($ch, $options);
     curl_exec($ch);
     $err = curl_errno($ch);
     $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);

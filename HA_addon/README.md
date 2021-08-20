@@ -3,6 +3,8 @@ Backup the configs of all your Tasmota devices
 
 
 # Latest Changes
+* Add referer for tasmota new security feature
+* fixed mqtt overscanning
 * changed backup downloads to use device name, version, and date
 * added alert if device isn't getting backed up visually
 * fixed sorting on ip and version

@@ -2,6 +2,8 @@
 Backup the configs of all your Tasmota devices
 
 # Latest Changes
+* fixed restores
+* added wled backups
 * fix zero size backup bug
 * Add referer for tasmota new security feature
 * fixed mqtt overscanning
@@ -20,6 +22,11 @@ Backup the configs of all your Tasmota devices
 * Remove devices
 * Download individual backups
 * No duplicates (based on IP, and MAC)
+
+# WLED
+Backups of wled are done via downloading the cfg.json and presets.json and putting them in a zip file.
+the limited mqtt support in wled means there is no way to automatically scan, so only ip scanning is supported
+
 
 # Install via Hass.io aka HomeAssistant Supervisor
 Go into home assisant, then the supervisor

@@ -49,6 +49,11 @@ $(document).ready(function() {
     <tbody>
 <?php
 
+    $device = dbDeviceId($id);
+    $type=0;
+    if(isset($device['type']))
+        $type=intval($device['type']);
+
     $backups = dbBackupList($id);
     foreach ($backups as $db_field) {
         $backupid = $db_field['id'];
@@ -84,7 +89,9 @@ $(document).ready(function() {
     <input type='submit' value='Delete' onclick='return window.confirm("Are you sure you want to delete <?php echo $filename; ?>");' class='btn-xs btn-danger'>
     </form>
   </center></td>
-  <td><center>
+<?php
+        if(intval($type)===0) {
+?>  <td><center>
     <form action='listbackups.php' method='POST'>
     <input type='hidden' name='task' value='restorebackup'>
     <input type='hidden' name='backupid' value='<?php echo $backupid; ?>'>
@@ -93,8 +100,9 @@ $(document).ready(function() {
     <input type='submit' value='Restore' onclick='return window.confirm("Are you sure you want to restore <?php echo $filename; ?> to this device");' class='btn-xs btn-danger'>
     </form>
   </center></td>
-</tr>
 <?php
+        } else { echo '<td>&nbsp;</td>'; }
+        echo "\r\n</tr>\r\n";
     }
 
 ?>

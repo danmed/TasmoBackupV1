@@ -77,15 +77,20 @@ if ($_POST["task"]=="scan") {
 
     if ($ipresult=getTasmotaScanRange($iprange, $user, $password)) {
         for($i=0;$i<count($ipresult);$i++) {
-            $ip=$ipresult[$i];
-            if ($status=getTasmotaStatus($ip, $user, $password)) {
-                if ($status['Status']['Topic'])
-                    $name=$status['Status']['Topic'];
-                if(!isset($settings['use_topic_as_name']) || $settings['use_topic_as_name']=='N') {
-                    if ($status['Status']['DeviceName'] && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
-                        $name=$status['Status']['DeviceName'];
-                    else if ($status['Status']['FriendlyName'][0])
-                        $name=$status['Status']['FriendlyName'][0];
+            list($ip,$type)=$ipresult[$i];
+            if ($status=getTasmotaStatus($ip, $user, $password, $type)) {
+                if ($type===0) { // Tasmota
+                    if ($status['Status']['Topic'])
+                        $name=$status['Status']['Topic'];
+                    if(!isset($settings['use_topic_as_name']) || $settings['use_topic_as_name']=='N') {
+                        if ($status['Status']['DeviceName'] && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
+                            $name=$status['Status']['DeviceName'];
+                        else if ($status['Status']['FriendlyName'][0])
+                            $name=$status['Status']['FriendlyName'][0];
+                    }
+                } else if ($type===1) { // WLED
+                    if(isset($status['info']['name']))
+                        $name=trim($status['info']['name']);
                 }
                 echo "<tr valign='middle'><td><center><input type='checkbox' name='ip[]' value='" . $ip . "'></center></td>".
                      "<td>" . $name . "</td>".

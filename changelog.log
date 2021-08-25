@@ -1,3 +1,17 @@
+##v1.04.22
+* Fix restores
+* add wled support
+
+##v1.04.21
+* Fix zero size backup bug
+
+##v1.04.20
+* Fix mqtt scanning too often
+* Tasmota needs referer header set security feature
+
+##v1.04.19
+* Fix missing else for setting mqtt topic names setting
+
 ##v1.04.18
 * update mqtt lib
 * fix topic names

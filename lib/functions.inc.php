@@ -62,7 +62,9 @@ function getTasmotaScan($ip, $user, $password)
         CURLOPT_CONNECTTIMEOUT => 12,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_REFERER => 'http://'.$ip.'/',
+        CURLOPT_ORIGIN => 'http://'.$ip,
         CURLOPT_USERAGENT => 'TasmoBackup '.$GLOBALS['VERSION'],
+        CURLOPT_ENCODING => "",
     ));
     $data = curl_exec($ch);
     $err = curl_errno($ch);
@@ -75,7 +77,14 @@ function getTasmotaScan($ip, $user, $password)
         if (isset($settings['autoadd_scan']) && $settings['autoadd_scan']=='Y') {
             addTasmotaDevice($ip, $user, $password, true);
         } else {
-            return true;
+            return 0;
+        }
+    }
+    if (strpos($data, 'WLED') !== false) {
+        if (isset($settings['autoadd_scan']) && $settings['autoadd_scan']=='Y') {
+            addTasmotaDevice($ip, $user, $password, true, false, 1);
+        } else {
+            return 1;
         }
     }
     return false;
@@ -91,8 +100,8 @@ function getTasmotaScanRange($iprange, $user, $password)
         CURLOPT_TIMEOUT => 30,
         CURLOPT_CONNECTTIMEOUT => 12,
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_REFERER => 'http://'.$ip.'/',
         CURLOPT_USERAGENT => 'TasmoBackup '.$GLOBALS['VERSION'],
+        CURLOPT_ENCODING => "",
     );
     $range=15;
     if($range > count($iprange)) $range=count($iprange);
@@ -100,6 +109,7 @@ function getTasmotaScanRange($iprange, $user, $password)
     for($i=0;$i<$range;$i++) {
         $url = 'http://'.rawurlencode($user).':'.rawurlencode($password).'@'. $iprange[$i] . '/';
         $ch = curl_init($url);
+        $options[CURLOPT_REFERER]='http://'.$iprange[$i].'/';
         curl_setopt_array($ch, $options);
         curl_multi_add_handle($master, $ch);
     }
@@ -119,7 +129,14 @@ function getTasmotaScanRange($iprange, $user, $password)
                     if (isset($settings['autoadd_scan']) && $settings['autoadd_scan']=='Y') {
                         addTasmotaDevice($url['host'], $user, $password, true);
                     } else {
-                        array_push($result,$url['host']);
+                        array_push($result,array($url['host'],0));
+                    }
+                }
+                if (strpos($data, 'WLED') !== false) {
+                    if (isset($settings['autoadd_scan']) && $settings['autoadd_scan']=='Y') {
+                        addTasmotaDevice($url['host'], $user, $password, true, false, 1);
+                    } else {
+                        array_push($result,array($url['host'],1));
                     }
                 }
             }
@@ -127,9 +144,11 @@ function getTasmotaScanRange($iprange, $user, $password)
             unset($url);
             unset($statusCode);
             if($i<count($iprange)) {
-                $url = 'http://'.rawurlencode($user).':'.rawurlencode($password).'@'. $iprange[$i++] . '/';
+                $url = 'http://'.rawurlencode($user).':'.rawurlencode($password).'@'. $iprange[$i] . '/';
                 $ch = curl_init($url);
+                $options[CURLOPT_REFERER]='http://'.$iprange[$i].'/';
                 curl_setopt_array($ch, $options);
+                $i++;
                 curl_multi_add_handle($master, $ch);
             }
             curl_multi_remove_handle($master, $done['handle']);
@@ -140,17 +159,21 @@ function getTasmotaScanRange($iprange, $user, $password)
     return $result;
 }
 
-function getTasmotaStatus($ip, $user, $password)
+function getTasmotaStatus($ip, $user, $password, $type=0)
 {
     //Get Name
     $url = 'http://' .rawurlencode($user).':'.rawurlencode($password).'@'. $ip . '/cm?cmnd=status%200&user='.rawurlencode($user).'&password=' . rawurlencode($password);
+    if(intval($type)===1)
+        $url = 'http://' .rawurlencode($user).':'.rawurlencode($password).'@'. $ip . '/json';
     $options = array(
         CURLOPT_FOLLOWLOCATION => false,
         CURLOPT_TIMEOUT => 30,
         CURLOPT_CONNECTTIMEOUT => 12,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_REFERER => 'http://'.$ip.'/',
+        CURLOPT_ORIGIN => 'http://'.$ip,
         CURLOPT_USERAGENT => 'TasmoBackup '.$GLOBALS['VERSION'],
+        CURLOPT_ENCODING => "",
     );
     $ch = curl_init($url);
     curl_setopt_array($ch, $options);
@@ -163,6 +186,8 @@ function getTasmotaStatus($ip, $user, $password)
     }
     $json=jsonTasmotaDecode($data);
     if(isset($json["Status"]))
+        return $json;
+    if(isset($json["info"]))
         return $json;
     sleep(1);
     $data=getTasmotaOldStatus($ip, $user, $password);
@@ -182,7 +207,9 @@ function getTasmotaOldStatus($ip, $user, $password)
         CURLOPT_CONNECTTIMEOUT => 12,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_REFERER => 'http://'.$ip.'/',
+        CURLOPT_ORIGIN => 'http://'.$ip,
         CURLOPT_USERAGENT => 'TasmoBackup '.$GLOBALS['VERSION'],
+        CURLOPT_ENCODING => "",
     );
     $ch = curl_init($url);
     curl_setopt_array($ch, $options);
@@ -206,7 +233,9 @@ function getTasmotaStatus2($ip, $user, $password)
         CURLOPT_CONNECTTIMEOUT => 12,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_REFERER => 'http://'.$ip.'/',
+        CURLOPT_ORIGIN => 'http://'.$ip,
         CURLOPT_USERAGENT => 'TasmoBackup '.$GLOBALS['VERSION'],
+        CURLOPT_ENCODING => "",
     );
     $ch = curl_init($url);
     curl_setopt_array($ch, $options);
@@ -230,7 +259,9 @@ function getTasmotaStatus5($ip, $user, $password)
         CURLOPT_CONNECTTIMEOUT => 12,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_REFERER => 'http://'.$ip.'/',
+        CURLOPT_ORIGIN => 'http://'.$ip,
         CURLOPT_USERAGENT => 'TasmoBackup '.$GLOBALS['VERSION'],
+        CURLOPT_ENCODING => "",
     );
     $ch = curl_init($url);
     curl_setopt_array($ch, $options);
@@ -256,14 +287,18 @@ function restoreTasmotaBackup($ip, $user, $password, $filename)
         CURLOPT_TIMEOUT => 60,
         CURLOPT_CONNECTTIMEOUT => 12,
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_REFERER => 'http://'.$ip.'/',
+        CURLOPT_REFERER => 'http://'.$ip.'/rs?',
+        CURLOPT_ORIGIN => 'http://'.$ip,
         CURLOPT_USERAGENT => 'TasmoBackup '.$GLOBALS['VERSION'],
         CURLOPT_POST => true,
         CURLOPT_POSTFIELDS => $fields,
         CURLOPT_HTTPHEADER => array('Content-Type: multipart/form-data'),
+        CURLOPT_ENCODING => "",
     );
     $ch = curl_init($url);
     curl_setopt_array($ch, $options);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Expect:'));
+
     $result=curl_exec($ch);
     $err = curl_errno($ch);
     $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -281,7 +316,7 @@ function downloadTasmotaBackup($backup)
         $filename = preg_replace('/(\s+|:|\.|\()/', '_', $filename);
         $filename = preg_replace('/[^A-Za-z0-9_\-]/', '', $filename);
         header("Cache-Control: no-cache private",true);
-        header("Content-Description: Tasmota Backup ".$backup['name']);
+        header("Content-Description: Backup ".$backup['name']);
         header('Content-disposition: attachment; filename="'.$filename.'.dmp"',true);
         header("Content-Type: application/octet-stream",true);
         header("Content-Transfer-Encoding: binary",true);
@@ -292,36 +327,80 @@ function downloadTasmotaBackup($backup)
     return false;
 }
 
-function getTasmotaBackup($ip, $user, $password, $filename)
+function getTasmotaBackup($ip, $user, $password, $filename, $type=0)
 {
     //Get Backup
-    $url = 'http://'.rawurlencode($user).':'.rawurlencode($password)."@".$ip.'/dl';
 
-    $fp = fopen($filename, 'w+');
-    if ($fp === false) {
-        return false;
-    }
+    if(intval($type)===0) { // Tasmota
+        $fp = fopen($filename, 'w+');
+        if ($fp === false) {
+            return false;
+        }
+        $url = 'http://'.rawurlencode($user).':'.rawurlencode($password)."@".$ip.'/dl';
+        $options = array(
+            CURLOPT_FOLLOWLOCATION => false,
+            CURLOPT_TIMEOUT => 60,
+            CURLOPT_CONNECTTIMEOUT => 12,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_REFERER => 'http://'.$ip.'/',
+            CURLOPT_ORIGIN => 'http://'.$ip,
+            CURLOPT_USERAGENT => 'TasmoBackup '.$GLOBALS['VERSION'],
+            CURLOPT_ENCODING => "",
+            CURLOPT_FILE => $fp,
+        );
+        $ch = curl_init($url);
+        curl_setopt_array($ch, $options);
+        curl_exec($ch);
+        $err = curl_errno($ch);
+        $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        fclose($fp);
+        curl_close($ch);
 
-    $options = array(
-        CURLOPT_FOLLOWLOCATION => false,
-        CURLOPT_TIMEOUT => 60,
-        CURLOPT_CONNECTTIMEOUT => 12,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_REFERER => 'http://'.$ip.'/',
-        CURLOPT_USERAGENT => 'TasmoBackup '.$GLOBALS['VERSION'],
-        CURLOPT_FILE => $fp,
-    );
-    $ch = curl_init($url);
-    curl_setopt_array($ch, $options);
-    curl_exec($ch);
-    $err = curl_errno($ch);
-    $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    fclose($fp);
-    curl_close($ch);
+        if (!$err && $statusCode == 200) {
+            return true;
+        }
+    } else if(intval($type)===1) { // WLED
+        $url = 'http://'.rawurlencode($user).':'.rawurlencode($password)."@".$ip.'/edit?download=cfg.json';
+        $options = array(
+            CURLOPT_FOLLOWLOCATION => false,
+            CURLOPT_TIMEOUT => 60,
+            CURLOPT_CONNECTTIMEOUT => 12,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_REFERER => 'http://'.$ip.'/',
+            CURLOPT_ORIGIN => 'http://'.$ip,
+            CURLOPT_USERAGENT => 'TasmoBackup '.$GLOBALS['VERSION'],
+            CURLOPT_ENCODING => "",
+        );
+        $ch = curl_init($url);
+        curl_setopt_array($ch, $options);
+        $cfg = curl_exec($ch);
+        $err = curl_errno($ch);
+        $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        if($err || $statusCode !== 200)
+            return false;
 
-    if (!$err && $statusCode == 200) {
+        $url = 'http://'.rawurlencode($user).':'.rawurlencode($password)."@".$ip.'/edit?download=presets.json';
+        $ch = curl_init($url);
+        curl_setopt_array($ch, $options);
+        $presets = curl_exec($ch);
+        $err = curl_errno($ch);
+        $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        if($err || $statusCode !== 200)
+            return false;
+
+        $zip = new ZipArchive;
+        if($zip->open($filename, ZipArchive::CREATE) === FALSE)
+            return false;
+        if($zip->addFromString('cfg.json', $cfg) === FALSE)
+            return false;
+        if($zip->addFromString('presets.json', $presets) === FALSE)
+            return false;
+        $zip->close();
         return true;
     }
+
     return false;
 }
 
@@ -342,46 +421,62 @@ function backupCleanup($id)
     return true;
 }
 
-function backupSingle($id, $name, $ip, $user, $password)
+function backupSingle($id, $name, $ip, $user, $password, $type=0)
 {
     global $settings;
 
     $backupfolder = $settings['backup_folder'];
 
-    if ($status=getTasmotaStatus($ip, $user, $password)) {
-	if (!isset($status['StatusFWR'])) {
-            sleep(1);
-            if ($status2=getTasmotaStatus2($ip, $user, $password)) {
-                $status['StatusFWR']=$status2['StatusFWR'];
-            } else
-                return true; // Device Offline
+    if ($status=getTasmotaStatus($ip, $user, $password, $type)) {
+        if(intval($type)===0) { // Tasmota
+            if (!isset($status['StatusFWR'])) {
+                sleep(1);
+                if ($status2=getTasmotaStatus2($ip, $user, $password)) {
+                    $status['StatusFWR']=$status2['StatusFWR'];
+                } else
+                    return true; // Device Offline
+            }
+	    if (!isset($status['StatusNET'])) {
+                sleep(1);
+                if ($status5=getTasmotaStatus5($ip, $user, $password)) {
+                    $status['StatusNET']=$status5['StatusNET'];
+                } else
+                    return true; // Device Offline
+            }
         }
-	if (!isset($status['StatusNET'])) {
-            sleep(1);
-            if ($status5=getTasmotaStatus5($ip, $user, $password)) {
-                $status['StatusNET']=$status5['StatusNET'];
-            } else
-                return true; // Device Offline
+        if(intval($type)===1) { // WLED
+            if (!isset($status['info']['ver']))
+                return true;
         }
     } else {
         return true; // Device Offline
     }
 
-    $version = $status['StatusFWR']['Version'];
-    $mac = strtoupper($status['StatusNET']['Mac']);
+    if(intval($type)===0) { // Tasmota
+        $version = $status['StatusFWR']['Version'];
+        $mac = strtoupper($status['StatusNET']['Mac']);
 
-    if (!isset($settings['autoupdate_name']) || (isset($settings['autoupdate_name']) && $settings['autoupdate_name']=='Y')) {
-        if(isset($settings['use_topic_as_name']) && $settings['use_topic_as_name']=='F') {
-        } else {
-            if ($status['Status']['Topic'])
-                $name=$status['Status']['Topic'];
-            if(!isset($settings['use_topic_as_name']) || $settings['use_topic_as_name']=='N') {
-                if ($status['Status']['DeviceName'] && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
-                    $name=$status['Status']['DeviceName'];
-                else if ($status['Status']['FriendlyName'][0])
-                    $name=$status['Status']['FriendlyName'][0];
+        if (!isset($settings['autoupdate_name']) || (isset($settings['autoupdate_name']) && $settings['autoupdate_name']=='Y')) {
+            if(isset($settings['use_topic_as_name']) && $settings['use_topic_as_name']=='F') {
+            // Empty
+            } else {
+                if ($status['Status']['Topic'])
+                    $name=$status['Status']['Topic'];
+                if(!isset($settings['use_topic_as_name']) || $settings['use_topic_as_name']=='N') {
+                    if ($status['Status']['DeviceName'] && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
+                        $name=$status['Status']['DeviceName'];
+                    else if ($status['Status']['FriendlyName'][0])
+                        $name=$status['Status']['FriendlyName'][0];
+                }
             }
         }
+    } else if (intval($type)===1) { // WLED
+        if(isset($status['info']['name']))
+            $name=trim($status['info']['name']);
+        if(isset($status['info']['ver']))
+            $version=trim($status['info']['ver']);
+        if(isset($status['info']['mac']))
+            $mac=implode(':',str_split(str_replace(array('.',':'),array('',''),trim($status['info']['mac'])),2));
     }
 
     $savename = preg_replace('/\s+/', '_', $name);
@@ -396,10 +491,14 @@ function backupSingle($id, $name, $ip, $user, $password)
     $savedate = preg_replace('/(\s+|:)/', '_', $date);
     $savedate = preg_replace('/[^A-Za-z0-9_\-]/', '', $savedate);
 
-    $saveto = $backupfolder . $savename . "/" . $savemac . "-" . $savedate . ".dmp";
+    $ext='.dmp';
+    if(intval($type)===1) $ext='.zip';
+
+
+    $saveto = $backupfolder . $savename . "/" . $savemac . "-" . $savedate . $ext;
 
     sleep(1);
-    if (getTasmotaBackup($ip, $user, $password, $saveto)) {
+    if (getTasmotaBackup($ip, $user, $password, $saveto, $type)) {
         $directory = $backupfolder . $savename . "/";
 /*
         // Initialize filecount variavle
@@ -412,7 +511,7 @@ function backupSingle($id, $name, $ip, $user, $password)
             #echo $noofbackups;
         }
 */
-        if (!dbNewBackup($id, $name, $version, $date, 1, $saveto, $mac)) {
+        if (!dbNewBackup($id, $name, $version, $date, 1, $saveto, $mac, $type)) {
             return true;
         }
         return false;
@@ -445,7 +544,7 @@ function backupAll($docker=false)
     $stm->execute(array(":date" => date('Y-m-d H:i:s',time()-(3600*$hours))));
     $errorcount = 0;
     while ($db_field = $stm->fetch(PDO::FETCH_ASSOC)) {
-        if (backupSingle($db_field['id'], $db_field['name'], $db_field['ip'], 'admin', $db_field['password'])) {
+        if (backupSingle($db_field['id'], $db_field['name'], $db_field['ip'], 'admin', $db_field['password'], $db_field['type'])) {
             $errorcount++;
         } else {
             backupCleanup($db_field['id']);
@@ -454,59 +553,67 @@ function backupAll($docker=false)
     return $errorcount;
 }
 
-function addTasmotaDevice($ip, $user, $password, $verified=false, $status=false)
+function addTasmotaDevice($ip, $user, $password, $verified=false, $status=false, $type=null)
 {
     global $settings;
 
-    if(!$verified) {
-        if (!getTasmotaScan($ip, $user, $password)) {
+    if(!$verified || !isset($type)) {
+        if (($type=getTasmotaScan($ip, $user, $password))===false) {
             return $ip.': Device not found.';
         }
     }
     if (!dbDeviceExist($ip)) {
         if ($status==false)
-            $status=getTasmotaStatus($ip, $user, $password);
+            $status=getTasmotaStatus($ip, $user, $password, $type);
         if ($status) {
-            if(!isset($status['StatusNET'])) {
-                sleep(1);
-                if ($status5=getTasmotaStatus5($ip, $user, $password))
-                    $status['StatusNET']=$status5['StatusNET'];
-                else 
-                    return $ip.': Device not responding to status5 request.';
-            }
-            if(!isset($status['StatusFWR'])) {
-                sleep(1);
-                if ($status2=getTasmotaStatus2($ip, $user, $password))
-                    $status['StatusFWR']=$status2['StatusFWR'];
-                else
-                    return $ip.': Device not responding to status2 request.';
-            }
-
-            if(isset($settings['use_topic_as_name']) && $settings['use_topic_as_name']=='F' && isset($status['Topic'])) {
-                $name=trim(str_replace(array('/stat','stat/'),array('',''),$status['Topic'])," \t\r\n\v\0/");;
-            } else {
-                if ($status['Status']['Topic'])
-                    $name=$status['Status']['Topic'];
-                if(!isset($settings['use_topic_as_name']) || $settings['use_topic_as_name']=='N') {
-                    if (isset($status['Status']['DeviceName']) && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
-                        $name=$status['Status']['DeviceName'];
-                    else if ($status['Status']['FriendlyName'][0])
-                        $name=$status['Status']['FriendlyName'][0];
+            if(intval($type)===0) { // Tasmota
+                if (!isset($status['StatusNET'])) {
+                    sleep(1);
+                    if ($status5=getTasmotaStatus5($ip, $user, $password))
+                        $status['StatusNET']=$status5['StatusNET'];
+                    else 
+                        return $ip.': Device not responding to status5 request.';
                 }
+                if(!isset($status['StatusFWR'])) {
+                    sleep(1);
+                    if ($status2=getTasmotaStatus2($ip, $user, $password))
+                        $status['StatusFWR']=$status2['StatusFWR'];
+                    else
+                        return $ip.': Device not responding to status2 request.';
+                }
+                if(isset($settings['use_topic_as_name']) && $settings['use_topic_as_name']=='F' && isset($status['Topic'])) {
+                    $name=trim(str_replace(array('/stat','stat/'),array('',''),$status['Topic'])," \t\r\n\v\0/");;
+                } else {
+                    if ($status['Status']['Topic'])
+                        $name=$status['Status']['Topic'];
+                    if(!isset($settings['use_topic_as_name']) || $settings['use_topic_as_name']=='N') {
+                        if (isset($status['Status']['DeviceName']) && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
+                            $name=$status['Status']['DeviceName'];
+                        else if ($status['Status']['FriendlyName'][0])
+                            $name=$status['Status']['FriendlyName'][0];
+                    }
+                }
+                if (isset($status['StatusFWR']['Version']))
+                    $version=$status['StatusFWR']['Version'];
+                if (isset($status['StatusNET']['Mac']))
+                    $mac=strtoupper($status['StatusNET']['Mac']);
+            } else if (intval($type)===1) { // WLED
+                if(isset($status['info']['name']))
+                    $name=trim($status['info']['name']);
+                if(isset($status['info']['ver']))
+                    $version=trim($status['info']['ver']);
+                if(isset($status['info']['mac']))
+                    $mac=implode(':',str_split(str_replace(array('.',':'),array('',''),trim($status['info']['mac'])),2));
             }
-            if (isset($status['StatusFWR']['Version']))
-                $version=$status['StatusFWR']['Version'];
-            if (isset($status['StatusNET']['Mac']))
-                $mac=strtoupper($status['StatusNET']['Mac']);
             if (($id=dbDeviceFind($ip,$mac))>0) {
                 if (!isset($settings['autoupdate_name']) || (isset($settings['autoupdate_name']) && $settings['autoupdate_name']=='Y'))
                     $newname=$name;
-                if(dbDeviceUpdate($id,$newname,$ip,$version,$password,$mac))
+                if(dbDeviceUpdate($id,$newname,$ip,$version,$password,$mac,$type))
                     return $ip.': ' . $name . ' infomation has been updated!';
                 else
                     return $ip.': ' . $name . ' already exists in the database!';
             } else {
-                if (dbDeviceAdd($name, $ip, $version, $password, $mac)) {
+                if (dbDeviceAdd($name, $ip, $version, $password, $mac, $type)) {
                     return $ip.': ' . $name . ' Added Successfully!';
                 }
             }
@@ -515,26 +622,35 @@ function addTasmotaDevice($ip, $user, $password, $verified=false, $status=false)
         return $ip.': Device not responding to status request.';
     } else { // Update device metadata, but only if scanned via mqtt as not to add more overhead
         if ($status) {
-            if(isset($settings['use_topic_as_name']) && $settings['use_topic_as_name']=='F' && isset($status['Topic'])) {
-                $name=trim(str_replace(array('/stat','stat/'),array('',''),$status['Topic'])," \t\r\n\v\0/");;
-            } else {
-                if ($status['Status']['Topic'])
-                    $name=$status['Status']['Topic'];
-                if(!isset($settings['use_topic_as_name']) || $settings['use_topic_as_name']=='N') {
-                    if (isset($status['Status']['DeviceName']) && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
-                        $name=$status['Status']['DeviceName'];
-                    else if ($status['Status']['FriendlyName'][0])
-                        $name=$status['Status']['FriendlyName'][0];
+            if(intval($type)===0) {
+                if(isset($settings['use_topic_as_name']) && $settings['use_topic_as_name']=='F' && isset($status['Topic'])) {
+                    $name=trim(str_replace(array('/stat','stat/'),array('',''),$status['Topic'])," \t\r\n\v\0/");;
+                } else {
+                    if ($status['Status']['Topic'])
+                        $name=$status['Status']['Topic'];
+                    if(!isset($settings['use_topic_as_name']) || $settings['use_topic_as_name']=='N') {
+                        if (isset($status['Status']['DeviceName']) && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
+                            $name=$status['Status']['DeviceName'];
+                        else if ($status['Status']['FriendlyName'][0])
+                            $name=$status['Status']['FriendlyName'][0];
+                    }
                 }
+                if (isset($status['StatusFWR']['Version']))
+                    $version=$status['StatusFWR']['Version'];
+                if (isset($status['StatusNET']['Mac']))
+                    $mac=strtoupper($status['StatusNET']['Mac']);
+            } else if (intval($type)===1) { // WLED
+                if(isset($status['info']['name']))
+                    $name=trim($status['info']['name']);
+                if(isset($status['info']['ver']))
+                    $version=trim($status['info']['ver']);
+                if(isset($status['info']['mac']))
+                    $mac=implode(':',str_split(str_replace(array('.',':'),array('',''),trim($status['info']['mac'])),2));
             }
-            if (isset($status['StatusFWR']['Version']))
-                $version=$status['StatusFWR']['Version'];
-            if (isset($status['StatusNET']['Mac']))
-                $mac=strtoupper($status['StatusNET']['Mac']);
             if (($id=dbDeviceFind($ip,$mac))>0) {
                 if (!isset($settings['autoupdate_name']) || (isset($settings['autoupdate_name']) && $settings['autoupdate_name']=='Y'))
                     $newname=$name;
-                if(dbDeviceUpdate($id,$newname,$ip,$version,$password,$mac))
+                if(dbDeviceUpdate($id,$newname,$ip,$version,$password,$mac,$type))
                     return $ip.': ' . $name . ' infomation has been updated!';
                 else
                     return $ip.': ' . $name . ' already exists in the database!';

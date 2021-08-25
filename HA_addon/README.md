@@ -3,6 +3,8 @@ Backup the configs of all your Tasmota devices
 
 
 # Latest Changes
+* add wled backups (only ip scanning, wled has limited mqtt support)
+* fix single click restores
 * Add referer for tasmota new security feature
 * fixed mqtt overscanning
 * changed backup downloads to use device name, version, and date

@@ -70,7 +70,7 @@ switch(strtolower($task)) {
         $devices = dbDeviceIp($ip);
         if ($devices!==false) {
             foreach ($devices as $db_field) {
-                if (backupSingle($db_field['id'], $db_field['name'], $db_field['ip'], 'admin', $db_field['password'])) {
+                if (backupSingle($db_field['id'], $db_field['name'], $db_field['ip'], 'admin', $db_field['password'], $db_field['type'])) {
                     $show_modal = true;
                     $output = "<center><b>Backup failed</b></center>";
                 } else {
@@ -177,6 +177,12 @@ $(document).ready(function() {
             $mac = '';
             $mac_display = '&nbsp;';
         }
+        $logo='images/tasmota.png';
+        $type='Tasmota';
+        if(isset($db_field['type']) && intval($db_field['type'])===1) {
+            $logo='images/wled.png';
+            $type='WLED';
+        }
         $version = $db_field['version'];
         $lastbackup = $db_field['lastbackup'];
         $numberofbackups = $db_field['noofbackups'];
@@ -196,7 +202,7 @@ $(document).ready(function() {
         if(isset($settings['hide_mac_column']) && $settings['hide_mac_column']=='Y')
             $mac_display='';
 
-        echo "<tr valign='middle'><td onclick=\"deviceModal('#myModaldevice".$id."');\">" . $name . "</td><td><center><a href='http://" . $ip . "' target='_blank'>" . $ip . "</a></td>" . $mac_display . "<td><center>";
+        echo "<tr valign='middle'><td onclick=\"deviceModal('#myModaldevice".$id."');\"><img src=\"" . $logo ."\" width=\"32\" height=\"32\" style=\"align:left\">&nbsp;" . $name . "</td><td><center><a href='http://" . $ip . "' target='_blank'>" . $ip . "</a></td>" . $mac_display . "<td><center>";
 	if(isset($settings['theme']) && $settings['theme']=='dark') { // Enforce Dark mode
 	    echo "<img src='" . (strlen($password) > 0 ? 'images/lock-dark.png' : 'images/lock-open-variant-dark.png') . "'>";
 	} else if(isset($settings['theme']) && $settings['theme']=='light') { // Enforce Light mode
@@ -242,7 +248,7 @@ $(document).ready(function() {
 	echo "<td><center><form method='POST' id='deleteform' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='delete' name='task'><input type='submit' onclick='return window.confirm(\"Are you sure you want to delete " . $name . "\");' value='Delete' class='btn-xs btn-danger'></form></center></td></tr>\r\n";
 
         $list_model.='<div id="myModaldevice'.$id.'" class="modal fade" role="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h4 class="modal-title">'.$name.'</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div><div class="modal-body"><p><pre>'."\r\n";
-	$list_model.=sprintf("%14s: %s\r\n%14s: %s\r\n%14s: %s\r\n%14s: %s","Name",$name,"IP",$ip,"MAC",$mac,"Version",$ver);
+	$list_model.=sprintf("%14s: %s\r\n%14s: %s\r\n%14s: %s\r\n%14s: %s\r\n%14s: %s","Name",$name,"IP",$ip,"MAC",$mac,"Type",$type,"Version",$ver);
 	if(isset($tag))
             $list_model.=sprintf("\r\n%14s: %s","BuildTag",$tag);
         $list_model.=sprintf("\r\n%14s: %s\r\n","Last Backup",$lastbackup);

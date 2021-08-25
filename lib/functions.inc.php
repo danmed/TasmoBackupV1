@@ -309,7 +309,7 @@ function getTasmotaBackup($ip, $user, $password, $filename)
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_REFERER => 'http://'.$ip.'/',
         CURLOPT_USERAGENT => 'TasmoBackup '.$GLOBALS['VERSION'],
-        CURLOPT_FILE, $fp,
+        CURLOPT_FILE => $fp,
     );
     $ch = curl_init($url);
     curl_setopt_array($ch, $options);

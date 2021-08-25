@@ -2,6 +2,7 @@
 Backup the configs of all your Tasmota devices
 
 # Latest Changes
+* fix zero size backup bug
 * Add referer for tasmota new security feature
 * fixed mqtt overscanning
 * changed backup downloads to use device name, version, and date

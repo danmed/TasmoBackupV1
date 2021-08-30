@@ -1,3 +1,6 @@
+##v1.04.23
+* Fix 0 sized backups, curlopt_file isn't supported in array
+
 ##v1.04.22
 * Fix restores
 * add wled support

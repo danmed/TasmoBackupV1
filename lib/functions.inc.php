@@ -346,10 +346,10 @@ function getTasmotaBackup($ip, $user, $password, $filename, $type=0)
             CURLOPT_ORIGIN => 'http://'.$ip,
             CURLOPT_USERAGENT => 'TasmoBackup '.$GLOBALS['VERSION'],
             CURLOPT_ENCODING => "",
-            CURLOPT_FILE => $fp,
         );
         $ch = curl_init($url);
         curl_setopt_array($ch, $options);
+        curl_setopt($ch,CURLOPT_FILE,$fp);
         curl_exec($ch);
         $err = curl_errno($ch);
         $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);

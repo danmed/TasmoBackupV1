@@ -77,14 +77,14 @@ function getTasmotaScan($ip, $user, $password)
         if (isset($settings['autoadd_scan']) && $settings['autoadd_scan']=='Y') {
             addTasmotaDevice($ip, $user, $password, true);
         } else {
-            return 0;
+            return true;
         }
     }
     if (strpos($data, 'WLED') !== false) {
         if (isset($settings['autoadd_scan']) && $settings['autoadd_scan']=='Y') {
             addTasmotaDevice($ip, $user, $password, true, false, 1);
         } else {
-            return 1;
+            return true;
         }
     }
     return false;

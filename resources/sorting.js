@@ -117,10 +117,11 @@ jQuery.extend( jQuery.fn.dataTableExt.oSort, {
 	"ip-address-desc": function ( a, b ) {
 		return ((a < b) ? 1 : ((a > b) ? -1 : 0));
 	},
-   "version-pre": function ( d ) {
+    "version-pre": function ( d ) {
+       d = d.replace(/<[\s\S]*?>/g, "");
        var a = d.split(/[ .]+/), res = "";
        for(var i = 0; i < a.length; i++) {
-          res += ("0000000000" + a[i]).slice(-10);
+          res += ("00000000000000000000" + a[i]).slice(-20);
        }   
        return res;
     },   

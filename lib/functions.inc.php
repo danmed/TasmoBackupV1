@@ -61,8 +61,6 @@ function getTasmotaScan($ip, $user, $password)
         CURLOPT_TIMEOUT => 30,
         CURLOPT_CONNECTTIMEOUT => 12,
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_REFERER => 'http://'.$ip.'/',
-        CURLOPT_ORIGIN => 'http://'.$ip,
         CURLOPT_USERAGENT => 'TasmoBackup '.$GLOBALS['VERSION'],
         CURLOPT_ENCODING => "",
     ));
@@ -366,8 +364,8 @@ function getTasmotaBackup($ip, $user, $password, $filename, $type=0)
             CURLOPT_TIMEOUT => 60,
             CURLOPT_CONNECTTIMEOUT => 12,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_REFERER => 'http://'.$ip.'/',
-            CURLOPT_ORIGIN => 'http://'.$ip,
+            //CURLOPT_REFERER => 'http://'.$ip.'/',
+            //CURLOPT_ORIGIN => 'http://'.$ip,
             CURLOPT_USERAGENT => 'TasmoBackup '.$GLOBALS['VERSION'],
             CURLOPT_ENCODING => "",
         );

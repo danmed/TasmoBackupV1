@@ -63,6 +63,8 @@ function getTasmotaScan($ip, $user, $password)
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_USERAGENT => 'TasmoBackup '.$GLOBALS['VERSION'],
         CURLOPT_ENCODING => "",
+        CURLOPT_REFERER => 'http://'.$ip.'/',
+        CURLOPT_HTTPHEADER => array('Origin: http://'.$ip),
     ));
     $data = curl_exec($ch);
     $err = curl_errno($ch);
@@ -108,6 +110,7 @@ function getTasmotaScanRange($iprange, $user, $password)
         $url = 'http://'.rawurlencode($user).':'.rawurlencode($password).'@'. $iprange[$i] . '/';
         $ch = curl_init($url);
         $options[CURLOPT_REFERER]='http://'.$iprange[$i].'/';
+        $options[CURLOPT_HTTPHEADER]=array('Origin: http://'.$iprange[$i]);
         curl_setopt_array($ch, $options);
         curl_multi_add_handle($master, $ch);
     }
@@ -145,6 +148,7 @@ function getTasmotaScanRange($iprange, $user, $password)
                 $url = 'http://'.rawurlencode($user).':'.rawurlencode($password).'@'. $iprange[$i] . '/';
                 $ch = curl_init($url);
                 $options[CURLOPT_REFERER]='http://'.$iprange[$i].'/';
+                $options[CURLOPT_HTTPHEADER]=array('Origin: http://'.$iprange[$i]);
                 curl_setopt_array($ch, $options);
                 $i++;
                 curl_multi_add_handle($master, $ch);
@@ -168,10 +172,10 @@ function getTasmotaStatus($ip, $user, $password, $type=0)
         CURLOPT_TIMEOUT => 30,
         CURLOPT_CONNECTTIMEOUT => 12,
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_REFERER => 'http://'.$ip.'/',
-        CURLOPT_ORIGIN => 'http://'.$ip,
         CURLOPT_USERAGENT => 'TasmoBackup '.$GLOBALS['VERSION'],
         CURLOPT_ENCODING => "",
+        CURLOPT_REFERER => 'http://'.$ip.'/',
+        CURLOPT_HTTPHEADER => array('Origin: http://'.$ip),
     );
     $ch = curl_init($url);
     curl_setopt_array($ch, $options);
@@ -204,10 +208,10 @@ function getTasmotaOldStatus($ip, $user, $password)
         CURLOPT_TIMEOUT => 30,
         CURLOPT_CONNECTTIMEOUT => 12,
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_REFERER => 'http://'.$ip.'/',
-        CURLOPT_ORIGIN => 'http://'.$ip,
         CURLOPT_USERAGENT => 'TasmoBackup '.$GLOBALS['VERSION'],
         CURLOPT_ENCODING => "",
+        CURLOPT_REFERER => 'http://'.$ip.'/',
+        CURLOPT_HTTPHEADER => array('Origin: http://'.$ip),
     );
     $ch = curl_init($url);
     curl_setopt_array($ch, $options);
@@ -230,10 +234,10 @@ function getTasmotaStatus2($ip, $user, $password)
         CURLOPT_TIMEOUT => 30,
         CURLOPT_CONNECTTIMEOUT => 12,
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_REFERER => 'http://'.$ip.'/',
-        CURLOPT_ORIGIN => 'http://'.$ip,
         CURLOPT_USERAGENT => 'TasmoBackup '.$GLOBALS['VERSION'],
         CURLOPT_ENCODING => "",
+        CURLOPT_REFERER => 'http://'.$ip.'/',
+        CURLOPT_HTTPHEADER => array('Origin: http://'.$ip),
     );
     $ch = curl_init($url);
     curl_setopt_array($ch, $options);
@@ -256,10 +260,10 @@ function getTasmotaStatus5($ip, $user, $password)
         CURLOPT_TIMEOUT => 30,
         CURLOPT_CONNECTTIMEOUT => 12,
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_REFERER => 'http://'.$ip.'/',
-        CURLOPT_ORIGIN => 'http://'.$ip,
         CURLOPT_USERAGENT => 'TasmoBackup '.$GLOBALS['VERSION'],
         CURLOPT_ENCODING => "",
+        CURLOPT_REFERER => 'http://'.$ip.'/',
+        CURLOPT_HTTPHEADER => array('Origin: http://'.$ip),
     );
     $ch = curl_init($url);
     curl_setopt_array($ch, $options);
@@ -285,17 +289,16 @@ function restoreTasmotaBackup($ip, $user, $password, $filename)
         CURLOPT_TIMEOUT => 60,
         CURLOPT_CONNECTTIMEOUT => 12,
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_REFERER => 'http://'.$ip.'/rs?',
-        CURLOPT_ORIGIN => 'http://'.$ip,
         CURLOPT_USERAGENT => 'TasmoBackup '.$GLOBALS['VERSION'],
         CURLOPT_POST => true,
         CURLOPT_POSTFIELDS => $fields,
         CURLOPT_HTTPHEADER => array('Content-Type: multipart/form-data'),
         CURLOPT_ENCODING => "",
+        CURLOPT_REFERER => 'http://'.$ip.'/',
+        CURLOPT_HTTPHEADER => array('Origin: http://'.$ip, 'Expect:'),
     );
     $ch = curl_init($url);
     curl_setopt_array($ch, $options);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Expect:'));
 
     $result=curl_exec($ch);
     $err = curl_errno($ch);
@@ -340,10 +343,10 @@ function getTasmotaBackup($ip, $user, $password, $filename, $type=0)
             CURLOPT_TIMEOUT => 60,
             CURLOPT_CONNECTTIMEOUT => 12,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_REFERER => 'http://'.$ip.'/',
-            CURLOPT_ORIGIN => 'http://'.$ip,
             CURLOPT_USERAGENT => 'TasmoBackup '.$GLOBALS['VERSION'],
             CURLOPT_ENCODING => "",
+            CURLOPT_REFERER => 'http://'.$ip.'/',
+            CURLOPT_HTTPHEADER => array('Origin: http://'.$ip),
         );
         $ch = curl_init($url);
         curl_setopt_array($ch, $options);
@@ -364,10 +367,10 @@ function getTasmotaBackup($ip, $user, $password, $filename, $type=0)
             CURLOPT_TIMEOUT => 60,
             CURLOPT_CONNECTTIMEOUT => 12,
             CURLOPT_RETURNTRANSFER => true,
-            //CURLOPT_REFERER => 'http://'.$ip.'/',
-            //CURLOPT_ORIGIN => 'http://'.$ip,
             CURLOPT_USERAGENT => 'TasmoBackup '.$GLOBALS['VERSION'],
             CURLOPT_ENCODING => "",
+            CURLOPT_REFERER => 'http://'.$ip.'/',
+            CURLOPT_HTTPHEADER => array('Origin: http://'.$ip),
         );
         $ch = curl_init($url);
         curl_setopt_array($ch, $options);
@@ -561,7 +564,7 @@ function addTasmotaDevice($ip, $user, $password, $verified=false, $status=false,
         }
     }
     if (!dbDeviceExist($ip)) {
-        if ($status==false)
+        if ($status===false)
             $status=getTasmotaStatus($ip, $user, $password, $type);
         if ($status) {
             if(intval($type)===0) { // Tasmota

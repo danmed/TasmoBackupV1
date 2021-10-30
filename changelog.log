@@ -1,3 +1,6 @@
+##v1.04.26
+* Fix http headers, resolves tasmota and wled issues
+
 ##v1.04.25
 * Fix everything shows as wled type
 

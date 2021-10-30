@@ -1,3 +1,6 @@
+##v1.04.25
+* Fix everything shows as wled type
+
 ##v1.04.24
 * Fix adding wled, wled doesn't like extra headers
 * Fix sorting by version

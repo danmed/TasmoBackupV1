@@ -461,12 +461,12 @@ function backupSingle($id, $name, $ip, $user, $password, $type=0)
             if(isset($settings['use_topic_as_name']) && $settings['use_topic_as_name']=='F') {
             // Empty
             } else {
-                if ($status['Status']['Topic'])
+                if (isset($status['Status']['Topic']))
                     $name=$status['Status']['Topic'];
                 if(!isset($settings['use_topic_as_name']) || $settings['use_topic_as_name']=='N') {
-                    if ($status['Status']['DeviceName'] && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
+                    if (isset($status['Status']['DeviceName']) && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
                         $name=$status['Status']['DeviceName'];
-                    else if ($status['Status']['FriendlyName'][0])
+                    else if (isset($status['Status']['FriendlyName'][0]))
                         $name=$status['Status']['FriendlyName'][0];
                 }
             }
@@ -566,7 +566,7 @@ function addTasmotaDevice($ip, $user, $password, $verified=false, $status=false,
     if (!dbDeviceExist($ip)) {
         if ($status===false)
             $status=getTasmotaStatus($ip, $user, $password, $type);
-        if ($status) {
+        if (isset($status) && $status) {
             if(intval($type)===0) { // Tasmota
                 if (!isset($status['StatusNET'])) {
                     sleep(1);
@@ -585,7 +585,7 @@ function addTasmotaDevice($ip, $user, $password, $verified=false, $status=false,
                 if(isset($settings['use_topic_as_name']) && $settings['use_topic_as_name']=='F' && isset($status['Topic'])) {
                     $name=trim(str_replace(array('/stat','stat/'),array('',''),$status['Topic'])," \t\r\n\v\0/");;
                 } else {
-                    if ($status['Status']['Topic'])
+                    if (isset($status['Status']['Topic']))
                         $name=$status['Status']['Topic'];
                     if(!isset($settings['use_topic_as_name']) || $settings['use_topic_as_name']=='N') {
                         if (isset($status['Status']['DeviceName']) && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
@@ -622,17 +622,17 @@ function addTasmotaDevice($ip, $user, $password, $verified=false, $status=false,
         }
         return $ip.': Device not responding to status request.';
     } else { // Update device metadata, but only if scanned via mqtt as not to add more overhead
-        if ($status) {
+        if (isset($status) && $status) {
             if(intval($type)===0) {
                 if(isset($settings['use_topic_as_name']) && $settings['use_topic_as_name']=='F' && isset($status['Topic'])) {
                     $name=trim(str_replace(array('/stat','stat/'),array('',''),$status['Topic'])," \t\r\n\v\0/");;
                 } else {
-                    if ($status['Status']['Topic'])
+                    if (isset($status['Status']['Topic']))
                         $name=$status['Status']['Topic'];
                     if(!isset($settings['use_topic_as_name']) || $settings['use_topic_as_name']=='N') {
                         if (isset($status['Status']['DeviceName']) && strlen(preg_replace('/\s+/', '',$status['Status']['DeviceName']))>0)
                             $name=$status['Status']['DeviceName'];
-                        else if ($status['Status']['FriendlyName'][0])
+                        else if (isset($status['Status']['FriendlyName'][0]))
                             $name=$status['Status']['FriendlyName'][0];
                     }
                 }
@@ -649,12 +649,12 @@ function addTasmotaDevice($ip, $user, $password, $verified=false, $status=false,
                     $mac=implode(':',str_split(str_replace(array('.',':'),array('',''),trim($status['info']['mac'])),2));
             }
             if (($id=dbDeviceFind($ip,$mac))>0) {
-                if (!isset($settings['autoupdate_name']) || (isset($settings['autoupdate_name']) && $settings['autoupdate_name']=='Y'))
+                if (!isset($settings['autoupdate_name']) || (isset($settings['autoupdate_name']) && $settings['autoupdate_name']=='Y') && isset($name))
                     $newname=$name;
-                if(dbDeviceUpdate($id,$newname,$ip,$version,$password,$mac,$type))
-                    return $ip.': ' . $name . ' infomation has been updated!';
+                if(dbDeviceUpdate($id,isset($newname)?$newname:NULL,$ip,isset($version)?$version:NULL,$password,isset($mac)?$mac:NULL,$type))
+                    return $ip.': ' . (isset($name)?$name:'') . ' infomation has been updated!';
                 else
-                    return $ip.': ' . $name . ' already exists in the database!';
+                    return $ip.': ' . (isset($name)?$name:'') . ' already exists in the database!';
             }
         }
     }

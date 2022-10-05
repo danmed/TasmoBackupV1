@@ -50,7 +50,7 @@ sed -i "s|data/tasmobackup|$DBNAME|g" /var/www/html/data/config.inc.php
 
 su -l -p www-data -s /usr/bin/php /var/www/html/upgrade.php 1>/dev/null
 
-/usr/sbin/crond
+/usr/sbin/crond -l 9
 
 #su nobody -s /bin/sh -c "$@"
 exec "$@"

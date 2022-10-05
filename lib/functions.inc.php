@@ -544,14 +544,16 @@ function backupAll($docker=false)
     $stm = $db_handle->prepare("select * from devices where lastbackup < :date or lastbackup is NULL ");
     $stm->execute(array(":date" => date('Y-m-d H:i:s',time()-(3600*$hours))));
     $errorcount = 0;
+    $totalcount = 0;
     while ($db_field = $stm->fetch(PDO::FETCH_ASSOC)) {
+        $totalcount++;
         if (backupSingle($db_field['id'], $db_field['name'], $db_field['ip'], 'admin', $db_field['password'], $db_field['type'])) {
             $errorcount++;
         } else {
             backupCleanup($db_field['id']);
         }
     }
-    return $errorcount;
+    return array($errorcount,$totalcount);
 }
 
 function addTasmotaDevice($ip, $user, $password, $verified=false, $status=false, $type=null)

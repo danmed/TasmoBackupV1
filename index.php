@@ -84,10 +84,22 @@ switch(strtolower($task)) {
         $errorcount = backupAll();
 
         $show_modal = true;
-        if ($errorcount < 1) {
-            $output = "All backups completed successfully!";
+        if(is_array($errorcount)) {
+            if($errorcount[0]==0 && $errorcount[1]==0) {
+                $output = "All backups are uptodate";
+            }
+            if($errorcount[0]==0 && $errorcount[1]>0) {
+                $output = "All ".$errorcount[1]." backups completed successfully!";
+            }
+            if($errorcount[0]>0 && $errorcount[1]>0) {
+                $output = $errorcount[0]." backups failed out of ".$errorcount[1]." backups attempted.";
+            }
         } else {
-            $output = "<font color='red'><b>Not all backups completed successfully!</b></font>";
+            if ($errorcount < 1) {
+                $output = "All backups completed successfully!";
+            } else {
+                $output = "<font color='red'><b>Not all backups completed successfully!</b></font>";
+            }
         }
         break;
     case 'delete':
@@ -202,7 +214,7 @@ $(document).ready(function() {
         if(isset($settings['hide_mac_column']) && $settings['hide_mac_column']=='Y')
             $mac_display='';
 
-        echo "<tr valign='middle'><td onclick=\"deviceModal('#myModaldevice".$id."');\"><img src=\"" . $logo ."\" width=\"32\" height=\"32\" style=\"align:left\">&nbsp;" . $name . "</td><td><center><a href='http://" . $ip . "' target='_blank'>" . $ip . "</a></td>" . $mac_display . "<td><center>";
+        echo "<tr valign='middle'><td onclick=\"deviceModal('#myModaldevice".$id."');\"><img src=\"" . $logo ."\" width=\"32\" height=\"32\" style=\"align:left\">&nbsp;" . $name . "</td><td><center><a href='http://" . $ip . "' target='_blank'>" . $ip . "</a>&nbsp&nbsp<a href='http://" . $ip . "/cs' target='_blank'>CS</a></td>" . $mac_display . "<td><center>";
 	if(isset($settings['theme']) && $settings['theme']=='dark') { // Enforce Dark mode
 	    echo "<img src='" . (strlen($password) > 0 ? 'images/lock-dark.png' : 'images/lock-open-variant-dark.png') . "'>";
 	} else if(isset($settings['theme']) && $settings['theme']=='light') { // Enforce Light mode
@@ -241,7 +253,8 @@ $(document).ready(function() {
             if(isset($url) && strlen($url)>5)
                 $version='<a href="'.$url.'">'.$version.'</a>';
         }
-	echo "</center></td><td><center>" . $version . "</center></td><td $color><center>" . $lastbackup . "</center></td>";
+	$upgrade = '&nbsp;&nbsp;<a href="http://'.$ip.'/u1" target="_blank">Up</a>';
+	echo "</center></td><td><center>" . $version . $upgrade . "</center></td><td $color><center>" . $lastbackup . "</center></td>";
 	echo "<td><center><form method='POST' action='listbackups.php'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='" . $id . "' name='id'><input type='submit' value='" . $numberofbackups . "' class='btn-xs btn-info'></form></center></td>";
 	echo "<td><center><form method='POST' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='singlebackup' name='task'><input type='submit' value='Backup' class='btn-xs btn-success'></form></center></td>";
 	echo "<td><center><form method='POST' action='edit.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='edit' name='task'><input type='submit' value='Edit' class='btn-xs btn-warning'></form></center></td>";

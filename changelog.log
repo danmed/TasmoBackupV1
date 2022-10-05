@@ -1,3 +1,12 @@
+##v1.05.00
+* Fix crond extra logging
+* add success/failure counts to backupall
+* resolve return type issues
+* resolve unknown var issues
+
+##v1.04.27
+* Fix missing isset's
+
 ##v1.04.26
 * Fix http headers, resolves tasmota and wled issues
 

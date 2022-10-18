@@ -142,16 +142,16 @@ $(document).ready(function() {
             { "type": "version", "targets": [3] }
             ],
         "statesave": true,
-        "autoWidth": true
+        "autoWidth": false
 } );
 } );
 ',true);
 ?>
-  <body>
+  <body style="scrollbar-gutter: stable;overflow-y:scroll;">
     <div class="container-fluid">
     <table class="table table-striped table-bordered" id="status">
     <thead>
-      <tr><th colspan="9"><center><b>TasmoBackup <a href="settings.php"><?php
+      <tr><th colspan="10"><center><b>TasmoBackup <a href="settings.php"><?php
 	if(isset($settings['theme']) && $settings['theme']=='dark') { // Enforce Dark mode
 	    echo '<img src="images/settings-dark.png">';
 	} else if(isset($settings['theme']) && $settings['theme']=='light') { // Enforce Light mode
@@ -214,7 +214,7 @@ $(document).ready(function() {
         if(isset($settings['hide_mac_column']) && $settings['hide_mac_column']=='Y')
             $mac_display='';
 
-        echo "<tr valign='middle'><td onclick=\"deviceModal('#myModaldevice".$id."');\"><img src=\"" . $logo ."\" width=\"32\" height=\"32\" style=\"align:left\">&nbsp;" . $name . "</td><td><center><a href='http://" . $ip . "' target='_blank'>" . $ip . "</a>&nbsp&nbsp<a href='http://" . $ip . "/cs' target='_blank'>CS</a></td>" . $mac_display . "<td><center>";
+        echo "<tr valign='middle'><td onclick=\"deviceModal('#myModaldevice".$id."');\"><img src=\"" . $logo ."\" width=\"32\" height=\"32\" style=\"align:left\">&nbsp;" . $name . "</td><td><center><a href='http://" . $ip . "' target='_blank'>" . $ip . "</a>&nbsp&nbsp<img src='images/cli.png' alt='Open inline console' style='cursor: pointer;width:16px;margin-right:8px;' class='openConsole' data-ip='".$ip."' data-row='".$id."'><a href='http://".$ip."/cs' target='_blank'><img src='images/newtab.png' style='width:16px;' alt='Open console in new tab'></a></td>" . $mac_display . "<td><center>";
 	if(isset($settings['theme']) && $settings['theme']=='dark') { // Enforce Dark mode
 	    echo "<img src='" . (strlen($password) > 0 ? 'images/lock-dark.png' : 'images/lock-open-variant-dark.png') . "'>";
 	} else if(isset($settings['theme']) && $settings['theme']=='light') { // Enforce Light mode
@@ -259,7 +259,8 @@ $(document).ready(function() {
 	echo "<td><center><form method='POST' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='singlebackup' name='task'><input type='submit' value='Backup' class='btn-xs btn-success'></form></center></td>";
 	echo "<td><center><form method='POST' action='edit.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='edit' name='task'><input type='submit' value='Edit' class='btn-xs btn-warning'></form></center></td>";
 	echo "<td><center><form method='POST' id='deleteform' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='delete' name='task'><input type='submit' onclick='return window.confirm(\"Are you sure you want to delete " . $name . "\");' value='Delete' class='btn-xs btn-danger'></form></center></td></tr>\r\n";
-
+    echo "<tr style='display:none'><td colspan='10'><iframe id='iframe".$id."' style='width:95vw;height:20vh' src=''></iframe></td></tr>";
+// http://".$ip."/cs
         $list_model.='<div id="myModaldevice'.$id.'" class="modal fade" role="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h4 class="modal-title">'.$name.'</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div><div class="modal-body"><p><pre>'."\r\n";
 	$list_model.=sprintf("%14s: %s\r\n%14s: %s\r\n%14s: %s\r\n%14s: %s\r\n%14s: %s","Name",$name,"IP",$ip,"MAC",$mac,"Type",$type,"Version",$ver);
 	if(isset($tag))
@@ -273,10 +274,10 @@ $(document).ready(function() {
     </table>
 
 <center><form method='POST' action='index.php'><input type='hidden' value='backupall' name='task'><input type='submit' value='Backup All' class='btn-xs btn-success'></form><br>
-<form method="POST" action="scan.php"><input type=text name=range placeholder="192.168.1.1-255"><input type="password" name="password" placeholder="password" <?php if(isset($settings['tasmota_password'])) { echo 'value="'.$settings['tasmota_password'].'" '; } ?>><input type=hidden name=task value=scan><input type=submit value=Discover class='btn-xs btn-danger'></form>
+<form method="POST" action="scan.php"><input type=text name=range placeholder="192.168.1.1-255"><input type="password" name="password" placeholder="password" <?php if(isset($settings['tasmota_password'])) { echo 'value="'.$settings['tasmota_password'].'" '; } ?>><input type=hidden name=task value=scan><input style="min-width:200px" type=submit value=Discover class='btn-xs btn-danger'></form>
 <?php if(isset($settings['mqtt_host']) && isset($settings['mqtt_port']) && strlen($settings['mqtt_host'])>1) {
 ?>
-<form method="POST" action="scan.php"><input type=text name=mqtt_topic value='<?php echo isset($settings['mqtt_topic'])?$settings['mqtt_topic']:'tasmotas'; ?>'><input type="password" name="password" placeholder="password" <?php if(isset($settings['tasmota_password'])) { echo 'value="'.$settings['tasmota_password'].'" '; } ?>><input type=hidden name=task value=mqtt><input type=submit value="MQTT Discover" class='btn-xs btn-danger'></form>
+<form method="POST" action="scan.php"><input type=text name=mqtt_topic value='<?php echo isset($settings['mqtt_topic'])?$settings['mqtt_topic']:'tasmotas'; ?>'><input type="password" name="password" placeholder="password" <?php if(isset($settings['tasmota_password'])) { echo 'value="'.$settings['tasmota_password'].'" '; } ?>><input type=hidden name=task value=mqtt><input style="min-width:200px" type=submit value="MQTT Discover" class='btn-xs btn-danger'></form>
 <?php
 }
 
@@ -286,7 +287,17 @@ echo '</div>';
 if(isset($list_model)) {
     echo $list_model;
 ?>
-<script type='text/javascript'>
+<script>
+$(document).ready(function() {
+    $('.openConsole').on('click', function(){
+        let buttonClicked = $(this);
+        buttonClicked.closest('tr').next('tr').toggle();
+        let row = buttonClicked.data('row');
+        let ip = buttonClicked.data('ip')
+        $('#iframe'+row).attr('src', 'http://' + ip + '/cs');
+    });
+});
+
 function deviceModal(modalId) {
   $(modalId).modal('show');
 }
@@ -296,9 +307,9 @@ function deviceModal(modalId) {
 
 if (isset($show_modal) && $show_modal):
 ?>
-   <script type='text/javascript'>
+   <script>
     $(document).ready(function(){
-    $('#myModal').modal('show');
+        $('#myModal').modal('show');
     });
     </script>
 <?php
@@ -313,18 +324,15 @@ endif;
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        
         <h4 class="modal-title">TasmoBackup</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
       <div class="modal-body">
-        <p><center>
-          <?php if (isset($output)) {
-    echo $output;
-} ?>
+        <p style="align:center">
+          <?php if (isset($output)) { echo $output; } ?>
           <br>
-          <?php if (isset($output2)) {
-    echo $output2;
-} ?>
+          <?php if (isset($output2)) { echo $output2; } ?>
         </p>
       </div>
       <div class="modal-footer">

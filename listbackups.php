@@ -33,7 +33,7 @@ $(document).ready(function() {
             { "type": "version", "targets": [2] }
             ],
         "statesave": true,
-        "autoWidth": true
+        "autoWidth": false
 } );
 } );
 ',true);

@@ -11,7 +11,7 @@ $(document).ready(function() {
         "order": [[0, "asc" ]],
         "pageLength": '. (isset($settings['amount'])?$settings['amount']:100) .',
         "statesave": true,
-        "autoWidth": true
+        "autoWidth": false
 } );
 } );
 ',true);

@@ -77,8 +77,8 @@ docker run -d -p 8259:80 -v ./data:/var/www/html/data -e DBTYPE=mysql -e MYSQL_S
 ```
 git clone https://github.com/danmed/TasmoBackupV1
 cd TasmoBackupV1
-mkdir data
-chown www-data data
+mkdir data data/backups
+chown -R www-data data
 cp config.inc.php.example data/config.inc.php
 ```
 
@@ -86,6 +86,7 @@ Edit data/config.inc.php if you wish to change to using mysql database
 instead of sqlite.
 Make sure the data directory is owned by the user php runs as, or it will
 not be able to save your backups or create/update the sqlite file
+Use your package manager to install php*-curl. Example: `apt install php7.4-curl`
 
 Run the upgrade.php script to initialize your new database, or to upgrade
 your existing one when changing versions.

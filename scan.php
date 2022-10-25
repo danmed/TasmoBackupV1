@@ -10,7 +10,7 @@ $(document).ready(function() {
         "order": [[1, "asc" ]],
         "pageLength": '. (isset($settings['amount'])?$settings['amount']:100) .',
         "statesave": true,
-        "autoWidth": true
+        "autoWidth": false
 } );
 } );
 ',true,((isset($settings['autoadd_scan']) && $settings['autoadd_scan']=='Y')?1:false));

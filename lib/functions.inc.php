@@ -729,13 +729,13 @@ if($track) { ?>
 <?php } ?>
   <script src="resources/jquery.min.js"></script>
   <script src="resources/bootstrap.min.js"></script>
-<?php if($init!==false) { ?>
-  <script type="text/javascript" src="resources/datatables.min.js"></script>
-  <script type="text/javascript" src="resources/sorting.min.js"></script>
+<?php if($init !== false) { ?>
+  <script src="resources/datatables.min.js"></script>
+  <script src="resources/sorting.min.js"></script>
   <link rel="stylesheet" type="text/css" href="resources/datatables.min.css"/>
-<script type="text/javascript" class="init">
-<?php echo $init; ?>
-</script>
+    <script class="init">
+    <?php echo $init; ?>
+    </script>
 <?php } ?>
 </head>
 <?php

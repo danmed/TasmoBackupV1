@@ -6,17 +6,17 @@ global $db_handle;
 global $settings;
 
 if (isset($_POST["sortoption"])) {
-    dbSettingsUpdate('sort',intval($_POST["sortoption"]));
+    dbSettingsUpdate('sort', (int)$_POST["sortoption"]);
 }
 
 if (isset($_POST["amountoption"])) {
-    dbSettingsUpdate('amount',intval($_POST["amountoption"]));
+    dbSettingsUpdate('amount', (int)$_POST["amountoption"]);
 }
 if (isset($_POST['mqtt_host'])) {
     dbSettingsUpdate('mqtt_host',$_POST['mqtt_host']);
 }
 if (isset($_POST['mqtt_port'])) {
-    dbSettingsUpdate('mqtt_port',intval($_POST['mqtt_port']));
+    dbSettingsUpdate('mqtt_port', (int)$_POST['mqtt_port']);
 }
 if (isset($_POST['mqtt_user'])) {
     dbSettingsUpdate('mqtt_user',$_POST['mqtt_user']);
@@ -31,13 +31,13 @@ if (isset($_POST['mqtt_topic_format'])) {
     dbSettingsUpdate('mqtt_topic_format',trim($_POST['mqtt_topic_format']," \t\n\r\0\v/"));
 }
 if (isset($_POST['backup_minhours'])) {
-    dbSettingsUpdate('backup_minhours',intval($_POST['backup_minhours']));
+    dbSettingsUpdate('backup_minhours', (int)$_POST['backup_minhours']);
 }
 if (isset($_POST['backup_maxdays'])) {
-    dbSettingsUpdate('backup_maxdays',intval($_POST['backup_maxdays']));
+    dbSettingsUpdate('backup_maxdays', (int)$_POST['backup_maxdays']);
 }
 if (isset($_POST['backup_maxcount'])) {
-    dbSettingsUpdate('backup_maxcount',intval($_POST['backup_maxcount']));
+    dbSettingsUpdate('backup_maxcount', (int)$_POST['backup_maxcount']);
 }
 if (isset($_POST['backup_folder'])) {
     dbSettingsUpdate('backup_folder',$_POST['backup_folder']);

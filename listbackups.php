@@ -8,17 +8,17 @@ if (isset($_POST["name"])) {
     $name = $_POST["name"];
 }
 if (isset($_POST["id"])) {
-    $id = intval($_POST["id"]);
+    $id = (int)$_POST["id"];
 }
 if (isset($_POST["task"])) {
     switch(strtolower($_POST["task"])) {
         case 'delbackup':
-            dbBackupDel(intval($_POST["backupid"]));
+            dbBackupDel((int)$_POST["backupid"]);
             dbDeviceBackups($id);
             break;
         case 'restorebackup':
             $device=dbDeviceId($id);
-            $backup=dbBackupId(intval($_POST["backupid"]));
+            $backup=dbBackupId((int)$_POST["backupid"]);
             restoreTasmotaBackup($device['ip'],'admin',$device['password'],$backup['filename']);
             break;
     }
@@ -52,7 +52,7 @@ $(document).ready(function() {
     $device = dbDeviceId($id);
     $type=0;
     if(isset($device['type']))
-        $type=intval($device['type']);
+        $type= (int)$device['type'];
 
     $backups = dbBackupList($id);
     foreach ($backups as $db_field) {
@@ -90,7 +90,7 @@ $(document).ready(function() {
     </form>
   </center></td>
 <?php
-        if(intval($type)===0) {
+        if((int)$type===0) {
 ?>  <td><center>
     <form action='listbackups.php' method='POST'>
     <input type='hidden' name='task' value='restorebackup'>

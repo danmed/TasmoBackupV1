@@ -165,7 +165,7 @@ function getTasmotaStatus($ip, $user, $password, $type=0)
 {
     //Get Name
     $url = 'http://' .rawurlencode($user).':'.rawurlencode($password).'@'. $ip . '/cm?cmnd=status%200&user='.rawurlencode($user).'&password=' . rawurlencode($password);
-    if(intval($type)===1)
+    if((int)$type ===1)
         $url = 'http://' .rawurlencode($user).':'.rawurlencode($password).'@'. $ip . '/json';
     $options = array(
         CURLOPT_FOLLOWLOCATION => false,
@@ -332,7 +332,7 @@ function getTasmotaBackup($ip, $user, $password, $filename, $type=0)
 {
     //Get Backup
 
-    if(intval($type)===0) { // Tasmota
+    if((int)$type ===0) { // Tasmota
         $fp = fopen($filename, 'w+');
         if ($fp === false) {
             return false;
@@ -360,7 +360,7 @@ function getTasmotaBackup($ip, $user, $password, $filename, $type=0)
         if (!$err && $statusCode == 200) {
             return true;
         }
-    } else if(intval($type)===1) { // WLED
+    } else if((int)$type ===1) { // WLED
         $url = 'http://'.rawurlencode($user).':'.rawurlencode($password)."@".$ip.'/edit?download=cfg.json';
         $options = array(
             CURLOPT_FOLLOWLOCATION => false,
@@ -414,9 +414,9 @@ function backupCleanup($id)
     $days=0;
     $count=0;
     if(isset($settings['backup_maxdays']))
-        $days=intval($settings['backup_maxdays']);
+        $days= (int)$settings['backup_maxdays'];
     if(isset($settings['backup_maxcount']))
-        $count=intval($settings['backup_maxcount']);
+        $count= (int)$settings['backup_maxcount'];
     if($days>0 || $count>0)
         return dbBackupTrim($id,$days,$count);
     return true;
@@ -429,7 +429,7 @@ function backupSingle($id, $name, $ip, $user, $password, $type=0)
     $backupfolder = $settings['backup_folder'];
 
     if ($status=getTasmotaStatus($ip, $user, $password, $type)) {
-        if(intval($type)===0) { // Tasmota
+        if((int)$type ===0) { // Tasmota
             if (!isset($status['StatusFWR'])) {
                 sleep(1);
                 if ($status2=getTasmotaStatus2($ip, $user, $password)) {
@@ -445,7 +445,7 @@ function backupSingle($id, $name, $ip, $user, $password, $type=0)
                     return true; // Device Offline
             }
         }
-        if(intval($type)===1) { // WLED
+        if((int)$type ===1) { // WLED
             if (!isset($status['info']['ver']))
                 return true;
         }
@@ -453,7 +453,7 @@ function backupSingle($id, $name, $ip, $user, $password, $type=0)
         return true; // Device Offline
     }
 
-    if(intval($type)===0) { // Tasmota
+    if((int)$type ===0) { // Tasmota
         $version = $status['StatusFWR']['Version'];
         $mac = strtoupper($status['StatusNET']['Mac']);
 
@@ -471,7 +471,7 @@ function backupSingle($id, $name, $ip, $user, $password, $type=0)
                 }
             }
         }
-    } else if (intval($type)===1) { // WLED
+    } else if ((int)$type ===1) { // WLED
         if(isset($status['info']['name']))
             $name=trim($status['info']['name']);
         if(isset($status['info']['ver']))
@@ -493,7 +493,7 @@ function backupSingle($id, $name, $ip, $user, $password, $type=0)
     $savedate = preg_replace('/[^A-Za-z0-9_\-]/', '', $savedate);
 
     $ext='.dmp';
-    if(intval($type)===1) $ext='.zip';
+    if((int)$type ===1) $ext='.zip';
 
 
     $saveto = $backupfolder . $savename . "/" . $savemac . "-" . $savedate . $ext;
@@ -527,7 +527,7 @@ function backupAll($docker=false)
 
     $hours=0;
     if(isset($settings['backup_minhours']))
-        $hours=intval($settings['backup_minhours']);
+        $hours= (int)$settings['backup_minhours'];
     if($docker && $hours==0)
         return false;
     if ($docker && isset($settings['autoadd_scan']) && $settings['autoadd_scan']=='Y') { // auto scan on schedule
@@ -569,7 +569,7 @@ function addTasmotaDevice($ip, $user, $password, $verified=false, $status=false,
         if ($status===false)
             $status=getTasmotaStatus($ip, $user, $password, $type);
         if (isset($status) && $status) {
-            if(intval($type)===0) { // Tasmota
+            if((int)$type ===0) { // Tasmota
                 if (!isset($status['StatusNET'])) {
                     sleep(1);
                     if ($status5=getTasmotaStatus5($ip, $user, $password))
@@ -600,7 +600,7 @@ function addTasmotaDevice($ip, $user, $password, $verified=false, $status=false,
                     $version=$status['StatusFWR']['Version'];
                 if (isset($status['StatusNET']['Mac']))
                     $mac=strtoupper($status['StatusNET']['Mac']);
-            } else if (intval($type)===1) { // WLED
+            } else if ((int)$type ===1) { // WLED
                 if(isset($status['info']['name']))
                     $name=trim($status['info']['name']);
                 if(isset($status['info']['ver']))
@@ -625,7 +625,7 @@ function addTasmotaDevice($ip, $user, $password, $verified=false, $status=false,
         return $ip.': Device not responding to status request.';
     } else { // Update device metadata, but only if scanned via mqtt as not to add more overhead
         if (isset($status) && $status) {
-            if(intval($type)===0) {
+            if((int)$type ===0) {
                 if(isset($settings['use_topic_as_name']) && $settings['use_topic_as_name']=='F' && isset($status['Topic'])) {
                     $name=trim(str_replace(array('/stat','stat/'),array('',''),$status['Topic'])," \t\r\n\v\0/");;
                 } else {
@@ -642,7 +642,7 @@ function addTasmotaDevice($ip, $user, $password, $verified=false, $status=false,
                     $version=$status['StatusFWR']['Version'];
                 if (isset($status['StatusNET']['Mac']))
                     $mac=strtoupper($status['StatusNET']['Mac']);
-            } else if (intval($type)===1) { // WLED
+            } else if ((int)$type ===1) { // WLED
                 if(isset($status['info']['name']))
                     $name=trim($status['info']['name']);
                 if(isset($status['info']['ver']))

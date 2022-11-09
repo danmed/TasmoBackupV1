@@ -59,8 +59,8 @@ switch(strtolower($task)) {
         }
         break;
     case 'download':
-        $device=dbDeviceId(intval($_POST["id"]));
-        $backup=dbBackupId(intval($_POST["backupid"]));
+        $device=dbDeviceId((int)$_POST["id"]);
+        $backup=dbBackupId((int)$_POST["backupid"]);
         downloadTasmotaBackup($backup);
         break;
     case 'singlebackup':
@@ -174,8 +174,8 @@ $(document).ready(function() {
     $lastbackup_red=0;
     $lastbackup_yellow=0;
     if(isset($settings['backup_minhours']) && $settings['backup_minhours']>0) {
-        $lastbackup_green=$now-(intval($settings['backup_minhours'])*3600*2.2);
-        $lastbackup_red=$now-(intval($settings['backup_minhours'])*3600*8);
+        $lastbackup_green=$now-((int)$settings['backup_minhours'] *3600*2.2);
+        $lastbackup_red=$now-((int)$settings['backup_minhours'] *3600*8);
     }    
     $devices = dbDevicesSort();
     foreach ($devices as $db_field) {
@@ -191,7 +191,7 @@ $(document).ready(function() {
         }
         $logo='images/tasmota.png';
         $type='Tasmota';
-        if(isset($db_field['type']) && intval($db_field['type'])===1) {
+        if(isset($db_field['type']) && (int)$db_field['type'] ===1) {
             $logo='images/wled.png';
             $type='WLED';
         }

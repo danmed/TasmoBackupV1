@@ -150,7 +150,7 @@ function dbBackupList($id,$days=0)
 {
     global $db_handle;
 
-    $days=intval($days);
+    $days= (int)$days;
     $datecond='';
     if($days>0) {
         $date = date('Y-m-d H:i:s',time()-(86400*$days));
@@ -180,8 +180,8 @@ function dbBackupTrim($id,$days,$count,$all=false)
 {
     global $db_handle;
 
-    $days=intval($days);
-    $count=intval($count);
+    $days= (int)$days;
+    $count= (int)$count;
     if($days==0 && $count==0 && !$all)
         return true;
 
@@ -278,7 +278,7 @@ function dbDeviceDel($ip)
     $stm->bindValue(':ip', $ip, PDO::PARAM_STR);
     if (!$stm->execute())
         return false;
-    $id=intval($stm->fetchColumn());
+    $id= (int)$stm->fetchColumn();
     if($id==0)
         return false;
     dbBackupTrim($id,0,0,true);
@@ -427,14 +427,14 @@ if ($GLOBALS['DBType']=='mysql') {
 
     $stm=$db_handle->prepare("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='".$GLOBALS['DBName']."' AND TABLE_NAME='devices' AND COLUMN_NAME='mac';");
     $stm->execute();
-    $cnt=intval($stm->fetchColumn());
+    $cnt= (int)$stm->fetchColumn();
     if($cnt<1) {
         $db_handle->exec("ALTER TABLE devices ADD COLUMN mac varchar(32) NOT NULL DEFAULT '' AFTER ip;");
     }
 
     $stm=$db_handle->prepare("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='".$GLOBALS['DBName']."' AND TABLE_NAME='devices' AND COLUMN_NAME='type';");
     $stm->execute();
-    $cnt=intval($stm->fetchColumn());
+    $cnt= (int)$stm->fetchColumn();
     if($cnt<1) {
         $db_handle->exec("ALTER TABLE devices ADD COLUMN type int(3) NOT NULL DEFAULT 0 AFTER mac;");
     }

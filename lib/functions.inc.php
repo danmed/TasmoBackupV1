@@ -362,6 +362,13 @@ function getTasmotaBackup($ip, $user, $password, $filename, $type=0)
         }
     } else if(intval($type)===1) { // WLED
         $url = 'http://'.rawurlencode($user).':'.rawurlencode($password)."@".$ip.'/edit?download=cfg.json';
+
+        //parsing version from filename
+        $version = substr(strstr(basename($filename, '.zip'), 'v'), 1);
+
+        if (version_compare($version,'0.13.1',  '>')){
+            $url = 'http://'.rawurlencode($user).':'.rawurlencode($password)."@".$ip.'/cfg.json?download';
+        }
         $options = array(
             CURLOPT_FOLLOWLOCATION => false,
             CURLOPT_TIMEOUT => 60,
@@ -382,6 +389,11 @@ function getTasmotaBackup($ip, $user, $password, $filename, $type=0)
             return false;
 
         $url = 'http://'.rawurlencode($user).':'.rawurlencode($password)."@".$ip.'/edit?download=presets.json';
+
+        if (version_compare($version,'0.13.0',  '>')){
+            $url = 'http://'.rawurlencode($user).':'.rawurlencode($password)."@".$ip.'/presets.json?download';
+        }
+
         $ch = curl_init($url);
         curl_setopt_array($ch, $options);
         $presets = curl_exec($ch);
@@ -483,6 +495,7 @@ function backupSingle($id, $name, $ip, $user, $password, $type=0)
     $savename = preg_replace('/\s+/', '_', $name);
     $savename = preg_replace('/[^A-Za-z0-9_\-]/', '', $savename);
     $savemac = preg_replace('/[^A-Za-z0-9_\-]/','', $mac);
+
     if (!file_exists($backupfolder . $savename)) {
         $oldmask = umask(0);
         mkdir($backupfolder . $savename, 0777, true);
@@ -496,7 +509,7 @@ function backupSingle($id, $name, $ip, $user, $password, $type=0)
     if(intval($type)===1) $ext='.zip';
 
 
-    $saveto = $backupfolder . $savename . "/" . $savemac . "-" . $savedate . $ext;
+    $saveto = $backupfolder . $savename . "/" . $savemac . "-" . $savedate . '-v' . $version . $ext;
 
     sleep(1);
     if (getTasmotaBackup($ip, $user, $password, $saveto, $type)) {

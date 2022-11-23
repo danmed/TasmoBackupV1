@@ -6,8 +6,18 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit9652864dded9e7d7b60414870bb7085c
 {
-    public static $files = array (
-        '461c18cd6e7426b4234b954ce8cb7a22' => __DIR__ . '/../..' . '/lib/HomeAssistantConfigReader.php',
+    public static $prefixLengthsPsr4 = array (
+        'T' => 
+        array (
+            'TasmoBackup\\' => 12,
+        ),
+    );
+
+    public static $prefixDirsPsr4 = array (
+        'TasmoBackup\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/src',
+        ),
     );
 
     public static $classMap = array (
@@ -17,6 +27,8 @@ class ComposerStaticInit9652864dded9e7d7b60414870bb7085c
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
+            $loader->prefixLengthsPsr4 = ComposerStaticInit9652864dded9e7d7b60414870bb7085c::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit9652864dded9e7d7b60414870bb7085c::$prefixDirsPsr4;
             $loader->classMap = ComposerStaticInit9652864dded9e7d7b60414870bb7085c::$classMap;
 
         }, null, ClassLoader::class);

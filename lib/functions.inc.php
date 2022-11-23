@@ -58,7 +58,7 @@ function getTasmotaScan($ip, $user, $password)
         CURLOPT_TIMEOUT => 30,
         CURLOPT_CONNECTTIMEOUT => 12,
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_USERAGENT => 'TasmoBackup ' . HomeAssistantConfigReader::getVersion(),
+        CURLOPT_USERAGENT => 'TasmoBackup ' . TasmoBackup\Config\HomeAssistantConfigReader::getVersion(),
         CURLOPT_ENCODING => "",
         CURLOPT_REFERER => 'http://'.$ip.'/',
         CURLOPT_HTTPHEADER => array('Origin: http://'.$ip),
@@ -97,7 +97,7 @@ function getTasmotaScanRange($iprange, $user, $password)
         CURLOPT_TIMEOUT => 30,
         CURLOPT_CONNECTTIMEOUT => 12,
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_USERAGENT => 'TasmoBackup ' . HomeAssistantConfigReader::getVersion(),
+        CURLOPT_USERAGENT => 'TasmoBackup ' . TasmoBackup\Config\HomeAssistantConfigReader::getVersion(),
         CURLOPT_ENCODING => "",
     );
     $range=15;
@@ -169,7 +169,7 @@ function getTasmotaStatus($ip, $user, $password, $type=0)
         CURLOPT_TIMEOUT => 30,
         CURLOPT_CONNECTTIMEOUT => 12,
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_USERAGENT => 'TasmoBackup ' . HomeAssistantConfigReader::getVersion(),
+        CURLOPT_USERAGENT => 'TasmoBackup ' . TasmoBackup\Config\HomeAssistantConfigReader::getVersion(),
         CURLOPT_ENCODING => "",
         CURLOPT_REFERER => 'http://'.$ip.'/',
         CURLOPT_HTTPHEADER => array('Origin: http://'.$ip),
@@ -205,7 +205,7 @@ function getTasmotaOldStatus($ip, $user, $password)
         CURLOPT_TIMEOUT => 30,
         CURLOPT_CONNECTTIMEOUT => 12,
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_USERAGENT => 'TasmoBackup ' . HomeAssistantConfigReader::getVersion(),
+        CURLOPT_USERAGENT => 'TasmoBackup ' . TasmoBackup\Config\HomeAssistantConfigReader::getVersion(),
         CURLOPT_ENCODING => "",
         CURLOPT_REFERER => 'http://'.$ip.'/',
         CURLOPT_HTTPHEADER => array('Origin: http://'.$ip),
@@ -231,7 +231,7 @@ function getTasmotaStatus2($ip, $user, $password)
         CURLOPT_TIMEOUT => 30,
         CURLOPT_CONNECTTIMEOUT => 12,
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_USERAGENT => 'TasmoBackup ' . HomeAssistantConfigReader::getVersion(),
+        CURLOPT_USERAGENT => 'TasmoBackup ' . TasmoBackup\Config\HomeAssistantConfigReader::getVersion(),
         CURLOPT_ENCODING => "",
         CURLOPT_REFERER => 'http://'.$ip.'/',
         CURLOPT_HTTPHEADER => array('Origin: http://'.$ip),
@@ -257,7 +257,7 @@ function getTasmotaStatus5($ip, $user, $password)
         CURLOPT_TIMEOUT => 30,
         CURLOPT_CONNECTTIMEOUT => 12,
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_USERAGENT => 'TasmoBackup ' . HomeAssistantConfigReader::getVersion(),
+        CURLOPT_USERAGENT => 'TasmoBackup ' . TasmoBackup\Config\HomeAssistantConfigReader::getVersion(),
         CURLOPT_ENCODING => "",
         CURLOPT_REFERER => 'http://'.$ip.'/',
         CURLOPT_HTTPHEADER => array('Origin: http://'.$ip),
@@ -286,7 +286,7 @@ function restoreTasmotaBackup($ip, $user, $password, $filename)
         CURLOPT_TIMEOUT => 60,
         CURLOPT_CONNECTTIMEOUT => 12,
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_USERAGENT => 'TasmoBackup ' . HomeAssistantConfigReader::getVersion(),
+        CURLOPT_USERAGENT => 'TasmoBackup ' . TasmoBackup\Config\HomeAssistantConfigReader::getVersion(),
         CURLOPT_POST => true,
         CURLOPT_POSTFIELDS => $fields,
         CURLOPT_HTTPHEADER => array('Content-Type: multipart/form-data'),
@@ -340,7 +340,7 @@ function getTasmotaBackup($ip, $user, $password, $filename, $type=0)
             CURLOPT_TIMEOUT => 60,
             CURLOPT_CONNECTTIMEOUT => 12,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_USERAGENT => 'TasmoBackup ' . HomeAssistantConfigReader::getVersion(),
+            CURLOPT_USERAGENT => 'TasmoBackup ' . TasmoBackup\Config\HomeAssistantConfigReader::getVersion(),
             CURLOPT_ENCODING => "",
             CURLOPT_REFERER => 'http://'.$ip.'/',
             CURLOPT_HTTPHEADER => array('Origin: http://'.$ip),
@@ -364,7 +364,7 @@ function getTasmotaBackup($ip, $user, $password, $filename, $type=0)
             CURLOPT_TIMEOUT => 60,
             CURLOPT_CONNECTTIMEOUT => 12,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_USERAGENT => 'TasmoBackup ' . HomeAssistantConfigReader::getVersion(),
+            CURLOPT_USERAGENT => 'TasmoBackup ' . TasmoBackup\Config\HomeAssistantConfigReader::getVersion(),
             CURLOPT_ENCODING => "",
             CURLOPT_REFERER => 'http://'.$ip.'/',
             CURLOPT_HTTPHEADER => array('Origin: http://'.$ip),
@@ -743,7 +743,7 @@ function TBFooter()
     global $VERSION;
 ?>
 <br><br>
-<div style='text-align:right;font-size:11px;'><hr/><a href='https://github.com/danmed/TasmoBackupV1' target='_blank' style='color:#aaa;'>TasmoBackup <?php echo HomeAssistantConfigReader::getVersion(); ?> by Dan Medhurst</a></div>
+<div style='text-align:right;font-size:11px;'><hr/><a href='https://github.com/danmed/TasmoBackupV1' target='_blank' style='color:#aaa;'>TasmoBackup <?php echo TasmoBackup\Config\HomeAssistantConfigReader::getVersion(); ?> by Dan Medhurst</a></div>
 <?php
 }
 

@@ -1,5 +1,7 @@
 <?php
 
+namespace TasmoBackup\Config;
+
 /**
  * Reads config.json from HA_addon folder and provides information
  */
@@ -12,7 +14,7 @@ final class HomeAssistantConfigReader
      */
     private static function readConfig(): void
     {
-        $content = file_get_contents(__DIR__ . '/../HA_addon/config.json');
+        $content = file_get_contents(__DIR__ . '/../../HA_addon/config.json');
         self::$config = json_decode($content, true);
     }
 

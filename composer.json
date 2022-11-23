@@ -1,7 +1,7 @@
 {
   "autoload": {
-    "files": [
-      "lib/HomeAssistantConfigReader.php"
-    ]
+    "psr-4": {
+      "TasmoBackup\\": "./src"
+    }
   }
 }

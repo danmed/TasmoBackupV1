@@ -1,0 +1,7 @@
+{
+  "autoload": {
+    "files": [
+      "lib/HomeAssistantConfigReader.php"
+    ]
+  }
+}

@@ -2,7 +2,6 @@
 .git
 .gitignore
 .htaccess
-Dockerfile
 hooks
 multi-arch-manifest.yaml
 repository.json

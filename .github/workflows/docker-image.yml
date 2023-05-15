@@ -24,5 +24,5 @@ jobs:
 
     - name: 'Build Inventory Image'
       run: |
-        docker build . --tag ghcr.io/errolsancaktar/TasmoBackup:latest
-        docker push ghcr.io/errolsancaktar/TasmoBackup:latest
+        docker build . --tag ghcr.io/errolsancaktar/tasmobackup:latest
+        docker push ghcr.io/errolsancaktar/tasmobackup:latest

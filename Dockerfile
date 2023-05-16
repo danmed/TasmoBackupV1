@@ -1,4 +1,4 @@
-ARG BUILD_FROM=docker.patrickdk.com/docker-php-nginx:7.3
+ARG BUILD_FROM=php:fpm-alpine
 ARG BUILD_FROM_PREFIX
 FROM ${BUILD_FROM}${BUILD_FROM_PREFIX}
 
@@ -8,6 +8,10 @@ WORKDIR /
 
 COPY install.sh qemu-${QEMU_ARCH}-static* /usr/bin/
 COPY --chown=www-data . /var/www/html/
+COPY supervisord.conf /etc/supervisor/conf.d/
+COPY bin /usr/local/bin/
+
+
 
 ENV NGINX_SENDFILE=off \
     NGINX_WORKER_PROCESSES=1 \
@@ -18,12 +22,26 @@ ENV NGINX_SENDFILE=off \
     NGINX_LOG_ACCESS=off \
     NGINX_GZIP_STATIC=on
 
+RUN echo "Supervisor Install" \
+&& apk add --no-cache --purge -uU supervisor inotify-tools \
+&& 	rm -rf /var/cache/apk/* /tmp/* \
+&& chmod +x /usr/local/bin/*
+
+RUN echo "Nginx Install" \
+&& apk add --no-cache --purge -uU nginx \
+&& mkdir -p /var/www/html/data
+
+COPY --chown=www-data nginx /etc/nginx/
+COPY --chown=www-data data /var/www/html
+
+
 RUN echo "Start" \
- && rm -f /etc/php7/conf.d/*brotli.ini \
  && cd /var/www/html/resources \
  && gzip -k -9 *.js \
  && gzip -k -9 *.css \
  && chown www-data:www-data *.gz \
+ && mkdir -p /etc/nginx/vhost \
+ && ln -s /usr/local/bin/php /usr/bin/php \
  && rm -f /var/www/html/install.sh /var/www/html/qemu-*-static \
  && printf '        location ~* \.css$$ {\n\
             expires 1h;\n\
@@ -59,10 +77,9 @@ CMD [ "/usr/bin/install.sh", "/usr/bin/supervisord", "-c", "/etc/supervisor/conf
 ARG BUILD_DATE
 ARG BUILD_REF
 ARG BUILD_VERSION
-
-LABEL maintainer="Dan Medhurst (danmed@gmail.com)" \
+LABEL maintainer="Errol Sancaktar" \
   Description="Manage Tasmota scheduled backups and restores." \
-  ForkedFrom="" \
+  ForkedFrom="danmed/TasmoBackupV1:master" \
   io.hass.name="TasmoBackup" \
   io.hass.description="Manage Tasmota scheduled backups and restores." \
   io.hass.arch="${BUILD_ARCH}" \
@@ -72,8 +89,8 @@ LABEL maintainer="Dan Medhurst (danmed@gmail.com)" \
   org.label-schema.build-date="${BUILD_DATE}" \
   org.label-schema.name="TasmoBackup" \
   org.label-schema.description="Manage Tasmota scheduled backups and restores." \
-  org.label-schema.url="https://github.com/danmed/TasmoBackupV1" \
-  org.label-schema.usage="https://github.com/danmed/TasmoBackupV1/tree/master/README.md" \
-  org.label-schema.vcs-url="https://github.com/danmed/TasmoBackupV1" \
+  org.label-schema.url="https://github.com/errolsancaktar/TasmoBackupV1" \
+  org.label-schema.usage="https://github.com/errolsancaktar/TasmoBackupV1/tree/master/README.md" \
+  org.label-schema.vcs-url="https://github.com/errolsancaktar/TasmoBackupV1" \
   org.label-schema.vcs-ref="${BUILD_REF}" \
   org.label-schema.version="${BUILD_VERSION}"

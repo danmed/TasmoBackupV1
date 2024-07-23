@@ -1,0 +1,33 @@
+name: "TasmoBackup"
+version: "1.06.00"
+slug: "tasmobackup"
+description: "Tasmota Backup"
+url: "https://github.com/danmed/TasmoBackupV1/"
+image: "danmed/tasmobackupv1"
+arch:
+  - amd64
+  - i386
+  - aarch64
+  - armv7
+  - armhf
+homeassistant_api: false
+host_network: false
+startup: "application"
+boot: "auto"
+ingress: true
+ingress_port: 80
+options:
+  DBTYPE: "sqlite"
+  DBNAME: "data/tasmobackupdb"
+schema:
+  DBTYPE: "match(^(sqlite|mysql)$)"
+  DBNAME: "str"
+  MYSQL_SERVER: "str?"
+  MYSQL_USERNAME: "str?"
+  MYSQL_PASSWORD: "str?"
+panel_icon: "mdi:backup-restore"
+panel_admin: true
+ports:
+  80/tcp: null
+ports_description: {"80/tcp": "TasmoBackup Web Interface"}
+webui: "http://[HOST]:[PORT:80]"

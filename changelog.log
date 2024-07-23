@@ -1,3 +1,6 @@
+##v1.06.01
+* HA changed json to yaml
+
 ##v1.06.00
 * Add option to open console inline
 * Various cleanup

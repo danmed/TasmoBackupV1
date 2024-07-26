@@ -6,7 +6,7 @@ require_once(__DIR__.'/phpMQTT2.php');
 GLOBAL $mqtt_found;
 $mqtt_found=[];
 
-function setupMQTT($server, $port=1883, $user, $password)
+function setupMQTT($server, $user, $password, $port=1883)
 {
     $mqtt = new phpMQTT($server, $port, 'TasmoBackup');
     //$mqtt = new Bluerhinos\phpMQTT($server, $port, 'TasmoBackup');

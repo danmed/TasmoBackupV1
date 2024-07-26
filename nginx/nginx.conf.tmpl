@@ -1,0 +1,107 @@
+worker_processes ${NGINX_WORKER_PROCESSES};
+error_log stderr warn;
+pid /run/nginx.pid;
+user www-data www-data;
+
+events {
+    worker_connections ${NGINX_WORKER_CONNECTIONS};
+}
+
+http {
+    include mime.types;
+    default_type application/octet-stream;
+
+    # Define custom log format to include reponse times
+    log_format main_timed '$remote_addr - $remote_user [$time_local] "$request" '
+                          '$status $body_bytes_sent "$http_referer" '
+                          '"$http_user_agent" "$http_x_forwarded_for" '
+                          '$request_time $upstream_response_time $pipe $upstream_cache_status';
+
+    access_log /dev/stdout main_timed;
+    error_log /dev/stderr notice;
+
+    keepalive_timeout ${NGINX_KEEPALIVE_TIMEOUT};
+    fastcgi_read_timeout ${NGINX_PROXY_TIMEOUT};
+    proxy_read_timeout ${NGINX_PROXY_TIMEOUT};
+
+    client_max_body_size ${NGINX_CLIENT_MAX_BODY_SIZE};
+    client_body_buffer_size ${NGINX_CLIENT_BODY_BUFFER_SIZE};
+    sendfile ${NGINX_SENDFILE};
+    tcp_nodelay ${NGINX_TCP_NODELAY};
+    tcp_nopush ${NGINX_TCP_NOPUSH};
+
+    # Write temporary files to /tmp so they can be created as a non-privileged user
+    client_body_temp_path /tmp/client_temp;
+    proxy_temp_path /tmp/proxy_temp_path;
+    fastcgi_temp_path /tmp/fastcgi_temp;
+    uwsgi_temp_path /tmp/uwsgi_temp;
+    scgi_temp_path /tmp/scgi_temp;
+
+    proxy_set_header Proxy "";
+    map $http_x_forwarded_proto $is_https {
+        default "";
+        https on;
+    }
+    proxy_set_header HTTPS $is_https;
+
+    server_tokens off;
+
+    # Default server definition
+    server {
+        listen 80 default_server;
+        server_name _;
+
+        root /var/www/html;
+        index index.php index.html index.htm;
+
+        include vhost/server;
+
+        location / {
+            # First attempt to serve request as file, then
+            # as directory, then fall back to index.php
+            try_files $uri $uri/ /index.php?q=$uri&$args;
+            include vhost/server_location;
+        }
+
+        # Redirect server error pages to the static page /50x.html
+        error_page 500 502 503 504 /50x.html;
+        location = /50x.html {
+            root /var/lib/nginx/html;
+        }
+
+        # Pass the PHP scripts to PHP-FPM listening on localhost:9000
+        location ~ [^/]\.php(/|$) {
+            try_files $uri =404;
+            fastcgi_split_path_info ^(.+?\.php)(/.*)$;
+            fastcgi_pass localhost:9000;
+            include fastcgi_params;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            fastcgi_param SCRIPT_NAME $fastcgi_script_name;
+            fastcgi_param REMOTE_ADDR $http_x_real_ip;
+            fastcgi_param HTTPS $is_https;
+            fastcgi_index index.php;
+            fastcgi_read_timeout ${NGINX_PROXY_TIMEOUT};
+        }
+
+        # Allow fpm ping and status from localhost
+        location ~ ^/(fpm-status|fpm-ping)$ {
+            access_log off;
+            allow 127.0.0.1;
+            allow ::1;
+            deny all;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            include fastcgi_params;
+            fastcgi_pass localhost:9000;
+        }
+    }
+    
+    gzip ${NGINX_GZIP};
+    gzip_static ${NGINX_GZIP_STATIC};
+    gzip_proxied ${NGINX_GZIP_PROXIED};
+    gzip_types ${NGINX_GZIP_TYPES};
+    gzip_vary ${NGINX_GZIP_VARY};
+    gzip_disable "msie6";
+    
+    # Include other server configs
+    include /etc/nginx/conf.d/*.conf;
+}

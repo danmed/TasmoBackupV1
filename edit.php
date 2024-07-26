@@ -18,9 +18,9 @@ $(document).ready(function() {
 ?>
   <body>
     <div class="container-fluid">
+      <center><h4><a href="index.php">TasmoBackup</a> - Edit</h4></center>
     <table class="table table-striped table-bordered" id="status">
     <thead>
-      <tr><th colspan="4"><center><b><a href="index.php">TasmoBackup</a> - Edit</b></center></th></tr>
         <tr><th><b>NAME</th><th>IP</th><th>AUTH</th><th>SUBMIT</th></tr>
     </thead>
     <tbody>
@@ -42,7 +42,7 @@ $relcount = 1;
   <td><center><input type='text' name='name' value='<?php echo $name; ?>'></center></td>
   <td><center><input type='text' name='ip' value='<?php echo $ip; ?>'></center></td>
   <td><center><input type='password' name='password' value='<?php echo $password; ?>'></center></td>
-  <td><center><input type='submit' value='Submit' class='btn-xs btn-success'></center></td>
+  <td><center><button type='submit' class='btn btn-sm btn-success'>Submit</button></center></td>
 </form>
 </tr>
 <?php

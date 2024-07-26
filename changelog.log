@@ -1,3 +1,6 @@
+##v1.06.03
+* upgrade datatables/bootstrap
+
 ##v1.06.02
 * Fix sorting
 * iframe broke datatables

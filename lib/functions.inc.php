@@ -680,6 +680,15 @@ function addTasmotaDevice($ip, $user, $password, $verified=false, $status=false,
 function TBHeader($name=false,$favicon=true,$init=false,$track=true,$redirect=false)
 {
     global $settings;
+
+    $colormode = 'auto';
+    if(isset($settings['theme']) && $settings['theme']=='light') { // Enforce Light mode
+        $colormode = 'light';
+    }
+    if(isset($settings['theme']) && $settings['theme']=='dark') { // Enforce Dark mode
+        $colormode = 'dark';
+    }
+
     echo '<!DOCTYPE html><html lang="en"><head>';
 if($redirect!==false && $redirect>0) {
     echo '<meta http-equiv="refresh" content="'.$redirect.';url=index.php" />';
@@ -719,27 +728,7 @@ if($track) { ?>
 <title>TasmoBackup<?php if($name!==false) { echo ': '.$name; } ?></title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-<?php if(isset($settings['theme']) && $settings['theme']=='dark') { // Enforce Dark mode
-?>
-  <link rel="stylesheet" href="resources/bootstrap.dark.min.css">
-<?php } else if(isset($settings['theme']) && $settings['theme']=='light') { // Enforce Light mode
-?>
   <link rel="stylesheet" href="resources/bootstrap.min.css">
-<?php } else { // AutoDetect
-?>
-<script>
-  // If `prefers-color-scheme` is not supported, fall back to light mode.
-  if (window.matchMedia('(prefers-color-scheme: dark)').media === 'not all') {
-    document.documentElement.style.display = 'none';
-    document.head.insertAdjacentHTML(
-        'beforeend',
-        '<link rel="stylesheet" href="resources/bootstrap.min.css" onload="document.documentElement.style.display = \'\'">'
-    );
-  }
-</script>
-  <link rel="stylesheet" href="resources/bootstrap.min.css" media="(prefers-color-scheme: no-reference), (prefers-color-scheme: light)">
-  <link rel="stylesheet" href="resources/bootstrap.dark.min.css" media="(prefers-color-scheme: dark)">
-<?php } ?>
   <script src="resources/jquery.min.js"></script>
   <script src="resources/bootstrap.min.js"></script>
 <?php if($init !== false) { ?>
@@ -750,6 +739,19 @@ if($track) { ?>
     <?php echo $init; ?>
     </script>
 <?php } ?>
+  <script>
+    function updateColorScheme(mode) {
+      if(mode === 'light') {
+          document.documentElement.setAttribute('data-bs-theme', 'light');
+      } else if(mode === 'dark') {
+          document.documentElement.setAttribute('data-bs-theme', 'dark');
+      } else {
+          document.documentElement.setAttribute('data-bs-theme', window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      }
+    }
+    updateColorScheme('<?php echo $colormode; ?>');
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateColorScheme);
+  </script>
 </head>
 <?php
 }

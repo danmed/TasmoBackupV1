@@ -91,10 +91,10 @@ $(document).ready(function() {
   <body>
 
     <div class="container-fluid">
+        <center><h4><a href="index.php">TasmoBackup</a> - Settings</h4></center>
         <form method='POST' action='settings.php'>
             <table class="table table-striped table-bordered" id="status" >
                 <thead>
-                    <tr><th colspan="2"><center><b><a href="index.php">TasmoBackup</a> - Settings</b></center></th></tr>
                     <tr><th>Setting</th><th>Value</th></tr>
                 </thead>
                 <tbody>
@@ -118,7 +118,7 @@ $(document).ready(function() {
                     <tr valign='middle'><td align="right">Backup Data Directory</td><td><input type="text" name='backup_folder' value='<?php echo $settings['backup_folder']; ?>'></td></tr>
                 </tbody>
                 <tfoot>
-                    <tr><td>&nbsp;</td><td><input type='submit' value='Save' class='btn-xs btn-success'></td></tr>
+                    <tr><td>&nbsp;</td><td><button type='submit' class='btn btn-sm btn-success'>Save</button></td></tr>
                 </tfoot>
             </table>
         </form>
@@ -132,7 +132,7 @@ $(document).ready(function() {
                         <select name ="sortoption">
                             <option value="0">CSV</option>
                 </td>
-                <td style="padding-left:8px;"><input type='submit' value='Submit' class='btn-xs btn-success'></form></td>
+                <td style="padding-left:8px;"><button type='submit' class='btn btn-sm btn-success'>Submit</button></form></td>
             </tr>
         </table>
     </div>

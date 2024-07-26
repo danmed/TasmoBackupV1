@@ -149,9 +149,7 @@ $(document).ready(function() {
 ?>
   <body style="scrollbar-gutter: stable;overflow-y:scroll;">
     <div class="container-fluid">
-    <table class="table table-striped table-bordered" id="status">
-    <thead>
-      <tr><th colspan="<?php echo (isset($settings['hide_mac_column']) && $settings['hide_mac_column']=='Y')?'10':'11'; ?>"><center><b>TasmoBackup <a href="settings.php"><?php
+      <center><h4>TasmoBackup <a href="settings.php"><?php
 	if(isset($settings['theme']) && $settings['theme']=='dark') { // Enforce Dark mode
 	    echo '<img src="images/settings-dark.png">';
 	} else if(isset($settings['theme']) && $settings['theme']=='light') { // Enforce Light mode
@@ -161,7 +159,9 @@ $(document).ready(function() {
 	    echo '<source srcset="images/settings.png" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)">';
 	    echo '<img src="images/settings.png"></picture>';
 	}
-?></a></th></tr>
+?></a></h4></center>
+    <table class="table table-striped table-bordered" id="status">
+    <thead>
       <tr><th><b>NAME</th><th><center>IP</center></th><?php if(isset($settings['hide_mac_column']) && $settings['hide_mac_column']=='Y') { echo ''; } else { echo '<th><center>MAC</center></th>'; } ?><th><center>AUTH</center></th><th><center><b>VERSION</b></center></th><th><center>LAST BACKUP</center></th><th><center><b>FILES</b></center></th><th><center><b>BACKUP</b></center></th><th><center>EDIT</center></th><th><center><b>DELETE</b></center></th></tr>
     </thead>
     <tbody>
@@ -256,29 +256,29 @@ $(document).ready(function() {
         }
 	$upgrade = '&nbsp;&nbsp;<a href="http://'.$ip.'/u1" target="_blank"><img src="images/upgrade.png" style="width:16px;" alt="Open upgrade in new tab"></a>';
 	echo "</center></td><td><center>" . $version . $upgrade . "</center></td><td $color><center>" . $lastbackup . "</center></td>";
-	echo "<td data-sort='" . $numberofbackups . "'><center><form method='POST' action='listbackups.php'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='" . $id . "' name='id'><input type='submit' value='" . $numberofbackups . "' class='btn-xs btn-info'></form></center></td>";
-	echo "<td><center><form method='POST' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='singlebackup' name='task'><input type='submit' value='Backup' class='btn-xs btn-success'></form></center></td>";
-	echo "<td><center><form method='POST' action='edit.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='edit' name='task'><input type='submit' value='Edit' class='btn-xs btn-warning'></form></center></td>";
-	echo "<td><center><form method='POST' id='deleteform' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='delete' name='task'><input type='submit' onclick='return window.confirm(\"Are you sure you want to delete " . $name . "\");' value='Delete' class='btn-xs btn-danger'></form></center></td></tr>\r\n";
+	echo "<td data-sort='" . $numberofbackups . "'><center><form method='POST' action='listbackups.php'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='" . $id . "' name='id'><button type='submit' class='btn btn-sm btn-info'>" . $numberofbackups . "</button></form></center></td>";
+	echo "<td><center><form method='POST' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='singlebackup' name='task'><button type='submit' class='btn btn-sm btn-success'>Backup</button></form></center></td>";
+	echo "<td><center><form method='POST' action='edit.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='edit' name='task'><button type='submit' class='btn btn-sm btn-warning'>Edit</button></form></center></td>";
+	echo "<td><center><form method='POST' id='deleteform' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='delete' name='task'><button type='submit' onclick='return window.confirm(\"Are you sure you want to delete " . $name . "\");' class='btn btn-sm btn-danger'>Delete</button></form></center></td></tr>\r\n";
 //        echo "<tr style='display:none'><td colspan='". ((isset($settings['hide_mac_column']) && $settings['hide_mac_column']=='Y')?'10':'11') ."'><iframe id='iframe".$id."' style='width:95vw;height:20vh' src=''></iframe></td></tr>";
 // http://".$ip."/cs
-        $list_model.='<div id="myModaldevice'.$id.'" class="modal fade" role="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h4 class="modal-title">'.$name.'</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div><div class="modal-body"><p><pre>'."\r\n";
+        $list_model.='<div id="myModaldevice'.$id.'" class="modal fade" role="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h4 class="modal-title">'.$name.'</h4><button type="button" class="btn btn-sm close" data-bs-dismiss="modal">&times;</button></div><div class="modal-body"><p><pre>'."\r\n";
 	$list_model.=sprintf("%14s: %s\r\n%14s: %s\r\n%14s: %s\r\n%14s: %s\r\n%14s: %s","Name",$name,"IP",$ip,"MAC",$mac,"Type",$type,"Version",$ver);
 	if(isset($tag))
             $list_model.=sprintf("\r\n%14s: %s","BuildTag",$tag);
         $list_model.=sprintf("\r\n%14s: %s\r\n","Last Backup",$lastbackup);
-        $list_model.='</pre></p></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div></div></div></div>'."\r\n";
+        $list_model.='</pre></p></div><div class="modal-footer"><button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button></div></div></div></div>'."\r\n";
     }
 
 ?>
            </tbody>
     </table>
 
-<center><form method='POST' action='index.php'><input type='hidden' value='backupall' name='task'><input type='submit' value='Backup All' class='btn-xs btn-success'></form><br>
-<form method="POST" action="scan.php"><input type=text name=range placeholder="192.168.1.1-255"><input type="password" name="password" placeholder="password" <?php if(isset($settings['tasmota_password'])) { echo 'value="'.$settings['tasmota_password'].'" '; } ?>><input type=hidden name=task value=scan><input style="min-width:200px" type=submit value=Discover class='btn-xs btn-danger'></form>
+<center><form method='POST' action='index.php'><input type='hidden' value='backupall' name='task'><button type='submit' class='btn btn-sm btn-success'>Backup All</button></form><br>
+<form method="POST" action="scan.php"><input type=text name=range placeholder="192.168.1.1-255"><input type="password" name="password" placeholder="password" <?php if(isset($settings['tasmota_password'])) { echo 'value="'.$settings['tasmota_password'].'" '; } ?>><input type=hidden name=task value=scan><button style="min-width:200px" type=submit class='btn btn-sm btn-danger'>Discover</button></form>
 <?php if(isset($settings['mqtt_host']) && isset($settings['mqtt_port']) && strlen($settings['mqtt_host'])>1) {
 ?>
-<form method="POST" action="scan.php"><input type=text name=mqtt_topic value='<?php echo isset($settings['mqtt_topic'])?$settings['mqtt_topic']:'tasmotas'; ?>'><input type="password" name="password" placeholder="password" <?php if(isset($settings['tasmota_password'])) { echo 'value="'.$settings['tasmota_password'].'" '; } ?>><input type=hidden name=task value=mqtt><input style="min-width:200px" type=submit value="MQTT Discover" class='btn-xs btn-danger'></form>
+<form method="POST" action="scan.php"><input type=text name=mqtt_topic value='<?php echo isset($settings['mqtt_topic'])?$settings['mqtt_topic']:'tasmotas'; ?>'><input type="password" name="password" placeholder="password" <?php if(isset($settings['tasmota_password'])) { echo 'value="'.$settings['tasmota_password'].'" '; } ?>><input type=hidden name=task value=mqtt><button style="min-width:200px" type=submit class='btn btn-sm btn-danger'>MQTT Discover</button></form>
 <?php
 }
 
@@ -327,7 +327,7 @@ endif;
       <div class="modal-header">
         
         <h4 class="modal-title">TasmoBackup</h4>
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <button type="button" class="btn btn-sm close" data-bs-dismiss="modal">&times;</button>
       </div>
       <div class="modal-body">
         <p style="align:center">
@@ -337,7 +337,7 @@ endif;
         </p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
 

@@ -1,6 +1,6 @@
 ## ⬆️ Fixes
 
-- ⬆️ Fix adding wled devices
-- ⬆️ Fix sorting by version
+- ⬆️ Upgrade datatables
+- ⬆️ Fix sorting
 
 

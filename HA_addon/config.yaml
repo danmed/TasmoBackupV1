@@ -1,5 +1,5 @@
 name: "TasmoBackup"
-version: "1.06.02"
+version: "1.06.03"
 slug: "tasmobackup"
 description: "Tasmota Backup"
 url: "https://github.com/danmed/TasmoBackupV1/"

@@ -26,13 +26,13 @@ function toggle(source) {
 }
 </script>
     <div class="container-fluid">
+    <center><h4><a href="index.php">TasmoBackup</a> - Scan Results</h4></center>
 	    <form action="index.php" method="POST">
                 <input type="hidden" name="task" value="discoverall">
                 <?php if(isset($_POST['user'])) { echo '<input type="hidden" name="user" value="'.$_POST['user'].'">'; } ?>
                 <?php if(isset($_POST['password'])) { echo '<input type="hidden" name="password" value="'.$_POST['password'].'">'; } ?>
     <table class="table table-striped table-bordered" id="status">
     <thead>
-    <tr><th colspan="3"><center><b><a href="index.php">TasmoBackup</a> - Scan Results</b></center></th></tr>
     <tr><th><b>ADD</b></th><th><b>NAME</b></th><th><b>IP</b></th></tr>
     </thead>
     <tbody>
@@ -121,7 +121,7 @@ if ($_POST["task"]=="mqtt") {
 </tbody>
     <tr><td colspan="3">&nbsp;</td></tr>
     <tr><td><center><input type='checkbox' name="select-all" id="select-all" onClick="toggle(this)"></center></td><td>Select All</td><td>&nbsp;</td></tr>
-    <tr><td colspan="3"><center><input type=submit class='btn-xs btn-success' value='Add Devices'></center></td></tr>
+    <tr><td colspan="3"><center><button type=submit class='btn btn-sm btn-success'>Add Devices</button></center></td></tr>
     </table>
     </form>
     </div>

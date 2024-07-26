@@ -41,9 +41,9 @@ $(document).ready(function() {
   <body>
 
     <div class="container-fluid">
+	<center><h4><a href="index.php">TasmoBackup</a> - Listing for <?php echo $name; ?></h4></center>
     <table class="table table-striped table-bordered" id="status">
     <thead>
-	    <tr><th colspan="6"><center><b><a href="index.php">TasmoBackup</a> - Listing for <?php echo $name; ?></b></center></th></tr>
 		    <tr><th><b>DATE</b></th><th><center><b>NAME</b></center></th><th><center><b>VERSION</b></center></th><th><center><b>FILE</b></center></th><th><center><b>DELETE</b><center></th><th><center><b>RESTORE</b></center></th></tr>
     </thead>
     <tbody>
@@ -77,7 +77,7 @@ $(document).ready(function() {
     <input type='hidden' name='task' value='download'>
     <input type='hidden' name='backupid' value='<?php echo $backupid; ?>'>
     <input type='hidden' name='id' value='<?php echo $id; ?>'>
-    <input type='submit' value='Download' class='btn-xs btn-success'>
+    <button type='submit' class='btn btn-sm btn-success'>Download</button>
     </form>
   </center></td>
   <td><center>
@@ -86,7 +86,7 @@ $(document).ready(function() {
     <input type='hidden' name='backupid' value='<?php echo $backupid; ?>'>
     <input type='hidden' name='id' value='<?php echo $id; ?>'>
     <input type='hidden' name='name' value='<?php echo $name; ?>'>
-    <input type='submit' value='Delete' onclick='return window.confirm("Are you sure you want to delete <?php echo $filename; ?>");' class='btn-xs btn-danger'>
+    <button type='submit' onclick='return window.confirm("Are you sure you want to delete <?php echo $filename; ?>");' class='btn-sm btn-danger'>Delete</button>
     </form>
   </center></td>
 <?php
@@ -97,7 +97,7 @@ $(document).ready(function() {
     <input type='hidden' name='backupid' value='<?php echo $backupid; ?>'>
     <input type='hidden' name='id' value='<?php echo $id; ?>'>
     <input type='hidden' name='name' value='<?php echo $name; ?>'>
-    <input type='submit' value='Restore' onclick='return window.confirm("Are you sure you want to restore <?php echo $filename; ?> to this device");' class='btn-xs btn-danger'>
+    <button type='submit' onclick='return window.confirm("Are you sure you want to restore <?php echo $filename; ?> to this device");' class='btn btn-sm btn-danger'>Restore</button>
     </form>
   </center></td>
 <?php

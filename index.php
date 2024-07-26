@@ -204,11 +204,11 @@ $(document).ready(function() {
         if($lastbackup_green>0 && isset($lastbackup) && strlen($lastbackup)>10) {
             $ts=strtotime($lastbackup);
             if($ts<$lastbackup_red && $ts>0)
-                $color='bgcolor="red"';
+                $color='bg-danger text-white';
             if($ts>$lastbackup_red)
-                $color='bgcolor="yellow"';
+                $color='bg-warning text-dark';
             if($ts>$lastbackup_green)
-                $color=''; //    $color='bgcolor="green"';
+                $color=''; //    $color='bg-success';
 	}
 	$mac_display='<td><center>'.$mac_display.'</center></td>';
         if(isset($settings['hide_mac_column']) && $settings['hide_mac_column']=='Y')
@@ -255,7 +255,7 @@ $(document).ready(function() {
                 $version='<a href="'.$url.'">'.$version.'</a>';
         }
 	$upgrade = '&nbsp;&nbsp;<a href="http://'.$ip.'/u1" target="_blank"><img src="images/upgrade.png" style="width:16px;" alt="Open upgrade in new tab"></a>';
-	echo "</center></td><td><center>" . $version . $upgrade . "</center></td><td $color><center>" . $lastbackup . "</center></td>";
+	echo "</center></td><td><center>" . $version . $upgrade . "</center></td><td class='$color'><center>" . $lastbackup . "</center></td>";
 	echo "<td data-sort='" . $numberofbackups . "'><center><form method='POST' action='listbackups.php'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='" . $id . "' name='id'><button type='submit' class='btn btn-sm btn-info'>" . $numberofbackups . "</button></form></center></td>";
 	echo "<td><center><form method='POST' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='singlebackup' name='task'><button type='submit' class='btn btn-sm btn-success'>Backup</button></form></center></td>";
 	echo "<td><center><form method='POST' action='edit.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='edit' name='task'><button type='submit' class='btn btn-sm btn-warning'>Edit</button></form></center></td>";

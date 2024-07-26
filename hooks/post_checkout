@@ -8,8 +8,8 @@ source hooks/.config
 echo "✅ Install qemu + binfmt support"
 echo "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
 # it's an Ubuntu VM and you can install stuff.
-apt-get update
-apt-get install -y curl qemu-user-static binfmt-support jq moreutils
+#apt-get update
+#apt-get install -y curl qemu-user-static binfmt-support jq moreutils
 
 if [[ $(docker -v | cut -d. -f 1 | cut -d' ' -f3) -lt 19 ]]; then
   # Sadly docker itself uses Docker EE 17.06 on Dockerhub which does not support

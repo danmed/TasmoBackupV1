@@ -20,9 +20,22 @@ for arch in ${verified_build_architectures[@]}; do
   echo "✅ building $arch"
   echo "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
 
+  arch2="${arch}"
+  if [[ ${arch} == arm* ]]; then
+    echo "Found ARM"
+#    OLD_BUILD_FROM="${BUILD_FROM}"
+#    BUILD_FROM="docker.patrickdk.com/docker-php-nginx:5.6"
+#    BUILD_FROM_ARG="--build-arg BUILD_FROM=${BUILD_FROM}"
+    if [[ ${arch} == armv7 ]]; then
+      arch2="arm/v7"
+    fi
+    if [[ ${arch} == armhf ]]; then
+      arch2="arm/v6"
+    fi
+  fi
   BUILD_FROM_PREFIX="${build_from_prefix_map[${arch}]}"
   QEMU_ARCH="${docker_qemu_arch_map[${arch}]}"
-  docker build --pull ${BUILD_FROM_ARG} \
+  docker build --platform linux/${arch2} --pull ${BUILD_FROM_ARG} \
     --build-arg BUILD_FROM_PREFIX=${BUILD_FROM_PREFIX} \
     --build-arg BUILD_ARCH=${arch} \
     --build-arg QEMU_ARCH=${QEMU_ARCH} \
@@ -33,6 +46,11 @@ for arch in ${verified_build_architectures[@]}; do
     --file $DOCKERFILE_PATH \
     --tag "${IMAGE_NAME}-${arch}"  \
     .
+#  if [[ ${arch} == arm* ]]; then
+#    echo "Found ARM"
+#    BUILD_FROM="${OLD_BUILD_FROM}"
+#    BUILD_FROM_ARG="--build-arg BUILD_FROM=${BUILD_FROM}"
+#  fi
 done
 
 echo "✅ images built:"

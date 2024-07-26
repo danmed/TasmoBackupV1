@@ -447,7 +447,7 @@ class phpMQTT
 	 */
 	public function message($msg)
 	{
-		$tlen = (ord($msg{0}) << 8) + ord($msg[1]);
+		$tlen = (ord($msg[0]) << 8) + ord($msg[1]);
 		$topic = substr($msg, 2, $tlen);
 		$msg = substr($msg, ($tlen + 2));
 		$found = false;

@@ -2,6 +2,7 @@
 Backup the configs of all your Tasmota devices
 
 # Latest Changes
+* fixup sorting/datatables
 * fixed restores
 * added wled backups
 * fix zero size backup bug

@@ -1,3 +1,8 @@
+##v1.06.02
+* Fix sorting
+* iframe broke datatables
+* mac broke version sorting
+
 ##v1.06.01
 * HA changed json to yaml
 

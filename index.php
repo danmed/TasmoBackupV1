@@ -135,11 +135,11 @@ switch(strtolower($task)) {
 TBHeader(false,true,'
 $(document).ready(function() {
         $(\'#status\').DataTable({
-        "order": [['. (isset($settings['sort'])?$settings['sort']:0) .', "asc" ]],
+        "order": ['. (isset($settings['sort'])?(($settings['sort']<2 || (isset($settings['hide_mac_column']) && $settings['hide_mac_column']=='Y'))?$settings['sort']:$settings['sort']+1):0) .', "asc" ],
         "pageLength": '. (isset($settings['amount'])?$settings['amount']:100) .',
         "columnDefs": [
             { "type": "ip-address", "targets": [1] },
-            { "type": "version", "targets": [3] }
+            { "type": "version", "targets": ['. ((isset($settings['hide_mac_column']) && $settings['hide_mac_column']=='Y')?'3':'4') .'] }
             ],
         "statesave": true,
         "autoWidth": false
@@ -151,7 +151,7 @@ $(document).ready(function() {
     <div class="container-fluid">
     <table class="table table-striped table-bordered" id="status">
     <thead>
-      <tr><th colspan="10"><center><b>TasmoBackup <a href="settings.php"><?php
+      <tr><th colspan="<?php echo (isset($settings['hide_mac_column']) && $settings['hide_mac_column']=='Y')?'10':'11'; ?>"><center><b>TasmoBackup <a href="settings.php"><?php
 	if(isset($settings['theme']) && $settings['theme']=='dark') { // Enforce Dark mode
 	    echo '<img src="images/settings-dark.png">';
 	} else if(isset($settings['theme']) && $settings['theme']=='light') { // Enforce Light mode
@@ -214,7 +214,8 @@ $(document).ready(function() {
         if(isset($settings['hide_mac_column']) && $settings['hide_mac_column']=='Y')
             $mac_display='';
 
-        echo "<tr valign='middle'><td onclick=\"deviceModal('#myModaldevice".$id."');\"><img src=\"" . $logo ."\" width=\"32\" height=\"32\" style=\"align:left\">&nbsp;" . $name . "</td><td><center><a href='http://" . $ip . "' target='_blank'>" . $ip . "</a>&nbsp&nbsp<img src='images/cli.png' alt='Open inline console' style='cursor: pointer;width:16px;margin-right:8px;' class='openConsole' data-ip='".$ip."' data-row='".$id."'><a href='http://".$ip."/cs' target='_blank'><img src='images/newtab.png' style='width:16px;' alt='Open console in new tab'></a></td>" . $mac_display . "<td><center>";
+        //echo "<tr valign='middle'><td onclick=\"deviceModal('#myModaldevice".$id."');\"><img src=\"" . $logo ."\" width=\"32\" height=\"32\" style=\"align:left\">&nbsp;" . $name . "</td><td><center><a href='http://" . $ip . "' target='_blank'>" . $ip . "</a>&nbsp&nbsp<img src='images/cli.png' alt='Open inline console' style='cursor: pointer;width:16px;margin-right:8px;' class='openConsole' data-ip='".$ip."' data-row='".$id."'><a href='http://".$ip."/cs' target='_blank'><img src='images/newtab.png' style='width:16px;' alt='Open console in new tab'></a></td>" . $mac_display . "<td><center>";
+        echo "<tr valign='middle'><td onclick=\"deviceModal('#myModaldevice".$id."');\"><img src=\"" . $logo ."\" width=\"32\" height=\"32\" style=\"align:left\">&nbsp;" . $name . "</td><td><center><a href='http://" . $ip . "' target='_blank'>" . $ip . "</a>&nbsp&nbsp<a href='http://".$ip."/cs' target='_blank'><img src='images/newtab.png' style='width:16px;' alt='Open console in new tab'></a></td>" . $mac_display . "<td><center>";
 	if(isset($settings['theme']) && $settings['theme']=='dark') { // Enforce Dark mode
 	    echo "<img src='" . (strlen($password) > 0 ? 'images/lock-dark.png' : 'images/lock-open-variant-dark.png') . "'>";
 	} else if(isset($settings['theme']) && $settings['theme']=='light') { // Enforce Light mode
@@ -253,13 +254,13 @@ $(document).ready(function() {
             if(isset($url) && strlen($url)>5)
                 $version='<a href="'.$url.'">'.$version.'</a>';
         }
-	$upgrade = '&nbsp;&nbsp;<a href="http://'.$ip.'/u1" target="_blank">Up</a>';
+	$upgrade = '&nbsp;&nbsp;<a href="http://'.$ip.'/u1" target="_blank"><img src="images/upgrade.png" style="width:16px;" alt="Open upgrade in new tab"></a>';
 	echo "</center></td><td><center>" . $version . $upgrade . "</center></td><td $color><center>" . $lastbackup . "</center></td>";
-	echo "<td><center><form method='POST' action='listbackups.php'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='" . $id . "' name='id'><input type='submit' value='" . $numberofbackups . "' class='btn-xs btn-info'></form></center></td>";
+	echo "<td data-sort='" . $numberofbackups . "'><center><form method='POST' action='listbackups.php'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='" . $id . "' name='id'><input type='submit' value='" . $numberofbackups . "' class='btn-xs btn-info'></form></center></td>";
 	echo "<td><center><form method='POST' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='singlebackup' name='task'><input type='submit' value='Backup' class='btn-xs btn-success'></form></center></td>";
 	echo "<td><center><form method='POST' action='edit.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='edit' name='task'><input type='submit' value='Edit' class='btn-xs btn-warning'></form></center></td>";
 	echo "<td><center><form method='POST' id='deleteform' action='index.php'><input type='hidden' value='" . $ip . "' name='ip'><input type='hidden' value='" . $name . "' name='name'><input type='hidden' value='delete' name='task'><input type='submit' onclick='return window.confirm(\"Are you sure you want to delete " . $name . "\");' value='Delete' class='btn-xs btn-danger'></form></center></td></tr>\r\n";
-    echo "<tr style='display:none'><td colspan='10'><iframe id='iframe".$id."' style='width:95vw;height:20vh' src=''></iframe></td></tr>";
+//        echo "<tr style='display:none'><td colspan='". ((isset($settings['hide_mac_column']) && $settings['hide_mac_column']=='Y')?'10':'11') ."'><iframe id='iframe".$id."' style='width:95vw;height:20vh' src=''></iframe></td></tr>";
 // http://".$ip."/cs
         $list_model.='<div id="myModaldevice'.$id.'" class="modal fade" role="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h4 class="modal-title">'.$name.'</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div><div class="modal-body"><p><pre>'."\r\n";
 	$list_model.=sprintf("%14s: %s\r\n%14s: %s\r\n%14s: %s\r\n%14s: %s\r\n%14s: %s","Name",$name,"IP",$ip,"MAC",$mac,"Type",$type,"Version",$ver);

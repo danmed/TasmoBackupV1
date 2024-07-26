@@ -20,44 +20,35 @@
 
 jQuery.extend( jQuery.fn.dataTableExt.oSort, {
 	"ip-address-pre": function ( a ) {
-		var i, item;
-		var m, n, t;
-		var x, xa;
+		let i, item;
+		let m, n, t;
+		let x, xa;
 
 		if (!a) {
 			return 0
 		}
 
-		a = a.replace(/<[\s\S]*?>/g, "");
+		a = a.replace(/<[\s\S]*?>/g, "").replace(/&nbsp;/g,"");
 		//IPv4:Port
-                t = a.split(":");
-                if (t.length == 2){
+                n = a.split(":");
+                if (n.length == 2){
                         m = t[0].split(".");
                 }
                 else {
                         m = a.split(".");
                 }
-		n = a.split(":");
-		x = "";
+		x = 0;
 		xa = "";
 
 		if (m.length == 4) {
 			// IPV4
 			for(i = 0; i < m.length; i++) {
-				item = m[i];
-
-				if(item.length == 1) {
-					x += "00" + item;
-				}
-				else if(item.length == 2) {
-					x += "0" + item;
-				}
-				else {
-					x += item;
-				}
+				if(i>0) x*=256;
+				x += parseInt(m[i]);
 			}
 		}
 		else if (n.length > 0) {
+			x = "";
 			// IPV6
 			var count = 0;
 			for(i = 0; i < n.length; i++) {
@@ -118,11 +109,11 @@ jQuery.extend( jQuery.fn.dataTableExt.oSort, {
 		return ((a < b) ? 1 : ((a > b) ? -1 : 0));
 	},
     "version-pre": function ( d ) {
-       d = d.replace(/<[\s\S]*?>/g, "");
-       var a = d.split(/[ .]+/), res = "";
+       d = d.replace(/<[\s\S]*?>/g, "").replace(/&nbsp;/g, "");
+       let a = d.split(/[ .]+/), res = "";
        for(var i = 0; i < a.length; i++) {
           res += ("00000000000000000000" + a[i]).slice(-20);
-       }   
+       }
        return res;
     },   
     "version-asc": function ( a, b ) {

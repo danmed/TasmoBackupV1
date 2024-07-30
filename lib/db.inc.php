@@ -31,7 +31,7 @@ if ($db_handle) {
 if(!isset($settings['backup_folder']))
     $settings['backup_folder']='data/backups/';
 else if(substr($settings['backup_folder'],-1) !== '/')
-    $settings['backup_folder'] += '/';
+    $settings['backup_folder'] .= '/';
 
 if(isset($settings['mqtt_topic_format']))
     $settings['mqtt_topic_format']=trim($settings['mqtt_topic_format']," \t\n\r\0\v/");

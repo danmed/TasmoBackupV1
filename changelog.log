@@ -1,3 +1,6 @@
+##v1.06.06
+* force path on end of backup_folder string
+
 ##v1.06.05
 * force path on end of backup_folder string
 

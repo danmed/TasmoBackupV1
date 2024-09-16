@@ -28,9 +28,15 @@ for arch in ${verified_build_architectures[@]}; do
 #    BUILD_FROM_ARG="--build-arg BUILD_FROM=${BUILD_FROM}"
     if [[ ${arch} == armv7 ]]; then
       arch2="arm/v7"
+      BUILD_FROM_ARG="--build-arg BUILD_FROM=docker.patrickdk.com/docker-php-nginx:7.3"
     fi
     if [[ ${arch} == armhf ]]; then
       arch2="arm/v6"
+      BUILD_FROM_ARG="--build-arg BUILD_FROM=docker.patrickdk.com/docker-php-nginx:7.3"
+    fi
+    if [[ ${arch} == armel ]]; then
+      arch2="arm/v5"
+      BUILD_FROM_ARG="--build-arg BUILD_FROM=docker.patrickdk.com/docker-php-nginx:7.3"
     fi
   fi
   BUILD_FROM_PREFIX="${build_from_prefix_map[${arch}]}"
@@ -46,11 +52,11 @@ for arch in ${verified_build_architectures[@]}; do
     --file $DOCKERFILE_PATH \
     --tag "${IMAGE_NAME}-${arch}"  \
     .
-#  if [[ ${arch} == arm* ]]; then
-#    echo "Found ARM"
+  if [[ ${arch} == arm* ]]; then
+    echo "Found ARM"
 #    BUILD_FROM="${OLD_BUILD_FROM}"
-#    BUILD_FROM_ARG="--build-arg BUILD_FROM=${BUILD_FROM}"
-#  fi
+    BUILD_FROM_ARG="--build-arg BUILD_FROM=${BUILD_FROM}"
+  fi
 done
 
 echo "✅ images built:"

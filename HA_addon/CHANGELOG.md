@@ -1,6 +1,4 @@
 ## ⬆️ Fixes
 
-- ⬆️ Upgrade datatables
-- ⬆️ Fix sorting
-
+- mysql 9 support
 

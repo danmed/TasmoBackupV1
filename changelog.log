@@ -1,3 +1,6 @@
+##v1.06.07
+* upgrade php for mysql9 support
+
 ##v1.06.06
 * force path on end of backup_folder string
 

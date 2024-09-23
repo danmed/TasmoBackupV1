@@ -1,3 +1,6 @@
+##v1.06.08
+* resolve curly braces
+
 ##v1.06.07
 * upgrade php for mysql9 support
 

@@ -20,7 +20,7 @@ ENV NGINX_SENDFILE=off \
     NGINX_GZIP_STATIC=on
 
 RUN echo "Start" \
- && rm -f /etc/php7/conf.d/*brotli.ini \
+ && rm -f /etc/php*/conf.d/*brotli.ini \
  && cd /var/www/html/resources \
  && gzip -k -9 *.js \
  && gzip -k -9 *.css \

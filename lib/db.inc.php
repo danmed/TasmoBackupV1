@@ -4,6 +4,7 @@ require_once(__DIR__.'/../data/config.inc.php');
 
 global $db_handle;
 global $settings;
+global $db_upgrade;
 
 if ($DBType=='mysql') {
     $db_handle = new \PDO('mysql:host='.$DBServer.';dbname='.$DBName, $DBUser, $DBPassword);
@@ -20,6 +21,91 @@ if ($DBType=='sqlite') {
     $GLOBALS['DBType']='sqlite';
 }
 
+if ($db_handle && $db_upgrade) {
+    if ($GLOBALS['DBType']=='mysql') {
+        $db_handle->exec("CREATE TABLE IF NOT EXISTS devices (
+            id int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
+            name varchar(128) NOT NULL,
+            ip varchar(64) NOT NULL,
+            mac varchar(32) NOT NULL,
+            type int(4) NOT NULL DEFAULT 0,
+            version varchar(128) NOT NULL,
+            lastbackup datetime DEFAULT NULL,
+            noofbackups int(11) DEFAULT NULL,
+            password varchar(128) DEFAULT NULL )
+        ");
+
+        $db_handle->exec("CREATE TABLE IF NOT EXISTS backups (
+            id bigint(20) AUTO_INCREMENT PRIMARY KEY NOT NULL,
+            deviceid int(11) NOT NULL,
+            name varchar(128) NOT NULL,
+            version varchar(128) NOT NULL,
+            date datetime DEFAULT NULL,
+            filename varchar(1080),
+            data text,
+            INDEX (deviceid,date) )
+        ");
+
+        $db_handle->exec("CREATE TABLE IF NOT EXISTS settings (
+            name varchar(128) PRIMARY KEY NOT NULL,
+            value varchar(255) NOT NULL )
+        ");
+
+        $stm=$db_handle->prepare("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='".$GLOBALS['DBName']."' AND TABLE_NAME='devices' AND COLUMN_NAME='mac';");
+        $stm->execute();
+        $cnt=intval($stm->fetchColumn());
+        if($cnt<1) {
+            $db_handle->exec("ALTER TABLE devices ADD COLUMN mac varchar(32) NOT NULL DEFAULT '' AFTER ip;");
+        }
+
+        $stm=$db_handle->prepare("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='".$GLOBALS['DBName']."' AND TABLE_NAME='devices' AND COLUMN_NAME='type';");
+        $stm->execute();
+        $cnt=intval($stm->fetchColumn());
+        if($cnt<1) {
+            $db_handle->exec("ALTER TABLE devices ADD COLUMN type int(3) NOT NULL DEFAULT 0 AFTER mac;");
+        }
+    }
+
+    if ($GLOBALS['DBType']=='sqlite') {
+        $db_handle->exec("CREATE TABLE IF NOT EXISTS devices (
+            id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+            name varchar(128) NOT NULL,
+            ip varchar(64) NOT NULL,
+            mac varchar(32) NOT NULL,
+	    type INTEGER NOT NULL DEFAULT 0,
+	    version varchar(128) NOT NULL,
+	    lastbackup datetime DEFAULT NULL,
+	    noofbackups INTEGER DEFAULT NULL,
+	    password varchar(128) DEFAULT NULL )
+        ");
+
+        $db_handle->exec("CREATE TABLE IF NOT EXISTS backups (
+            id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+            deviceid INTEGER NOT NULL,
+            name varchar(128) NOT NULL,
+            version varchar(128) NOT NULL,
+            date datetime DEFAULT NULL,
+            filename varchar(1080),
+            data text )
+        ");
+
+        $db_handle->exec("CREATE INDEX IF NOT EXISTS backupsdeviceid
+            ON backups(deviceid, date)
+        ");
+
+        $db_handle->exec("CREATE TABLE IF NOT EXISTS settings (
+            name varchar(128) PRIMARY KEY NOT NULL,
+            value varchar(255) NOT NULL )
+        ");
+
+        $curstate = error_reporting();
+        error_reporting(0);
+        @$db_handle->exec("ALTER TABLE devices ADD COLUMN mac varchar(32) NOT NULL DEFAULT ''");
+        @$db_handle->exec("ALTER TABLE devices ADD COLUMN type INTEGER NOT NULL DEFAULT 0");
+        error_reporting($curstate);
+    }
+}
+
 if ($db_handle) {
     $stm = $db_handle->prepare("select name,value from settings");
     if($stm && $stm->execute()) {
@@ -28,6 +114,7 @@ if ($db_handle) {
         }
     }
 }
+
 if(!isset($settings['backup_folder']))
     $settings['backup_folder']='data/backups/';
 else if(substr($settings['backup_folder'],-1) !== '/')
@@ -391,93 +478,5 @@ function dbNewBackup($id, $name, $version, $date, $noofbackups, $filename, $mac=
         return false;
     }
     return dbDeviceBackups($id,$date,$version,$name,$mac,$type);
-}
-
-
-function dbUpgrade()
-{
-    global $db_handle;
-
-if ($GLOBALS['DBType']=='mysql') {
-    $db_handle->exec("CREATE TABLE IF NOT EXISTS devices (
-    id int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
-    name varchar(128) NOT NULL,
-    ip varchar(64) NOT NULL,
-    mac varchar(32) NOT NULL,
-    type int(4) NOT NULL DEFAULT 0,
-    version varchar(128) NOT NULL,
-    lastbackup datetime DEFAULT NULL,
-    noofbackups int(11) DEFAULT NULL,
-    password varchar(128) DEFAULT NULL )
-    ");
-
-    $db_handle->exec("CREATE TABLE IF NOT EXISTS backups (
-    id bigint(20) AUTO_INCREMENT PRIMARY KEY NOT NULL,
-    deviceid int(11) NOT NULL,
-    name varchar(128) NOT NULL,
-    version varchar(128) NOT NULL,
-    date datetime DEFAULT NULL,
-    filename varchar(1080),
-    data text,
-    INDEX (deviceid,date) )
-    ");
-
-    $db_handle->exec("CREATE TABLE IF NOT EXISTS settings (
-    name varchar(128) PRIMARY KEY NOT NULL,
-    value varchar(255) NOT NULL )
-    ");
-
-    $stm=$db_handle->prepare("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='".$GLOBALS['DBName']."' AND TABLE_NAME='devices' AND COLUMN_NAME='mac';");
-    $stm->execute();
-    $cnt=intval($stm->fetchColumn());
-    if($cnt<1) {
-        $db_handle->exec("ALTER TABLE devices ADD COLUMN mac varchar(32) NOT NULL DEFAULT '' AFTER ip;");
-    }
-
-    $stm=$db_handle->prepare("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='".$GLOBALS['DBName']."' AND TABLE_NAME='devices' AND COLUMN_NAME='type';");
-    $stm->execute();
-    $cnt=intval($stm->fetchColumn());
-    if($cnt<1) {
-        $db_handle->exec("ALTER TABLE devices ADD COLUMN type int(3) NOT NULL DEFAULT 0 AFTER mac;");
-    }
-
-}
-
-if ($GLOBALS['DBType']=='sqlite') {
-    $db_handle->exec("CREATE TABLE IF NOT EXISTS devices (
-    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    name varchar(128) NOT NULL,
-    ip varchar(64) NOT NULL,
-    mac varchar(32) NOT NULL,
-    type INTEGER NOT NULL DEFAULT 0,
-    version varchar(128) NOT NULL,
-    lastbackup datetime DEFAULT NULL,
-    noofbackups INTEGER DEFAULT NULL,
-    password varchar(128) DEFAULT NULL )
-    ");
-
-    $db_handle->exec("CREATE TABLE IF NOT EXISTS backups (
-    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    deviceid INTEGER NOT NULL,
-    name varchar(128) NOT NULL,
-    version varchar(128) NOT NULL,
-    date datetime DEFAULT NULL,
-    filename varchar(1080),
-    data text )
-    ");
-
-    $db_handle->exec("CREATE INDEX IF NOT EXISTS backupsdeviceid
-    ON backups(deviceid, date)
-    ");
-
-    $db_handle->exec("CREATE TABLE IF NOT EXISTS settings (
-    name varchar(128) PRIMARY KEY NOT NULL,
-    value varchar(255) NOT NULL )
-    ");
-
-    @$db_handle->exec("ALTER TABLE devices ADD COLUMN mac varchar(32) NOT NULL DEFAULT ''");
-
-    @$db_handle->exec("ALTER TABLE devices ADD COLUMN type INTEGER NOT NULL DEFAULT 0");
-}
 }
 

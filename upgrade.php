@@ -1,9 +1,10 @@
 <?php
-require_once(__DIR__.'/lib/functions.inc.php');
-
 global $settings;
+global $db_upgrade;
 
-dbUpgrade();
+$db_upgrade = true;
+
+require_once(__DIR__.'/lib/functions.inc.php');
 
 TBHeader('Upgrade',true,false,true,10);
 

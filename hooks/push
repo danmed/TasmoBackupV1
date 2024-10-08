@@ -37,7 +37,7 @@ for tag in "${tagparts[@]}"; do
 
   echo "✅ Creating manifest ${BUILD_NAME}"
   echo "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
-  docker manifest create ${BUILD_NAME} $manifests
+  docker manifest create --amend ${BUILD_NAME} $manifests
   echo
 
   echo "✅ Annotating manifest"
@@ -74,7 +74,7 @@ if [[ ${!DOCKER_EXTRATAGS-x} == x ]]; then
 
     echo "✅ Creating manifest ${BUILD_NAME}"
     echo "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
-    docker manifest create ${BUILD_NAME} $manifests
+    docker manifest create --amend ${BUILD_NAME} $manifests
     echo
 
     echo "✅ Annotating manifest"

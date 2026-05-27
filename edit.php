@@ -10,7 +10,7 @@ $(document).ready(function() {
         $(\'#status\').DataTable({
         "order": [[0, "asc" ]],
         "pageLength": '. (isset($settings['amount'])?$settings['amount']:100) .',
-        "statesave": true,
+        "stateSave": true,
         "autoWidth": false
 } );
 } );

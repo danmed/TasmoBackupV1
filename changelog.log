@@ -1,3 +1,8 @@
+##v1.06.10
+* Apply restore fix from dracoqcca
+* MAC/IP Fix for device loopup
+* datatables uses camelcase settings names fix for sorting
+
 ##v1.06.09
 * sqlite warnings became hard errors fix
 

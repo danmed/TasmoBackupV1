@@ -82,7 +82,7 @@ $(document).ready(function() {
         $(\'#status\').DataTable({
         "order": [],
         "pageLength": '. (isset($settings['amount'])?$settings['amount']:25) .',
-        "statesave": true,
+        "stateSave": true,
         "autoWidth": false
 } );
 } );

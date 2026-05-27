@@ -32,7 +32,7 @@ $(document).ready(function() {
         "columnDefs": [
             { "type": "version", "targets": [2] }
             ],
-        "statesave": true,
+        "stateSave": true,
         "autoWidth": false
 } );
 } );

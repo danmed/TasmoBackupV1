@@ -141,7 +141,7 @@ $(document).ready(function() {
             { "type": "ip-address", "targets": [1] },
             { "type": "version", "targets": ['. ((isset($settings['hide_mac_column']) && $settings['hide_mac_column']=='Y')?'3':'4') .'] }
             ],
-        "statesave": true,
+        "stateSave": true,
         "autoWidth": false
 } );
 } );

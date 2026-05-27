@@ -1,6 +1,6 @@
 ## ⬆️ Fixes
 
-- sqlite php 8 errors
-- resolve php 8 issues
-- mysql 9 support
+- Apply restore fix from dracoqcca
+- MAC/IP Fix for device loopup
+- datatables uses camelcase settings names fix for sorting
 

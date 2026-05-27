@@ -279,6 +279,12 @@ function getTasmotaStatus5($ip, $user, $password)
 
 function restoreTasmotaBackup($ip, $user, $password, $filename)
 {
+    // GET /rs first to set upload_file_type=UPL_SETTINGS on the device
+    $rs = curl_init('http://'.rawurlencode($user).':'.rawurlencode($password)."@".$ip.'/rs');
+    curl_setopt_array($rs, array(CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 10));
+    curl_exec($rs);
+    curl_close($rs);
+	
     $url = 'http://'.rawurlencode($user).':'.rawurlencode($password)."@".$ip.'/u2';
 
     $cfile = new CURLFile($filename,'application/octet-stream','config.dmp');

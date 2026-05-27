@@ -137,22 +137,22 @@ function dbSettingsUpdate($name,$value)
 function dbDeviceExist($ip=NULL,$mac=NULL)
 {
     global $db_handle;
-    if(isset($mac)){
-	$stm = $db_handle->prepare("select count(*) from devices where mac = :mac");
+    if(isset($mac) && $mac !== "") {
+        $stm = $db_handle->prepare("select count(*) from devices where mac = :mac");
         $stm->bindValue(':mac', $mac, PDO::PARAM_STR);
         if ($stm->execute()) {
             if ($stm->fetchColumn() > 0 )
-	        return true;
+                return true;
         }
     }
 
-    if(isset($ip)) {
-	$stm = $db_handle->prepare("select count(*) from devices where ip = :ip");
+    if(isset($ip) && $ip !== "") {
+        $stm = $db_handle->prepare("select count(*) from devices where ip = :ip");
         $stm->bindValue(':ip', $ip, PDO::PARAM_STR);
-    }
-    if ($stm->execute()) {
-        if ($stm->fetchColumn() > 0)
-            return true;
+        if ($stm->execute()) {
+            if ($stm->fetchColumn() > 0)
+                return true;
+        }
     }
     return false;
 }
@@ -160,22 +160,22 @@ function dbDeviceExist($ip=NULL,$mac=NULL)
 function dbDeviceFind($ip=NULL,$mac=NULL)
 {
     global $db_handle;
-    if(isset($mac)){
-	$stm = $db_handle->prepare("select id from devices where mac = :mac");
+    if(isset($mac) && $mac !== "") {
+        $stm = $db_handle->prepare("select id from devices where mac = :mac");
         $stm->bindValue(':mac', $mac, PDO::PARAM_STR);
         if ($stm->execute()) {
             if (($data=$stm->fetchColumn()) > 0 )
-	        return $data;
+                return $data;
         }
     }
 
-    if(isset($ip)) {
-	$stm = $db_handle->prepare("select id from devices where ip = :ip");
+    if(isset($ip) && $ip !== "") {
+        $stm = $db_handle->prepare("select id from devices where ip = :ip");
         $stm->bindValue(':ip', $ip, PDO::PARAM_STR);
-    }
-    if ($stm->execute()) {
-        if (($data=$stm->fetchColumn()) > 0)
-            return $data;
+        if ($stm->execute()) {
+            if (($data=$stm->fetchColumn()) > 0)
+                return $data;
+        }
     }
     return false;
 }

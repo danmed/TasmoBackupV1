@@ -414,11 +414,11 @@ class phpMQTT {
 
 	function printstr($string){
 		$strlen = strlen($string);
-			for($j=0;$j<$strlen;$j++){
-				$num = ord($string[$j]);
-				if($num > 31) 
-					$chr = $string[$]}; else $chr = " ";
-				printf("%4d: %08b : 0x%02x : %s \n",$j,$num,$num,$chr);
-			}
+		for($j=0;$j<$strlen;$j++){
+			$num = ord($string[$j]);
+			if($num > 31) $chr = $string[$j];
+		    else $chr = " ";
+			printf("%4d: %08b : 0x%02x : %s \n",$j,$num,$num,$chr);
+		}
 	}
 }
